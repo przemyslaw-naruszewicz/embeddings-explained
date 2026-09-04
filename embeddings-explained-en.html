@@ -1,0 +1,1219 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Five newsrooms, one story · Proximtype</title>
+<link rel="stylesheet" href="assets/fonts-gdynia.css">
+<link rel="stylesheet" href="assets/board-gdynia.css">
+</head>
+<body>
+<main class="board">
+
+  <!-- ============ HERO ============ -->
+  <div class="wrap">
+    <div class="heroCard">
+      <div class="blob1"></div><div class="blob2"></div><div class="grain"></div>
+      <div class="heroIn">
+        <p class="eyebrow">Semantic clustering · the meaning layer</p>
+        <h1 class="hl">Five newsrooms.<br><span class="brasstx">One story.</span></h1>
+        <div class="defbox">
+          <p>
+            An <b>embedding</b> is a vector: a fixed-length list of numbers that a language model
+            computes for a piece of text. Texts with similar meanings usually produce vectors that
+            lie close together, so the system can calculate their similarity instead of comparing
+            them by eye.
+          </p>
+        </div>
+        <p class="sub">
+          When a president resigns, for example, five newsrooms report the event in five different
+          ways. The articles may share no phrasing at all, and sometimes they are not even written
+          in the same language. A program that groups them by common words will miss even a simple
+          paraphrase.
+        </p>
+        <p class="sub">
+          The system represents each article as a point in a semantic space. It does not measure
+          ordinary distance between the points. Instead, it compares the directions of their vectors
+          using the cosine of the angle between them. The resulting score estimates whether the texts
+          are related.
+        </p>
+      </div>
+      <div class="kpis">
+        <div class="kpi">
+          <div class="v">768</div>
+          <div class="k">numbers per article</div>
+          <div class="d">That is how many coordinates describe each text’s position in semantic space</div>
+        </div>
+        <div class="kpi">
+          <div class="v">0.70</div>
+          <div class="k">similarity threshold</div>
+          <div class="d">Cosine similarity ranges from −1.00 to 1.00. At 0.70 and above, two texts go
+            into one group; in the sample, the same story scores 0.9933 and a different one 0.3872</div>
+        </div>
+        <div class="kpi">
+          <div class="v">3</div>
+          <div class="k">texts per call</div>
+          <div class="d">A server may have 4 GB of memory and no swap, so texts are sent to the model in small batches</div>
+        </div>
+        <div class="kpi">
+          <div class="v">none</div>
+          <div class="k">expiry date</div>
+          <div class="d">A result computed once does not change, so it never needs to be invalidated</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ PRIMER ============ -->
+  <section>
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="label">Primer</p>
+        <h2 class="title">Meaning expressed as coordinates</h2>
+        <p class="lead">Three properties make embeddings useful for this task.</p>
+      </div>
+
+      <div class="primer">
+        <div class="pcards">
+
+          <div class="pcard">
+            <div class="n">01</div>
+            <div>
+              <h3>The model represents each text with 768 coordinates</h3>
+              <p>
+                An embedding model turns a sentence into a list of 768 numbers. The result is neither
+                a summary nor a set of keywords. These numbers are coordinates that place
+                the text in a semantic space shared by every other text.
+              </p>
+            </div>
+          </div>
+
+          <div class="pcard">
+            <div class="n">02</div>
+            <div>
+              <h3>Nearby vectors suggest related texts</h3>
+              <p>
+                Texts about the same event often land in nearly the same place even when they use
+                different words. That “nearly” can be measured. The measure is based on the angle
+                between their vectors: 1.00 means the same direction, 0.00 means perpendicular
+                directions and −1.00 means opposite directions. This removes the need to write
+                separate rules for synonyms and word order.
+              </p>
+            </div>
+          </div>
+
+          <div class="pcard">
+            <div class="n">03</div>
+            <div>
+              <h3>The same text always gives the same numbers</h3>
+              <p>
+                Computing an embedding is deterministic: the same version of the model returns
+                exactly the same vector for the same text. The result does not depend on when
+                it is computed or on any text processed earlier.
+                That is why the result is worth storing rather than recomputing it.
+              </p>
+            </div>
+          </div>
+
+          <div class="hood">
+            <span class="ht">The technical side</span>
+            <p>
+              A vector is a list of numbers. To make the calculation visible, use just two
+              coordinates. The first says how far to move the arrow’s endpoint horizontally; the
+              second says how far to move it vertically. There is no need to measure the angle with
+              a protractor. Its cosine can be calculated directly from the arrows’ coordinates.
+            </p>
+
+            <div class="cosviz">
+              <div class="cosplot">
+                <span class="coslabel">1 · Read the coordinates</span>
+                <svg viewBox="0 0 320 280" role="img"
+                     aria-label="A coordinate system from 0 to 1. Vector A ends at the point 1 and 0, while vector B ends at the point 0.8 and 0.6. The vectors form an angle of about 37 degrees.">
+                  <defs>
+                    <marker id="cos-a-en" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                      <path d="M0 0 L10 5 L0 10 z" fill="#021a35"></path>
+                    </marker>
+                    <marker id="cos-b-en" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                      <path d="M0 0 L10 5 L0 10 z" fill="#b4914b"></path>
+                    </marker>
+                  </defs>
+                  <rect class="cosplane" x="55" y="100" width="160" height="120"></rect>
+                  <g class="cosgrid">
+                    <line x1="95" y1="20" x2="95" y2="220"></line>
+                    <line x1="135" y1="20" x2="135" y2="220"></line>
+                    <line x1="175" y1="20" x2="175" y2="220"></line>
+                    <line x1="215" y1="20" x2="215" y2="220"></line>
+                    <line x1="255" y1="20" x2="255" y2="220"></line>
+                    <line x1="55" y1="180" x2="255" y2="180"></line>
+                    <line x1="55" y1="140" x2="255" y2="140"></line>
+                    <line x1="55" y1="100" x2="255" y2="100"></line>
+                    <line x1="55" y1="60" x2="255" y2="60"></line>
+                    <line x1="55" y1="20" x2="255" y2="20"></line>
+                  </g>
+                  <line class="cosaxis" x1="40" y1="220" x2="280" y2="220"></line>
+                  <line class="cosaxis" x1="55" y1="235" x2="55" y2="12"></line>
+                  <g class="costicks">
+                    <text x="55" y="239">0</text>
+                    <text x="95" y="239">0.2</text>
+                    <text x="135" y="239">0.4</text>
+                    <text x="175" y="239">0.6</text>
+                    <text class="active" x="215" y="239">0.8</text>
+                    <text x="255" y="239">1</text>
+                    <text x="44" y="184">0.2</text>
+                    <text x="44" y="144">0.4</text>
+                    <text class="active" x="44" y="104">0.6</text>
+                    <text x="44" y="64">0.8</text>
+                    <text x="44" y="24">1</text>
+                  </g>
+                  <text class="cosaxisname" x="168" y="270" text-anchor="middle">1st coordinate · horizontal</text>
+                  <text class="cosaxisname" transform="translate(13 126) rotate(-90)" text-anchor="middle">2nd coordinate · vertical</text>
+                  <line class="cosguide" x1="215" y1="100" x2="215" y2="220"></line>
+                  <line class="cosguide" x1="55" y1="100" x2="215" y2="100"></line>
+                  <path class="cosarc" d="M105 220 A50 50 0 0 0 95 190"></path>
+                  <line class="cosvector cosa" x1="55" y1="220" x2="255" y2="220" marker-end="url(#cos-a-en)"></line>
+                  <line class="cosvector cosb" x1="55" y1="220" x2="215" y2="100" marker-end="url(#cos-b-en)"></line>
+                  <circle cx="55" cy="220" r="4" fill="#675d4d"></circle>
+                  <text class="costheta" x="109" y="190">θ ≈ 37°</text>
+                  <text class="cosva" x="198" y="207">A = [1, 0]</text>
+                  <text class="cosvb" x="157" y="82">B = [0.8, 0.6]</text>
+                </svg>
+                <p class="coshint">
+                  <b>A = [1, 0]</b>: 1 to the right and 0 upwards.<br>
+                  <b>B = [0.8, 0.6]</b>: 0.8 to the right and 0.6 upwards.
+                </p>
+              </div>
+
+              <div class="cosmath">
+                <span class="coslabel">2 · Calculate direction similarity</span>
+                <div class="cosformula" aria-label="The cosine of the angle equals the dot product of A and B divided by the product of the lengths of A and B">
+                  <span>cos(θ)</span><span>=</span>
+                  <span class="cosfrac"><span>A · B</span><span>|A| × |B|</span></span>
+                </div>
+                <div class="cosnotation">
+                  <span><code>A · B</code> is the dot product: multiply matching pairs, then add the results.</span>
+                  <span><code>|A|</code> and <code>|B|</code> are the lengths of the arrows.</span>
+                </div>
+                <div class="cossteps">
+                  <div class="cosstep">
+                    <span class="sn">1</span>
+                    <div>Calculate the numerator. Multiply numbers in matching positions, then add:
+                      <code>(1 × 0.8) + (0 × 0.6) = 0.8</code>
+                    </div>
+                  </div>
+                  <div class="cosstep">
+                    <span class="sn">2</span>
+                    <div>Calculate the denominator. An arrow is the hypotenuse, so use the
+                      Pythagorean theorem:
+                      <code>|A| = √(1² + 0²) = 1<br>|B| = √(0.8² + 0.6²) = √(0.64 + 0.36) = 1</code>
+                    </div>
+                  </div>
+                  <div class="cosstep">
+                    <span class="sn">3</span>
+                    <div>Divide the numerator by the product of the lengths. This removes the effect
+                      of arrow size, leaving a comparison of direction:
+                      <code>0.8 ÷ (1 × 1) = 0.80</code>
+                    </div>
+                  </div>
+                </div>
+                <div class="cosanswer">
+                  <strong>0.80</strong>
+                  <span>The score is close to 1, so the directions are similar. It is also above
+                    the 0.70 threshold, so the texts would enter one group.</span>
+                </div>
+                <div class="coslegend"><span>−1 · opposite</span><span>0 · perpendicular</span><span>1 · same direction</span></div>
+                <p class="cosangleback">The diagram shows an angle of about 37° because
+                  <code>arccos(0.80) ≈ 37°</code>. The system does not need the angle itself. It uses
+                  the score of 0.80 directly when comparing texts.</p>
+              </div>
+            </div>
+
+            <p class="cosnote">
+              The diagram has two axes because that is what can be drawn on a page. A real vector has
+              768 coordinates, so the program multiplies 768 pairs of numbers and adds all the results.
+              This model’s vectors have length 1 (L2 normalisation). The denominator is therefore 1,
+              but the code still calculates it so that vectors of other lengths work too.
+            </p>
+          </div>
+
+        </div>
+
+        <figure class="mini">
+          <svg viewBox="0 0 380 340" role="img"
+               aria-label="Two differently worded headlines land close together in semantic space; an unrelated headline lands far away.">
+            <defs>
+              <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M0 0 L10 5 L0 10 z" fill="#675d4d"></path>
+              </marker>
+            </defs>
+
+            <rect x="168" y="14" width="200" height="312" rx="16" fill="#f6f4ec"></rect>
+            <text x="180" y="316" font-family="Work Sans, sans-serif" font-size="10" letter-spacing="1.6"
+                  fill="#675d4d">SEMANTIC SPACE</text>
+
+            <circle cx="280" cy="104" r="44" fill="#e9c176" fill-opacity="0.16"
+                    stroke="#e9c176" stroke-width="1.5" stroke-dasharray="4 4"></circle>
+            <text x="280" y="46" text-anchor="middle" font-family="Work Sans, sans-serif" font-size="11.5"
+                  font-weight="500" fill="#b4914b">one cluster</text>
+
+            <rect x="4" y="30" width="150" height="34" rx="8" fill="#ffffff" stroke="#c4c6ce"></rect>
+            <text x="18" y="51" font-family="Work Sans, sans-serif" font-size="12" fill="#021a35">Macron resigns</text>
+
+            <rect x="4" y="118" width="150" height="34" rx="8" fill="#ffffff" stroke="#c4c6ce"></rect>
+            <text x="18" y="139" font-family="Work Sans, sans-serif" font-size="12" fill="#021a35">President steps down</text>
+
+            <rect x="4" y="250" width="150" height="34" rx="8" fill="#ffffff" stroke="#c4c6ce"></rect>
+            <text x="18" y="271" font-family="Work Sans, sans-serif" font-size="12" fill="#021a35">Tsunami hits Japan</text>
+
+            <path d="M158 47 C 206 47, 214 78, 262 92" fill="none" stroke="#675d4d" stroke-width="1.6" marker-end="url(#ah)"></path>
+            <path d="M158 135 C 212 135, 238 132, 284 120" fill="none" stroke="#675d4d" stroke-width="1.6" marker-end="url(#ah)"></path>
+            <path d="M158 267 C 186 267, 198 264, 224 262" fill="none" stroke="#675d4d" stroke-width="1.6" marker-end="url(#ah)"></path>
+
+            <circle cx="270" cy="94" r="7" fill="#e9c176"></circle>
+            <circle cx="290" cy="116" r="7" fill="#e9c176"></circle>
+            <circle cx="232" cy="262" r="7" fill="#021a35"></circle>
+            <text x="232" y="288" text-anchor="middle" font-family="Work Sans, sans-serif" font-size="11.5"
+                  font-weight="500" fill="#675d4d">far away</text>
+          </svg>
+          <figcaption>different words · nearby points</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TF-IDF ============ -->
+  <section class="band">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="label">A reference point</p>
+        <h2 class="title">Why counting words isn’t enough</h2>
+        <p class="lead">
+          Before embeddings became common, texts were often compared using <b>TF-IDF</b>. The method
+          first counts words, then gives each one a weight based on how often it appears in a given
+          text and how rare it is across the collection. It considers two texts similar when they
+          contain the same high-weight words.
+        </p>
+      </div>
+
+      <div class="specimen">
+
+        <div class="card">
+          <h3>How TF-IDF compares texts</h3>
+          <p class="note">
+            Two quantities determine the weight of each word: how often it occurs in this text and
+            how rare it is in all the others. A word present everywhere, such as “and” or “is”, does
+            not distinguish one text from another and gets a weight near zero. A rare word, such as
+            “resignation”, gets a high one.
+          </p>
+          <p class="note">
+            A text becomes a list of such weights, and the similarity of two texts is a measure of
+            how much the two lists overlap. The method uses arithmetic on word counts rather than a
+            language model or machine learning. It fits in a few dozen lines of code and runs without
+            any preparation.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>Where it breaks down</h3>
+          <p class="note">
+            Two texts may say the same thing in different words. “The president steps down” and
+            “Macron resigns” share no meaningful word, so their similarity is exactly zero.
+          </p>
+          <p class="note">
+            To match those two sentences at all, you have to add a list of synonyms, a way of
+            reducing words to their base forms, and a list of names. Someone has to prepare these
+            by hand and repeat the work for every language.
+          </p>
+        </div>
+
+        <div class="card wide">
+          <h3>The hardest case: several languages at once</h3>
+          <p class="note">
+            The same event may be covered in English, French and Polish at the same time. If two
+            articles in different languages share no words, a word-counting method assigns them a
+            similarity of zero even when they describe the same event. Without additional rules,
+            everything would first have to be translated into one language. That would require
+            another model, whose errors would also affect the results.
+          </p>
+          <p class="note">
+            Inflected languages make it worse: three grammatical forms of one Polish noun are three
+            different words to a word counter. A multilingual model can compare texts without
+            separate rules for every language. Because it learned many languages at once, it maps
+            texts from all of them into one shared space. A Polish sentence can therefore land
+            close to its English counterpart.
+          </p>
+
+          <table class="cmp">
+            <thead>
+              <tr><th>Question</th><th>TF-IDF</th><th>Embeddings</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>What does it compare?</td>
+                <td>words in common</td>
+                <td>the meaning of the whole text</td>
+              </tr>
+              <tr>
+                <td>How does it know what matters?</td>
+                <td>from how rare words are in the collection at hand</td>
+                <td>from a model that has already read an enormous number of texts</td>
+              </tr>
+              <tr>
+                <td>Will it spot the same thing said differently?</td>
+                <td>no, not until someone adds a synonym dictionary</td>
+                <td>usually, because the model is trained to compare meaning</td>
+              </tr>
+              <tr>
+                <td>Can it handle two languages?</td>
+                <td>not without extra handling, such as translation</td>
+                <td>yes, provided the model is multilingual</td>
+              </tr>
+              <tr>
+                <td>What about a name, a ticker, a statute number?</td>
+                <td>better: an exact hit on a rare word carries the most weight</td>
+                <td>worse: similar names can land close together</td>
+              </tr>
+              <tr>
+                <td>Is the score always the same?</td>
+                <td>no, it changes with the collection used to calculate word rarity</td>
+                <td>yes, the same text and model always give the same result</td>
+              </tr>
+              <tr>
+                <td>What does it cost?</td>
+                <td>very little; it is computed locally, with no extra tooling</td>
+                <td>the model uses 1.3 GB and takes a few seconds; the result is then stored permanently</td>
+              </tr>
+              <tr>
+                <td>Can you explain the result?</td>
+                <td>yes, you can see which words determined the result</td>
+                <td>no; it consists of 768 numbers, none of which means anything on its own</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p class="note">
+            Neither method is better in every case. Search engines usually combine them: word
+            matching handles a statute number well, while embeddings capture the meaning of a
+            question. Here the task is to decide whether the articles describe the same event, so
+            their meaning matters most.
+          </p>
+        </div>
+
+        <div class="card wide">
+          <h3>Why only one method remained</h3>
+          <p class="note">
+            At first, a setting determined the grouping method: development environments without
+            access to the model used TF-IDF, while production used embeddings. As a result, the
+            same batch of articles formed different groups on a developer’s machine and in
+            production, while one similarity threshold had to serve two different distributions
+            of scores. When article groups produce signals that may inform investment decisions,
+            “I got a different result” stops being a minor detail.
+          </p>
+          <p class="note">
+            Word counting had one advantage: it did not depend on the model. That advantage
+            disappeared once embeddings for the test dataset had been computed once and stored in
+            a fixture alongside the code. Before each test, those vectors are loaded into the cache.
+            Tests therefore use the same embeddings and the same grouping method as production
+            without having to call the model.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MODEL AND OLLAMA ============ -->
+  <section>
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="label">Model and infrastructure</p>
+        <h2 class="title">What computes these numbers, and where does it run?</h2>
+        <p class="lead">
+          The model had to support multiple languages, fit on the same server as the database
+          and application, and run on private infrastructure without sending text elsewhere.
+        </p>
+      </div>
+
+      <div class="model">
+        <div class="card">
+          <h3>nomic-embed-text-v2-moe</h3>
+          <p class="note">
+            An open model built for this one job: it doesn’t hold a conversation, doesn’t
+            summarise, doesn’t answer questions. It takes text, returns 768 numbers, and that is
+            where its role ends.
+          </p>
+          <p class="note">
+            The <b>MoE</b> in the name stands for <i>mixture of experts</i>: the model contains several
+            specialised subnetworks but activates only some of them for any given piece of text.
+            It can therefore offer the capabilities of a larger model while using resources closer
+            to those of a smaller one.
+          </p>
+          <p class="note">
+            For this task, multilingual support matters most: a French wire story and its
+            English write-up can map to nearby points in the space, without translation or
+            hand-written rules.
+          </p>
+        </div>
+
+        <div class="card">
+          <p class="label">Specifications</p>
+          <h3>Size and shape</h3>
+          <dl class="kv">
+            <dt>output</dt>
+            <dd>768 numbers · can be shortened with some loss of quality</dd>
+            <dt class="row-alt">languages</dt>
+            <dd class="row-alt">multilingual · around a hundred languages</dd>
+            <dt>how much it reads</dt>
+            <dd>~512 tokens (~2 paragraphs) · any text beyond that is cut off</dd>
+            <dt class="row-alt">weights</dt>
+            <dd class="row-alt">open · downloaded once, kept locally</dd>
+            <dt>in memory</dt>
+            <dd>~1.3 GB · only while a batch is computed</dd>
+            <dt class="row-alt">where it runs</dt>
+            <dd class="row-alt">Ollama on the same server · no external network calls</dd>
+          </dl>
+          <p class="note">
+            The model reads about 512 tokens, so anything beyond that is cut off. This system assumes
+            that the article’s subject will be clear from its headline and first paragraph. Important
+            information that appears later will not affect the vector.
+          </p>
+        </div>
+      </div>
+
+      <div class="cols2 tight">
+        <div class="tcard">
+          <h3><span class="g">?</span> What Ollama is</h3>
+          <p>
+            Ollama is a program that runs language models on your own computer or server. You
+            install it once and download a model with a single command. The model then runs at a
+            local address, much like a database that receives requests and returns results.
+          </p>
+          <p>
+            Ollama takes a list of texts and returns a list of vectors. The application calls it
+            over HTTP only when a new result has to be computed. No text leaves the server, and local
+            calls are not billed individually.
+          </p>
+        </div>
+        <div class="tcard">
+          <h3><span class="g">$</span> Requirements for running it</h3>
+          <p>
+            A model this size takes ~1.3 GB of memory, and only while a batch is being computed. It
+            fits next to the database and the application itself on an ordinary VPS costing a few
+            euros a month. It requires neither a graphics card nor an account with a cloud provider.
+          </p>
+          <p>
+            A server may have 4 GB of memory and no swap. In that configuration, the model is
+            unloaded from memory immediately after each batch, and texts are sent to it three at a time. Reloading
+            takes a few seconds and is needed only when a batch contains new content.
+          </p>
+          <div class="hood">
+            <span class="ht">The technical side</span>
+            <code>POST /api/embed</code>, input in chunks of 3, <code>keep_alive: 0</code> on the
+            last chunk (releasing memory). Address and model name come from configuration
+            (<code>OLLAMA_EMBED_MODEL</code>).
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE ROUTE ============ -->
+  <section>
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="label">The route</p>
+        <h2 class="title">Where embeddings fit into the process</h2>
+        <p class="lead">
+          An article passes through six steps on its way from a news feed to a signal. Only two need
+          an embedding. The others reduce the number of model calls and help ensure reliable results.
+        </p>
+      </div>
+
+      <!-- Colours are the board tokens, written out because SVG presentation
+           attributes are read before the cascade: navy #021a35, brass #e9c176,
+           secondary #675d4d, outline-variant #c4c6ce. -->
+      <div class="flowcard">
+        <svg viewBox="0 0 1120 210" role="img"
+             aria-label="Six steps: intake with content-checksum dedup, keyword filter, assembling the text the model reads, embedding via the cache, grouping by similarity, analysis of the cluster. The embedding is produced in step four and used in step five.">
+          <defs>
+            <marker id="fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M0 0 L10 5 L0 10 z" fill="#675d4d"></path>
+            </marker>
+          </defs>
+
+          <text x="0" y="24" font-family="Work Sans, sans-serif" font-size="10" letter-spacing="1.6"
+                fill="#675d4d">IN · ITEMS FROM NEWS FEEDS, E.G. RSS</text>
+          <text x="1120" y="24" text-anchor="end" font-family="Work Sans, sans-serif" font-size="10"
+                letter-spacing="1.6" fill="#675d4d">OUT · A SIGNAL OR A PROCESS STAGE</text>
+
+          <rect x="0" y="54" width="156" height="96" rx="14" fill="#ffffff" stroke="#c4c6ce"></rect>
+          <text x="15" y="76" font-family="Work Sans, sans-serif" font-size="10" letter-spacing="1.6" fill="#b4914b">01</text>
+          <text x="15" y="99" font-family="Manrope, sans-serif" font-size="14.5" font-weight="700" fill="#021a35">Intake</text>
+          <text x="15" y="120" font-family="Work Sans, sans-serif" font-size="11.5" fill="#675d4d">a checksum removes</text>
+          <text x="15" y="135" font-family="Work Sans, sans-serif" font-size="11.5" fill="#675d4d">exact duplicates</text>
+
+          <rect x="193" y="54" width="156" height="96" rx="14" fill="#ffffff" stroke="#c4c6ce"></rect>
+          <text x="208" y="76" font-family="Work Sans, sans-serif" font-size="10" letter-spacing="1.6" fill="#b4914b">02</text>
+          <text x="208" y="99" font-family="Manrope, sans-serif" font-size="14.5" font-weight="700" fill="#021a35">Filter</text>
+          <text x="208" y="120" font-family="Work Sans, sans-serif" font-size="11.5" fill="#675d4d">keywords,</text>
+          <text x="208" y="135" font-family="Work Sans, sans-serif" font-size="11.5" fill="#675d4d">no model needed</text>
+
+          <rect x="386" y="54" width="156" height="96" rx="14" fill="#ffffff" stroke="#c4c6ce"></rect>
+          <text x="401" y="76" font-family="Work Sans, sans-serif" font-size="10" letter-spacing="1.6" fill="#b4914b">03</text>
+          <text x="401" y="99" font-family="Manrope, sans-serif" font-size="14.5" font-weight="700" fill="#021a35">Text</text>
+          <text x="401" y="120" font-family="Work Sans, sans-serif" font-size="11.5" fill="#675d4d">headline and body:</text>
+          <text x="401" y="135" font-family="Work Sans, sans-serif" font-size="11.5" fill="#675d4d">what the model reads</text>
+
+          <rect x="579" y="54" width="156" height="96" rx="14" fill="#021a35"></rect>
+          <text x="594" y="76" font-family="Work Sans, sans-serif" font-size="10" letter-spacing="1.6" fill="#e9c176">04</text>
+          <text x="594" y="99" font-family="Manrope, sans-serif" font-size="14.5" font-weight="700" fill="#ffffff">Embedding</text>
+          <text x="594" y="120" font-family="Work Sans, sans-serif" font-size="11.5" fill="#b3c8eb">text → 768 numbers,</text>
+          <text x="594" y="135" font-family="Work Sans, sans-serif" font-size="11.5" fill="#b3c8eb">cache checked first</text>
+
+          <rect x="772" y="54" width="156" height="96" rx="14" fill="#021a35"></rect>
+          <text x="787" y="76" font-family="Work Sans, sans-serif" font-size="10" letter-spacing="1.6" fill="#e9c176">05</text>
+          <text x="787" y="99" font-family="Manrope, sans-serif" font-size="14.5" font-weight="700" fill="#ffffff">Grouping</text>
+          <text x="787" y="120" font-family="Work Sans, sans-serif" font-size="11.5" fill="#b3c8eb">nearby vectors</text>
+          <text x="787" y="135" font-family="Work Sans, sans-serif" font-size="11.5" fill="#b3c8eb">= one story</text>
+
+          <rect x="965" y="54" width="156" height="96" rx="14" fill="#ffffff" stroke="#c4c6ce"></rect>
+          <text x="980" y="76" font-family="Work Sans, sans-serif" font-size="10" letter-spacing="1.6" fill="#b4914b">06</text>
+          <text x="980" y="99" font-family="Manrope, sans-serif" font-size="14.5" font-weight="700" fill="#021a35">Analysis</text>
+          <text x="980" y="120" font-family="Work Sans, sans-serif" font-size="11.5" fill="#675d4d">one group,</text>
+          <text x="980" y="135" font-family="Work Sans, sans-serif" font-size="11.5" fill="#675d4d">one call to an LLM</text>
+
+          <path d="M164 102 L185 102" stroke="#675d4d" stroke-width="1.6" marker-end="url(#fa)"></path>
+          <path d="M357 102 L378 102" stroke="#675d4d" stroke-width="1.6" marker-end="url(#fa)"></path>
+          <path d="M550 102 L571 102" stroke="#675d4d" stroke-width="1.6" marker-end="url(#fa)"></path>
+          <path d="M743 102 L764 102" stroke="#675d4d" stroke-width="1.6" marker-end="url(#fa)"></path>
+          <path d="M936 102 L957 102" stroke="#675d4d" stroke-width="1.6" marker-end="url(#fa)"></path>
+
+          <path d="M0 164 L0 176 L156 176 L156 164" fill="none" stroke="#675d4d" stroke-width="1.4"></path>
+          <text x="0" y="196" font-family="Work Sans, sans-serif" font-size="11.5" fill="#675d4d">character layer: is this exactly the same text?</text>
+
+          <path d="M579 164 L579 176 L928 176 L928 164" fill="none" stroke="#e9c176" stroke-width="2.2"></path>
+          <text x="579" y="196" font-family="Work Sans, sans-serif" font-size="11.5" font-weight="500"
+                fill="#b4914b">meaning layer: where the embedding is created and used</text>
+        </svg>
+        <p class="flowcap">
+          Steps 01 to 03 do not analyse meaning: the first compares characters, the second looks for
+          words from a list, and the third assembles the text for the model. Semantic analysis begins
+          at step 04. Its result is stored as a row of numbers and used in step 05. Step 06 receives
+          a finished group of articles rather than a vector.
+        </p>
+      </div>
+
+      <div class="cols2 tight">
+        <div class="tcard">
+          <h3><span class="g">≡</span> Intake (step 01): has this text been here before?</h3>
+          <p>
+            The same wire copy may arrive from two feeds, or return after a dropped connection.
+            A <b>checksum</b> detects it. This short string is computed from the entire text: the
+            same text always produces the same checksum, while any change produces a different one.
+            If the checksum is already in the database, the article is not stored again.
+          </p>
+          <p>
+            The check is binary and completely blind to meaning: moving a single comma produces
+            a different checksum and a second row in the database.
+          </p>
+        </div>
+        <div class="tcard">
+          <h3><span class="g">≈</span> Embedding and grouping (steps 04 and 05): is this the same story?</h3>
+          <p>
+            Five newsrooms describe one event in five different texts, so each checksum will be
+            different. An embedding makes it possible to measure how close those texts are and
+            join them into one group, even when they do not share a single sentence.
+          </p>
+          <p>
+            Each question needs a different tool. The program first compares content checksums, a
+            fast operation that requires no model. Only texts that pass this stage are compared by
+            meaning, which requires the model to run.
+          </p>
+        </div>
+      </div>
+
+      <div class="strips">
+
+        <article class="strip">
+          <div class="num">01</div>
+          <div>
+            <h3>Accept it, but only once</h3>
+            <p class="txt">
+              Articles sometimes arrive from news feeds more than once. A duplicate may result from
+              a retry after a timeout or from the same wire copy appearing in two feeds. In both
+              cases the content checksum is identical, so the program rejects the second copy.
+            </p>
+            <div class="hood">
+              <span class="ht">The technical side</span>
+              <code>WorldEvent</code> · an identifier computed from the headline and body determines
+              whether an event has already been seen. It uses a fast, non-cryptographic hash function
+              (<code>xxh128(title + content)</code>). This is the <b>deduplication</b> key,
+              deliberately a different one from the key the embedding cache uses.
+            </div>
+            <div class="io"><span class="pill"><b>in</b> · RSS feed items</span><span class="pill"><b>out</b> · persisted events</span></div>
+          </div>
+        </article>
+
+        <article class="strip">
+          <div class="num">02</div>
+          <div>
+            <h3>Remove what is clearly irrelevant</h3>
+            <p class="txt">
+              A simple keyword filter comes next. It checks for required and disqualifying words,
+              and optionally for trusted sources. It needs no model and reduces the number of texts
+              passed to the stage that uses the model.
+            </p>
+            <p class="txt">
+              If no keywords are configured, nothing gets through. Passing every text in that case
+              could hide the configuration mistake until the bill arrived.
+            </p>
+            <p class="txt">
+              The list still has to be prepared. A large language model can help during configuration,
+              but it is not used during processing. The operator describes what they are looking for,
+              and the model drafts a list of variants, related forms and equivalents in the source
+              languages. The operator reviews and approves the final list.
+            </p>
+            <div class="hood">
+              <span class="ht">The technical side</span>
+              <code>WorldEventFilter → WorldEventFilterSpec</code>: a CPU-only regex gate. When its
+              configuration is empty, it rejects every text instead of allowing all of them through.
+              Keyword suggestion is a separate path, called from the
+              configuration screen:
+              <code>KeywordSuggesterInterface::suggest(description, languages)</code>, adapter
+              <code>AnthropicKeywordSuggester</code> behind a cache and a rate limiter.
+            </div>
+            <div class="io"><span class="pill"><b>in</b> · event snapshot</span><span class="pill"><b>out</b> · array: WorldEventDescriptor objects</span></div>
+          </div>
+        </article>
+
+        <article class="strip">
+          <div class="num">03</div>
+          <div>
+            <h3>Decide what the model will read</h3>
+            <p class="txt">
+              For each article, the code joins the headline and body into one block. This exact text
+              is sent to the model and determines both the resulting vector and its cache key.
+            </p>
+            <div class="hood">
+              <span class="ht">The technical side</span>
+              <code>FilteredWorldEvent::getTextForClustering()</code> →
+              <code>title . ' ' . content</code>.
+            </div>
+            <div class="io"><span class="pill"><b>out</b> · array: texts</span></div>
+          </div>
+        </article>
+
+        <article class="strip hot">
+          <div class="num">04</div>
+          <div>
+            <h3>Turn the text into numbers</h3>
+            <p class="txt">
+              This step uses more resources than the others, so it first checks whether the text has
+              been processed before. The model receives only texts without a stored result.
+            </p>
+            <div class="io"><span class="pill"><b>in</b> · array: texts</span><span class="pill"><b>out</b> · array: vectors of 768 floats</span></div>
+            <div class="hood">
+              <span class="ht">The technical side</span>
+              In PHP the result has type <code>array</code>: it contains vectors, each of which is
+              an array of 768 <code>float</code> values. PHPDoc describes this shape more precisely as
+              <code>list&lt;list&lt;float&gt;&gt;</code>.
+            </div>
+          </div>
+        </article>
+
+        <article class="strip">
+          <div class="num">05</div>
+          <div>
+          <h3>Group by similarity</h3>
+            <p class="txt">
+              The program calculates a separate similarity score for every pair of articles in a
+              daily batch. If a pair scores 0.70 or above, both articles enter the same group.
+              Groups merge through shared articles: if A-B and B-C clear the threshold, A, B and C
+              form one group even when A-C scores below it. A daily batch contains only a few dozen
+              articles, so every pair can be evaluated without approximation.
+            </p>
+            <div class="hood">
+              <span class="ht">The technical side</span>
+              <code>SimilarityGrouping</code>: similarity is computed separately for every pair, so
+              fifty articles require just under 1,250 comparisons of 768 numbers each, a fraction of
+              a second. Pairs at or above the threshold are merged by a structure called <b>union-find</b>: each
+              article starts as its own group, and merging a pair joins the two groups containing
+              those articles. This is why A-B and B-C form one group ABC even if A-C does not clear
+              the threshold. No estimation or sampling is involved; the groups follow directly from
+              the threshold.
+            </div>
+            <div class="io"><span class="pill"><b>in</b> · array: vectors of 768 floats</span><span class="pill"><b>out</b> · index → group</span></div>
+          </div>
+        </article>
+
+        <article class="strip">
+          <div class="num">06</div>
+          <div>
+            <h3>One group, one analysis</h3>
+            <p class="txt">
+              A group is analysed once, not once per article, so five reports of the same
+              event require one analysis in total. Grouping therefore also reduces the work at the
+              final stage. The result is either a trading signal or an indication that a longer
+              process has moved to its next stage.
+            </p>
+            <div class="hood">
+              <span class="ht">The technical side</span>
+              <code>WorldEventCluster</code>: the clusterer has two consumers:
+              <code>SignalGenerationKernel</code> (events → signals) and <code>ProcessStepper</code>,
+              which sorts clusters by size and stops at the first one to pass the stage gate.
+            </div>
+            <div class="io"><span class="pill"><b>out</b> · Signal</span><span class="pill"><b>out</b> · stage observation</span></div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CACHE ============ -->
+  <section>
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="label">Storing the answers</p>
+        <h2 class="title">How the model’s results reach the database</h2>
+        <p class="lead">
+          The cache stores each computed vector so the model does not have to compute it again. A
+          single class manages the cache and passes missing texts to the model.
+        </p>
+      </div>
+
+      <div class="specimen">
+
+        <div class="card">
+          <h3>The question first, the work second</h3>
+          <p class="note">
+            The program calculates a checksum for every text, as it does when catching duplicates,
+            but bases this checksum on what the model actually sees. It then sends the checksums for
+            the entire batch to the database in one query and asks which ones are already known.
+          </p>
+          <p class="note">
+            Only the remaining texts go to the model. Each result is stored before it is used.
+            When the same text appears again, the program reads its vector from the database instead
+            of running the model a second time.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>The pattern: a decorator</h3>
+          <p class="note">
+            The class that queries the database cannot compute an embedding. The class that
+            computes one knows nothing about the database. Both expose the same interface, so the
+            database-aware class can wrap the model class. That is the decorator pattern.
+          </p>
+          <p class="note">
+            The rest of the program simply requests that texts be turned into vectors and does not
+            need to know whether the result came from the database or the model. The cache can therefore be
+            removed, replaced or extended with another layer without changing the code that uses it.
+          </p>
+        </div>
+
+        <div class="card wide">
+          <h3>The decorator in code</h3>
+          <p class="note">
+            This shortened version omits logging, the response-length check and the handling of texts
+            repeated within one batch.
+          </p>
+          <div class="codebox"><pre><span class="kw">final readonly class</span> <span class="id">CachedTextVectorizer</span> <span class="kw">implements</span> <span class="id">TextVectorizerInterface</span>
+{
+    <span class="kw">public function</span> <span class="id">__construct</span>(
+        <span class="kw">private</span> TextVectorizerInterface $inner,   <span class="cm">// the model (Ollama)</span>
+        <span class="kw">private</span> EmbeddingStoreInterface $store,   <span class="cm">// the embedding_cache table</span>
+        <span class="kw">private string</span> $modelId,
+        <span class="kw">private bool</span> $ollamaEnabled,
+    ) {}
+
+    <span class="kw">public function</span> <span class="id">vectorize</span>(<span class="kw">array</span> $texts): <span class="kw">array</span>
+    {
+        $hashOf  = <span class="id">array_map</span>(self::<span class="id">keyFor</span>(...), $texts);
+        $vectors = $this-&gt;store-&gt;<span class="id">getMany</span>($hashOf, $this-&gt;modelId);   <span class="cm">// 1 query</span>
+
+        $misses = $this-&gt;<span class="id">collectMisses</span>($texts, $hashOf, $vectors);
+
+        <span class="kw">if</span> ([] !== $misses) {
+            <span class="kw">if</span> (!$this-&gt;ollamaEnabled) {
+                <span class="cm">// a missing vector is an error; never silently fall back to another method</span>
+                <span class="kw">throw new</span> \<span class="id">RuntimeException</span>(<span class="str">'Embedding cache miss …'</span>);
+            }
+
+            $fresh = $this-&gt;inner-&gt;<span class="id">vectorize</span>($misses);      <span class="cm">// the only call to the model</span>
+            $this-&gt;store-&gt;<span class="id">putMany</span>($fresh, $this-&gt;modelId);  <span class="cm">// stored before it is used</span>
+            $vectors += $fresh;
+        }
+
+        <span class="kw">return</span> <span class="id">array_map</span>(<span class="kw">static fn</span> (<span class="kw">string</span> $h) =&gt; $vectors[$h], $hashOf);
+    }
+
+    <span class="kw">public static function</span> <span class="id">keyFor</span>(<span class="kw">string</span> $text): <span class="kw">string</span>
+    {
+        <span class="kw">return</span> <span class="id">hash</span>(<span class="str">'sha256'</span>, <span class="id">trim</span>($text));   <span class="cm">// keyed on the text the model reads</span>
+    }
+}</pre></div>
+          <p class="codecap">
+            The database key is the pair <code>(text checksum, model name)</code>, while the row
+            contains the vector as <code>jsonb</code>. No expiry date is needed because the value
+            does not change.
+          </p>
+        </div>
+
+        <div class="card wide dark">
+          <h3>Three possible outcomes</h3>
+          <div class="outcomes">
+            <div class="oc">
+              <h4>Text already known</h4>
+              <span class="cond">any mode</span>
+              <p>The numbers come back from the database and the model never runs. This is what
+                happens when the same text appears again.</p>
+            </div>
+            <div class="oc warn">
+              <h4>New text, model available</h4>
+              <span class="cond">backend enabled</span>
+              <p>The model runs the computation locally, three texts at a time. The result is stored immediately,
+                so the model will not be needed for that text again.</p>
+            </div>
+            <div class="oc stop">
+              <h4>New text, model switched off</h4>
+              <span class="cond">backend disabled</span>
+              <p>The program stops and reports which text has no result and which command can
+                generate it. It does not fall back to a weaker method.</p>
+            </div>
+          </div>
+          <div class="hood">
+            <span class="ht">The technical side</span>
+            Table <code>embedding_cache</code>, composite key
+            <code>(sha256(trim(text)), model_id)</code>, vector as <code>jsonb</code>, no TTL.
+            Writes use <code>ON CONFLICT DO NOTHING</code>, so parallel workers don’t collide.
+            The model name is part of the key: once it changes, the same text no longer matches the
+            old rows and the vector is computed afresh. The previous model’s vectors
+            stay in the table but are no longer read, so correctness does not depend
+            on anyone remembering to clear the cache. Setting: <code>OLLAMA_ENABLED</code>. Cache
+            initialisation: <code>bin/console app:embed:warm --days=1</code>.
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SPECIMEN: REAL VECTOR FOR FICTIONAL TEXT ============ -->
+  <section class="band">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="label">Specimen</p>
+        <h2 class="title">What a stored vector looks like</h2>
+        <p class="lead">
+          The headline about Macron’s resignation is fictional and was created for the test
+          scenario. The vector itself is not illustrative. These values were calculated by the
+          working model for that headline and stored in the repository’s test fixture.
+          Production stores vectors in the same format. One headline goes in; one row of 768
+          numbers comes out.
+        </p>
+      </div>
+
+      <div class="specimen">
+
+        <div class="card">
+          <h3>One headline, one row</h3>
+          <p class="note">
+            In this case the body field was empty, so the model received only the headline. Its
+            checksum and the model name form the key.
+          </p>
+          <dl class="kv">
+            <dt>what the model read</dt>
+            <dd>Macron resignation abdication power president france Macron resignation</dd>
+            <dt class="row-alt">text checksum</dt>
+            <dd class="row-alt">7319e9beaf703b2351870019ae5446cf94cefe520f5f997f6326b3a357d62169</dd>
+            <dt>model</dt>
+            <dd>nomic-embed-text-v2-moe</dd>
+            <dt class="row-alt">result</dt>
+            <dd class="row-alt">768 numbers · length 1.00 · ≈ 9.3 kB stored</dd>
+          </dl>
+        </div>
+
+        <div class="card">
+          <p class="label">The technical side</p>
+          <h3>The row on disk</h3>
+          <p class="note">
+            The table has three columns, <code>VARCHAR(64)</code>, <code>VARCHAR(255)</code> and
+            <code>JSONB</code>, plus a composite primary key. No additional index is needed because
+            lookups use an exact key, never a similarity search.
+          </p>
+          <div class="rowbox">
+<span class="c">-- SELECT * FROM embedding_cache LIMIT 1;</span><br>
+<span class="s">text_hash</span> <span class="v">7319e9beaf703b2351870019ae5446cf…</span><br>
+<span class="s">model_id </span> <span class="v">nomic-embed-text-v2-moe</span><br>
+<span class="s">vector   </span> <span class="k">[</span><span class="v">0.021463, -0.003320, 0.013590, -0.022463</span><span class="c">,</span><br>
+<span class="s">         </span> <span class="c">… 763 more floats …</span><br>
+<span class="s">         </span> <span class="v">-0.026217, 0.054305</span><span class="k">]</span>
+          </div>
+        </div>
+
+        <div class="card wide">
+          <h3>The first 56 coordinates of four vectors</h3>
+          <p class="note">
+            Each square represents one coordinate. A sandy hue indicates a positive value and a navy
+            hue a negative one. The more intense the colour, the greater the absolute value. The first
+            two headlines describe Macron’s resignation using slightly different wording, yet their
+            patterns line up square for square. The third also concerns French politics but describes
+            a snap election, so its pattern is markedly different. The fourth, on an earthquake in
+            Japan, resembles none of the others.
+          </p>
+          <div class="heat">
+            <div class="heatrow">
+              <div class="hh"><span class="nm">A1 · Macron resignation abdication power president… <span>Politico</span></span><span class="sim">reference</span></div>
+              <div class="cells"><i style="background:rgba(233,193,118,0.51)"></i><i style="background:rgba(2,26,53,0.26)"></i><i style="background:rgba(233,193,118,0.42)"></i><i style="background:rgba(2,26,53,0.52)"></i><i style="background:rgba(2,26,53,0.49)"></i><i style="background:rgba(233,193,118,0.53)"></i><i style="background:rgba(2,26,53,0.64)"></i><i style="background:rgba(233,193,118,0.50)"></i><i style="background:rgba(233,193,118,0.57)"></i><i style="background:rgba(233,193,118,0.67)"></i><i style="background:rgba(233,193,118,0.53)"></i><i style="background:rgba(233,193,118,0.46)"></i><i style="background:rgba(2,26,53,0.60)"></i><i style="background:rgba(2,26,53,0.44)"></i><i style="background:rgba(233,193,118,0.28)"></i><i style="background:rgba(233,193,118,0.63)"></i><i style="background:rgba(2,26,53,0.20)"></i><i style="background:rgba(2,26,53,0.38)"></i><i style="background:rgba(233,193,118,0.43)"></i><i style="background:rgba(233,193,118,0.70)"></i><i style="background:rgba(2,26,53,0.42)"></i><i style="background:rgba(233,193,118,0.21)"></i><i style="background:rgba(2,26,53,0.76)"></i><i style="background:rgba(2,26,53,0.68)"></i><i style="background:rgba(233,193,118,0.74)"></i><i style="background:rgba(2,26,53,0.95)"></i><i style="background:rgba(2,26,53,0.63)"></i><i style="background:rgba(233,193,118,0.50)"></i><i style="background:rgba(233,193,118,0.57)"></i><i style="background:rgba(2,26,53,0.76)"></i><i style="background:rgba(2,26,53,0.28)"></i><i style="background:rgba(2,26,53,0.73)"></i><i style="background:rgba(2,26,53,0.81)"></i><i style="background:rgba(233,193,118,0.81)"></i><i style="background:rgba(2,26,53,0.87)"></i><i style="background:rgba(233,193,118,0.51)"></i><i style="background:rgba(233,193,118,0.62)"></i><i style="background:rgba(2,26,53,0.72)"></i><i style="background:rgba(233,193,118,0.64)"></i><i style="background:rgba(233,193,118,0.29)"></i><i style="background:rgba(233,193,118,0.83)"></i><i style="background:rgba(2,26,53,0.80)"></i><i style="background:rgba(233,193,118,0.39)"></i><i style="background:rgba(233,193,118,0.52)"></i><i style="background:rgba(2,26,53,0.87)"></i><i style="background:rgba(233,193,118,0.68)"></i><i style="background:rgba(2,26,53,0.71)"></i><i style="background:rgba(233,193,118,0.84)"></i><i style="background:rgba(233,193,118,0.42)"></i><i style="background:rgba(233,193,118,0.69)"></i><i style="background:rgba(233,193,118,0.66)"></i><i style="background:rgba(233,193,118,0.66)"></i><i style="background:rgba(233,193,118,0.37)"></i><i style="background:rgba(233,193,118,0.92)"></i><i style="background:rgba(233,193,118,0.54)"></i><i style="background:rgba(2,26,53,0.36)"></i></div>
+            </div>
+            <div class="heatrow">
+              <div class="hh"><span class="nm">A2 · Macron resignation president abdication power… <span>France 24</span></span><span class="sim">cosine 0.9933 → same cluster</span></div>
+              <div class="cells"><i style="background:rgba(233,193,118,0.51)"></i><i style="background:rgba(2,26,53,0.33)"></i><i style="background:rgba(233,193,118,0.41)"></i><i style="background:rgba(2,26,53,0.56)"></i><i style="background:rgba(2,26,53,0.41)"></i><i style="background:rgba(233,193,118,0.46)"></i><i style="background:rgba(2,26,53,0.64)"></i><i style="background:rgba(233,193,118,0.50)"></i><i style="background:rgba(233,193,118,0.54)"></i><i style="background:rgba(233,193,118,0.68)"></i><i style="background:rgba(233,193,118,0.53)"></i><i style="background:rgba(233,193,118,0.46)"></i><i style="background:rgba(2,26,53,0.59)"></i><i style="background:rgba(2,26,53,0.44)"></i><i style="background:rgba(233,193,118,0.35)"></i><i style="background:rgba(233,193,118,0.65)"></i><i style="background:rgba(2,26,53,0.32)"></i><i style="background:rgba(2,26,53,0.46)"></i><i style="background:rgba(233,193,118,0.46)"></i><i style="background:rgba(233,193,118,0.66)"></i><i style="background:rgba(2,26,53,0.42)"></i><i style="background:rgba(2,26,53,0.20)"></i><i style="background:rgba(2,26,53,0.76)"></i><i style="background:rgba(2,26,53,0.74)"></i><i style="background:rgba(233,193,118,0.72)"></i><i style="background:rgba(2,26,53,0.97)"></i><i style="background:rgba(2,26,53,0.65)"></i><i style="background:rgba(233,193,118,0.47)"></i><i style="background:rgba(233,193,118,0.55)"></i><i style="background:rgba(2,26,53,0.73)"></i><i style="background:rgba(2,26,53,0.21)"></i><i style="background:rgba(2,26,53,0.73)"></i><i style="background:rgba(2,26,53,0.84)"></i><i style="background:rgba(233,193,118,0.82)"></i><i style="background:rgba(2,26,53,0.87)"></i><i style="background:rgba(233,193,118,0.50)"></i><i style="background:rgba(233,193,118,0.62)"></i><i style="background:rgba(2,26,53,0.68)"></i><i style="background:rgba(233,193,118,0.67)"></i><i style="background:rgba(233,193,118,0.37)"></i><i style="background:rgba(233,193,118,0.83)"></i><i style="background:rgba(2,26,53,0.79)"></i><i style="background:rgba(233,193,118,0.34)"></i><i style="background:rgba(233,193,118,0.53)"></i><i style="background:rgba(2,26,53,0.83)"></i><i style="background:rgba(233,193,118,0.67)"></i><i style="background:rgba(2,26,53,0.65)"></i><i style="background:rgba(233,193,118,0.83)"></i><i style="background:rgba(233,193,118,0.49)"></i><i style="background:rgba(233,193,118,0.66)"></i><i style="background:rgba(233,193,118,0.67)"></i><i style="background:rgba(233,193,118,0.63)"></i><i style="background:rgba(233,193,118,0.44)"></i><i style="background:rgba(233,193,118,0.90)"></i><i style="background:rgba(233,193,118,0.55)"></i><i style="background:rgba(2,26,53,0.33)"></i></div>
+            </div>
+            <div class="heatrow">
+              <div class="hh"><span class="nm">B1 · France snap election parliament dissolved… <span>Euronews</span></span><span class="sim">cosine 0.3872 → separate cluster</span></div>
+              <div class="cells"><i style="background:rgba(233,193,118,0.69)"></i><i style="background:rgba(233,193,118,0.50)"></i><i style="background:rgba(233,193,118,0.71)"></i><i style="background:rgba(2,26,53,0.43)"></i><i style="background:rgba(2,26,53,0.52)"></i><i style="background:rgba(233,193,118,0.47)"></i><i style="background:rgba(2,26,53,0.70)"></i><i style="background:rgba(233,193,118,0.56)"></i><i style="background:rgba(2,26,53,0.40)"></i><i style="background:rgba(233,193,118,0.81)"></i><i style="background:rgba(233,193,118,0.52)"></i><i style="background:rgba(2,26,53,0.74)"></i><i style="background:rgba(2,26,53,0.33)"></i><i style="background:rgba(233,193,118,0.36)"></i><i style="background:rgba(233,193,118,0.70)"></i><i style="background:rgba(233,193,118,0.67)"></i><i style="background:rgba(233,193,118,0.39)"></i><i style="background:rgba(2,26,53,0.92)"></i><i style="background:rgba(233,193,118,0.68)"></i><i style="background:rgba(233,193,118,0.51)"></i><i style="background:rgba(2,26,53,0.67)"></i><i style="background:rgba(2,26,53,0.38)"></i><i style="background:rgba(233,193,118,0.43)"></i><i style="background:rgba(2,26,53,0.86)"></i><i style="background:rgba(233,193,118,0.38)"></i><i style="background:rgba(2,26,53,0.70)"></i><i style="background:rgba(2,26,53,0.72)"></i><i style="background:rgba(2,26,53,0.21)"></i><i style="background:rgba(233,193,118,0.53)"></i><i style="background:rgba(2,26,53,0.58)"></i><i style="background:rgba(2,26,53,0.55)"></i><i style="background:rgba(233,193,118,0.51)"></i><i style="background:rgba(2,26,53,0.48)"></i><i style="background:rgba(233,193,118,0.64)"></i><i style="background:rgba(2,26,53,0.44)"></i><i style="background:rgba(2,26,53,0.33)"></i><i style="background:rgba(233,193,118,0.49)"></i><i style="background:rgba(2,26,53,0.39)"></i><i style="background:rgba(233,193,118,0.42)"></i><i style="background:rgba(233,193,118,0.84)"></i><i style="background:rgba(233,193,118,0.56)"></i><i style="background:rgba(2,26,53,0.32)"></i><i style="background:rgba(233,193,118,0.63)"></i><i style="background:rgba(233,193,118,0.53)"></i><i style="background:rgba(2,26,53,0.65)"></i><i style="background:rgba(233,193,118,0.50)"></i><i style="background:rgba(233,193,118,0.43)"></i><i style="background:rgba(233,193,118,0.66)"></i><i style="background:rgba(233,193,118,0.49)"></i><i style="background:rgba(233,193,118,0.57)"></i><i style="background:rgba(2,26,53,0.72)"></i><i style="background:rgba(2,26,53,0.40)"></i><i style="background:rgba(233,193,118,0.34)"></i><i style="background:rgba(233,193,118,0.36)"></i><i style="background:rgba(2,26,53,0.23)"></i><i style="background:rgba(2,26,53,0.56)"></i></div>
+            </div>
+            <div class="heatrow">
+              <div class="hh"><span class="nm">U1 · Japan earthquake triggers tsunami warning… <span>NHK</span></span><span class="sim">cosine 0.1278 → unrelated</span></div>
+              <div class="cells"><i style="background:rgba(233,193,118,0.22)"></i><i style="background:rgba(233,193,118,0.94)"></i><i style="background:rgba(233,193,118,0.54)"></i><i style="background:rgba(2,26,53,0.28)"></i><i style="background:rgba(233,193,118,0.59)"></i><i style="background:rgba(2,26,53,0.41)"></i><i style="background:rgba(2,26,53,0.40)"></i><i style="background:rgba(233,193,118,0.60)"></i><i style="background:rgba(2,26,53,0.54)"></i><i style="background:rgba(233,193,118,0.88)"></i><i style="background:rgba(233,193,118,0.60)"></i><i style="background:rgba(2,26,53,0.58)"></i><i style="background:rgba(2,26,53,0.56)"></i><i style="background:rgba(233,193,118,0.49)"></i><i style="background:rgba(2,26,53,0.68)"></i><i style="background:rgba(233,193,118,0.55)"></i><i style="background:rgba(2,26,53,0.54)"></i><i style="background:rgba(233,193,118,0.46)"></i><i style="background:rgba(233,193,118,0.45)"></i><i style="background:rgba(233,193,118,0.39)"></i><i style="background:rgba(233,193,118,0.70)"></i><i style="background:rgba(233,193,118,0.51)"></i><i style="background:rgba(2,26,53,0.48)"></i><i style="background:rgba(2,26,53,0.60)"></i><i style="background:rgba(2,26,53,0.47)"></i><i style="background:rgba(2,26,53,0.38)"></i><i style="background:rgba(2,26,53,0.41)"></i><i style="background:rgba(2,26,53,0.69)"></i><i style="background:rgba(233,193,118,0.32)"></i><i style="background:rgba(2,26,53,0.51)"></i><i style="background:rgba(2,26,53,0.37)"></i><i style="background:rgba(233,193,118,0.87)"></i><i style="background:rgba(2,26,53,0.33)"></i><i style="background:rgba(233,193,118,0.71)"></i><i style="background:rgba(233,193,118,0.36)"></i><i style="background:rgba(233,193,118,0.46)"></i><i style="background:rgba(2,26,53,1.00)"></i><i style="background:rgba(2,26,53,0.55)"></i><i style="background:rgba(233,193,118,0.55)"></i><i style="background:rgba(2,26,53,0.58)"></i><i style="background:rgba(233,193,118,0.12)"></i><i style="background:rgba(233,193,118,0.66)"></i><i style="background:rgba(2,26,53,0.58)"></i><i style="background:rgba(233,193,118,0.61)"></i><i style="background:rgba(2,26,53,0.81)"></i><i style="background:rgba(233,193,118,0.72)"></i><i style="background:rgba(233,193,118,0.41)"></i><i style="background:rgba(233,193,118,0.59)"></i><i style="background:rgba(2,26,53,0.30)"></i><i style="background:rgba(233,193,118,0.36)"></i><i style="background:rgba(233,193,118,0.69)"></i><i style="background:rgba(2,26,53,0.93)"></i><i style="background:rgba(2,26,53,0.69)"></i><i style="background:rgba(233,193,118,0.23)"></i><i style="background:rgba(233,193,118,0.74)"></i><i style="background:rgba(2,26,53,0.46)"></i></div>
+            </div>
+          </div>
+          <div class="scalebar">
+            <span>−0.09</span><span class="grad"></span><span>+0.11</span>
+            <span style="margin-left:6px">first 56 of 768 coordinates; cosine using this slice alone:
+              0.9955 / 0.4904 / 0.1429; this slice is only an illustration, and the system computes
+              similarity from all 768 coordinates</span>
+          </div>
+        </div>
+
+        <div class="card wide">
+          <h3>Where the threshold lands</h3>
+          <p class="note">
+            The values below show how similar each headline is to A1. A clear gap separates the
+            same story from the other stories. In this sample, the 0.70 threshold lies in the gap
+            between those scores.
+          </p>
+          <div class="sims">
+            <div class="simrow">
+              <div class="top">
+                <span class="pair">A1 ↔ A2<span>Same resignation, two newsrooms, reshuffled wording</span></span>
+                <span class="val">0.9933</span>
+              </div>
+              <div class="track"><div class="fill merge" style="width:99.33%"></div><div class="cut" data-label="0.70 threshold" style="left:70%"></div></div>
+              <p class="verdict yes">↳ above the threshold: merged into one cluster</p>
+            </div>
+            <div class="simrow">
+              <div class="top">
+                <span class="pair">A1 ↔ B1<span>Same country, same crisis, different event</span></span>
+                <span class="val">0.3872</span>
+              </div>
+              <div class="track"><div class="fill" style="width:38.72%"></div><div class="cut" data-label="0.70 threshold" style="left:70%"></div></div>
+              <p class="verdict no">↳ below the threshold: stays separate, analysed on its own</p>
+            </div>
+            <div class="simrow">
+              <div class="top">
+                <span class="pair">A1 ↔ U1<span>Japan earthquake, unrelated subject</span></span>
+                <span class="val">0.1278</span>
+              </div>
+              <div class="track"><div class="fill" style="width:12.78%"></div><div class="cut" data-label="0.70 threshold" style="left:70%"></div></div>
+              <p class="verdict no">↳ far below; the keyword filter would have dropped it first</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DECISIONS ============ -->
+  <section>
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="label">Choices</p>
+        <h2 class="title">Four design decisions</h2>
+      </div>
+      <div class="cols2">
+
+        <div class="tcard">
+          <h3><span class="g">01</span> Two checksums instead of one</h3>
+          <p>
+            Every article carries a content checksum used to recognise duplicates. Both checksums
+            are built from the headline and body, but the content checksum cannot safely serve as the
+            cache key. If the text sent to the model were assembled differently, the duplicate
+            checksum would stay the same even though the model would read something else. The cache
+            would then return numbers computed from a different text without warning. A second
+            checksum takes only a few lines of code and prevents that mistake.
+          </p>
+        </div>
+
+        <div class="tcard">
+          <h3><span class="g">02</span> Stopping instead of falling back</h3>
+          <p>
+            If the program fell back on word comparison whenever the model was unavailable, it would
+            still return plausible-looking groups. They would be arranged differently, however, and
+            nothing in the output would reveal which method produced them. Here, article groups produce
+            signals that may later inform a trading decision made outside the application. Incorrect
+            grouping can therefore produce an incorrect signal. It is
+            safer to stop with a clear message than to let a change in result quality go unnoticed.
+          </p>
+        </div>
+
+        <div class="tcard">
+          <h3><span class="g">03</span> One way of grouping, not two</h3>
+          <p>
+            A setting decides only whether the model may be called at all; it
+            does not pick between two grouping methods. Tests and offline runs use results
+            stored alongside the code and follow exactly the same path as production.
+          </p>
+          <div class="hood">
+            <span class="ht">The technical side</span>
+            <code>OLLAMA_ENABLED</code> determines whether the model may be called when the cache has
+            no result; it does not select the grouping strategy. The fixture
+            <code>tests/fixtures/embeddings/nomic-embed-text-v2-moe.json</code> is seeded into
+            <code>embedding_cache</code> before every scenario. All three modes call
+            <code>CachedTextVectorizer</code>.
+          </div>
+        </div>
+
+        <div class="tcard">
+          <h3><span class="g">04</span> Plain JSON instead of a vector database</h3>
+          <p>
+            Lookups go by exact key and comparisons stay inside one small batch of articles, so a
+            specialised similarity index would provide no benefit here. It would, however, impose
+            a single vector size on a store intended to hold results from different models. That
+            situation changes when the program starts matching new events against a
+            permanent archive.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WHAT ELSE ============ -->
+  <section class="band">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="label">Further applications</p>
+        <h2 class="title">What else embeddings can do</h2>
+        <p class="lead">
+          Every use listed here relies on the same mechanism as grouping news reports. The model
+          places content in a shared space, and the system compares the resulting vectors with a
+          simple mathematical operation.
+        </p>
+      </div>
+
+      <div class="uses">
+
+        <div class="ucard">
+          <span class="tag here">what Proximtype does</span>
+          <h3>Grouping and topic discovery</h3>
+          <p>
+            Texts without assigned categories form clusters, each representing one topic, including
+            topics that nobody anticipated.
+          </p>
+        </div>
+
+        <div class="ucard">
+          <span class="tag here">what Proximtype does</span>
+          <h3>Matching across languages</h3>
+          <p>
+            Reports in French, English and Polish can land in one group without prior translation.
+          </p>
+        </div>
+
+        <div class="ucard">
+          <span class="tag">common</span>
+          <h3>Semantic search</h3>
+          <p>
+            A model places queries and documents in the same space, so a search for “what can I do if
+            my purchase is broken” can find the “returns policy for faulty goods”, even though the two phrases
+            share no words.
+          </p>
+        </div>
+
+        <div class="ucard">
+          <span class="tag">common</span>
+          <h3>Providing context to a model (RAG)</h3>
+          <p>
+            Before the question reaches a large model, the system attaches passages from the
+            organisation’s own documents, selected for their similarity to the query. The model
+            can then base its answer on that material instead of relying solely on its own memory.
+          </p>
+        </div>
+
+        <div class="ucard">
+          <span class="tag">common</span>
+          <h3>Duplicates that aren’t identical</h3>
+          <p>
+            This may be a reposted listing with a changed phone number or the same case submitted a second
+            time in different words. A checksum will treat the two as distinct, but an embedding can
+            help link them.
+          </p>
+        </div>
+
+        <div class="ucard">
+          <span class="tag">common</span>
+          <h3>Classification without training</h3>
+          <p>
+            Each category is described by one sentence, and each text is assigned to the category
+            whose description lies nearest. Adding a category requires one more sentence rather than
+            another round of data collection and classifier training.
+          </p>
+        </div>
+
+        <div class="ucard">
+          <span class="tag">common</span>
+          <h3>Recommendations and “more like this”</h3>
+          <p>
+            The system finds the nearest neighbours in the space and uses them to suggest similar
+            articles, products, job ads or tickets without a hand-maintained taxonomy.
+          </p>
+        </div>
+
+        <div class="ucard">
+          <span class="tag">common</span>
+          <h3>Routing support tickets</h3>
+          <p>
+            A new ticket goes to the team whose past cases sit closest to it. The system uses that
+            history rather than a set of rules.
+          </p>
+        </div>
+
+        <div class="ucard">
+          <span class="tag">common</span>
+          <h3>Spotting the odd one out</h3>
+          <p>
+            A text lying far from everything the system has seen so far is either irrelevant noise
+            or the first sign of something new. Either way, it is worth a look.
+          </p>
+        </div>
+
+      </div>
+
+      <div class="solo">
+        <div class="tcard">
+          <h3><span class="g">✕</span> What an embedding will not do</h3>
+          <p>
+            It does not establish whether two texts are identical. The content checksum in step 01
+            does that. The similarity score is not an explanation either: it shows that two texts
+            are close but not why. The model can use only patterns learned from its training data.
+            For an event from last week, the embedding represents only what appears in the input text.
+          </p>
+        </div>
+      </div>
+
+      <div class="foot">
+        <span><b>Port</b> <span class="mono">MarketSignals/Domain/WorldEvent/TextVectorizerInterface</span></span>
+        <span><b>Adapters</b> <span class="mono">CachedTextVectorizer → OllamaTextVectorizer</span></span>
+        <span><b>Store</b> <span class="mono">embedding_cache (text_hash, model_id) → jsonb</span></span>
+        <span><b>Model</b> <span class="mono">nomic-embed-text-v2-moe · 768 dimensions</span></span>
+        <span><b>Cache initialisation</b> <span class="mono">bin/console app:embed:warm --days=1</span></span>
+      </div>
+    </div>
+  </section>
+
+</main>
+</body>
+</html>

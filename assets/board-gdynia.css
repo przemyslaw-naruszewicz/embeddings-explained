@@ -1,0 +1,385 @@
+  /* ============================================================
+     Proximtype — how embeddings drive event clustering (ADR 0004).
+     Design system: "Gdynia Modernist / Maritime Functionalist"
+     (ui_design/gdynia_moderniste/DESIGN.md), same tokens as the
+     product landing: cream limestone, deep navy, brass.
+     Dividers stay tonal; white cards use only a faint warm outline.
+     Heat strips and every number are generated from the committed
+     fixture tests/fixtures/embeddings/nomic-embed-text-v2-moe.json.
+     ============================================================ */
+  :root{
+    --primary:#021a35; --primary-container:#1a2f4b; --on-primary:#ffffff;
+    --on-primary-container:#8397b8; --primary-fixed-dim:#b3c8eb; --primary-fixed:#d4e3ff;
+    --secondary:#5b554b; --secondary-container:#efe0cc; --on-secondary-container:#6e6353;
+    --tertiary:#241700; --brass:#e9c176; --brass-soft:#ffdea5; --on-brass:#261900;
+    --on-tertiary-container:#b4914b;
+    --surface:#fbf9f2; --sc-low:#f6f4ec; --sc:#f0eee7; --sc-high:#eae8e1;
+    --sc-highest:#e4e2dc; --sc-lowest:#ffffff; --surface-dim:#dcdad3;
+    --on-surface:#1b1c18; --on-surface-variant:#363a40; --outline:#74777e;
+    --outline-variant:#c4c6ce; --error:#ba1a1a; --ok:#3f6b4a;
+    --head:"Manrope",system-ui,sans-serif;
+    --body:"Work Sans",system-ui,sans-serif;
+    --mono:ui-monospace,"JetBrains Mono","SF Mono",Menlo,monospace;
+    --r-xl:1.5rem; --r-lg:.75rem; --r-sm:.4rem;
+    --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  .board{
+    background:var(--surface);color:var(--on-surface);
+    font-family:var(--body);font-size:16.5px;line-height:1.62;
+    -webkit-font-smoothing:antialiased;padding:clamp(20px,3.4vw,44px) 0 clamp(24px,3vw,40px);
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:0 clamp(18px,3vw,34px)}
+  h1,h2,h3,h4{margin:0;font-family:var(--head);font-weight:800;letter-spacing:-.03em;line-height:1.04}
+  p{margin:0}
+  code,.mono{font-family:var(--mono);font-size:.92em;letter-spacing:-.01em}
+
+  .eyebrow{font-size:11px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;
+    color:var(--on-tertiary-container)}
+  .label{font-size:11px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--secondary)}
+
+  /* ---------- hero: navy monolith ---------- */
+  .heroCard{position:relative;overflow:hidden;background:var(--primary);color:var(--surface);
+    border-radius:var(--r-xl);padding:clamp(30px,4vw,52px);box-shadow:0 32px 64px -20px rgba(2,26,53,.35)}
+  .blob1{position:absolute;right:-130px;top:-150px;width:470px;height:470px;
+    background:var(--primary-container);border-radius:50%;opacity:.55;filter:blur(70px)}
+  .blob2{position:absolute;right:60px;bottom:-70px;width:340px;height:140px;
+    background:rgba(233,193,118,.14);border-radius:50%;transform:rotate(12deg);filter:blur(50px)}
+  .grain{position:absolute;inset:0;background-image:var(--grain);opacity:.05;pointer-events:none;mix-blend-mode:overlay}
+  .heroIn{position:relative;z-index:2}
+  h1.hl{font-size:clamp(30px,4.6vw,54px);text-transform:uppercase;margin-top:14px;max-width:19ch}
+  h1.hl .brasstx{color:var(--brass)}
+  .sub{margin-top:22px;color:var(--primary-fixed-dim);font-size:18px;font-weight:400;
+    line-height:1.6;max-width:60ch}
+  .sub b{color:var(--surface);font-weight:500}
+
+  .kpis{position:relative;z-index:2;margin-top:34px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .kpi{background:rgba(251,249,242,.08);border-radius:var(--r-lg);padding:18px 20px}
+  .kpi .v{font-family:var(--head);font-weight:800;font-size:30px;letter-spacing:-.03em;
+    color:var(--brass);line-height:1;font-variant-numeric:tabular-nums}
+  .kpi .k{margin-top:9px;font-size:10.5px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--on-primary-container)}
+  .kpi .d{margin-top:7px;font-size:14px;font-weight:400;line-height:1.5;color:var(--primary-fixed-dim)}
+
+  /* Polish diacritics (ogonki, kreski) need air in uppercase display type —
+     at line-height 1.04 the Ę of one line touches the caps of the next. */
+  html[lang="pl"] h1.hl{line-height:1.13}
+  html[lang="pl"] h2.title{line-height:1.15}
+  html[lang="pl"] .strip h3,html[lang="pl"] .card h3,html[lang="pl"] .tcard h3,
+  html[lang="pl"] .ucard h3{line-height:1.18}
+
+  /* ---------- sections ---------- */
+  section{padding:clamp(34px,4.4vw,58px) 0}
+  .band{background:var(--sc-low)}
+  .sec-head{max-width:52rem;margin-bottom:30px}
+  h2.title{font-size:clamp(24px,3.2vw,36px);color:var(--primary);text-transform:uppercase;margin-top:12px}
+  .lead{color:var(--on-surface-variant);margin-top:14px;font-size:17px;font-weight:400;max-width:64ch}
+  .lead b{font-weight:600;color:var(--on-surface)}
+
+  /* A warm hairline keeps white content blocks distinct from the cream page. */
+  .strip:not(.hot),.card:not(.dark),.tcard,.pcard,.mini,.flowcard,.ucard{
+    box-shadow:inset 0 0 0 1px rgba(103,93,77,.14)
+  }
+
+  /* ---------- pipeline strips (pasowe okna) ---------- */
+  .strips{display:flex;flex-direction:column;gap:14px}
+  .strip{background:var(--sc-lowest);border-radius:var(--r-xl);padding:24px 28px;
+    display:grid;grid-template-columns:62px 1fr;gap:0 24px;align-items:start}
+  .strip.hot{background:var(--primary);color:var(--surface)}
+  .strip .num{font-family:var(--head);font-weight:800;font-size:14px;color:var(--on-brass);
+    background:var(--brass);border-radius:var(--r-sm);padding:4px 0;text-align:center;width:44px}
+  .strip.hot .num{background:var(--brass)}
+  .strip h3{font-size:20px;color:var(--primary);text-transform:uppercase;letter-spacing:-.025em}
+  .strip.hot h3{color:var(--surface)}
+  .strip .unit{margin-top:7px;font-family:var(--mono);font-size:12.5px;color:var(--secondary);
+    overflow-wrap:anywhere}
+  .strip.hot .unit{color:var(--brass-soft)}
+  .strip p.txt{margin-top:12px;color:var(--on-surface-variant);font-size:15.5px;font-weight:400;
+    line-height:1.6;max-width:78ch}
+  .strip.hot p.txt{color:var(--primary-fixed-dim)}
+  .strip p.txt b{color:var(--primary);font-weight:600}
+  .strip.hot p.txt b{color:var(--surface)}
+  /* Wejście/wyjście kroku to jedyne miejsce, gdzie na planszy pada nazwa typu —
+     musi być czytelne z odległości nagłówka, stąd cieplejsze tło i wersalikowa
+     etykieta zamiast szarego drobiazgu (nadal bez ramek: tonalnie, nie kreską). */
+  .strip .io{margin-top:16px;display:flex;flex-wrap:wrap;gap:10px}
+  .pill{background:var(--secondary-container);border-radius:var(--r-sm);padding:7px 13px;
+    font-family:var(--mono);font-size:13px;color:var(--tertiary)}
+  .pill b{display:inline-block;margin-right:3px;font-family:var(--body);font-size:10.5px;
+    font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--secondary)}
+  .strip.hot .pill{background:rgba(251,249,242,.14);color:var(--surface)}
+  .strip.hot .pill b{color:var(--brass)}
+
+  /* three-way cache outcome */
+  .outcomes{margin-top:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .oc{background:rgba(251,249,242,.1);border-radius:var(--r-lg);padding:18px 19px}
+  .oc h4{font-size:13px;text-transform:uppercase;letter-spacing:.04em;color:var(--surface)}
+  .oc .cond{display:block;margin-top:7px;font-family:var(--mono);font-size:11.5px;color:var(--brass)}
+  .oc p{margin-top:11px;font-size:14.5px;font-weight:400;line-height:1.55;color:var(--primary-fixed-dim)}
+  .oc p b{color:var(--surface);font-weight:500}
+  .oc.warn{background:rgba(233,193,118,.16)}
+  .oc.stop{background:rgba(255,180,171,.14)}
+
+  /* ---------- data specimen ---------- */
+  .specimen{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .card{background:var(--sc-lowest);border-radius:var(--r-xl);padding:28px}
+  .card.wide{grid-column:1 / -1}
+  .card h3{font-size:19px;color:var(--primary);text-transform:uppercase;letter-spacing:-.02em}
+  .card .note{margin-top:12px;color:var(--on-surface-variant);font-size:15.5px;font-weight:400;line-height:1.62}
+  .card .note b{color:var(--primary);font-weight:600}
+
+  .kv{margin-top:18px;display:grid;grid-template-columns:auto 1fr;gap:2px 18px;align-items:baseline}
+  .kv dt{font-size:10.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--secondary);padding:9px 0}
+  .kv dd{margin:0;padding:9px 0;font-family:var(--mono);font-size:13px;color:var(--primary);
+    overflow-wrap:anywhere;line-height:1.5}
+  .kv .row-alt{background:var(--sc-low)}
+
+  .rowbox{margin-top:18px;background:var(--primary);border-radius:var(--r-lg);padding:18px 20px;
+    color:var(--primary-fixed-dim);font-family:var(--mono);font-size:12.5px;line-height:1.72;
+    overflow-x:auto}
+  .rowbox .k{color:var(--brass)}
+  .rowbox .s{color:var(--on-primary-container)}
+  .rowbox .v{color:var(--surface)}
+  .rowbox .c{color:#7f93b3}
+
+  /* heat strips */
+  .heat{margin-top:8px}
+  .heatrow{margin-top:14px}
+  .heatrow .hh{display:flex;justify-content:space-between;align-items:baseline;gap:14px;margin-bottom:7px}
+  .heatrow .nm{font-size:14px;font-weight:500;color:var(--primary)}
+  .heatrow .nm span{color:var(--secondary);font-weight:400}
+  .heatrow .sim{font-family:var(--mono);font-size:12.5px;color:var(--secondary)}
+  .cells{display:flex;gap:2px;height:34px;border-radius:var(--r-sm);overflow:hidden}
+  .cells i{flex:1;display:block;background:var(--sc-high)}
+  .scalebar{margin-top:16px;display:flex;align-items:center;gap:12px;font-size:12px;color:var(--secondary)}
+  .scalebar .grad{flex:1;height:8px;border-radius:99px;
+    background:linear-gradient(90deg,#021a35,#8fa3bf 35%,var(--sc-high) 50%,#e9c176 72%,#b4914b)}
+
+  /* similarity meter */
+  .sims{margin-top:20px;display:flex;flex-direction:column;gap:16px}
+  .simrow .top{display:flex;justify-content:space-between;align-items:baseline;gap:16px}
+  .simrow .pair{font-size:14.5px;font-weight:500;color:var(--primary)}
+  .simrow .pair span{display:block;font-size:13.5px;font-weight:400;color:var(--on-surface-variant);margin-top:2px}
+  .simrow .val{font-family:var(--head);font-weight:800;font-size:22px;color:var(--primary);
+    font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+  .track{position:relative;margin-top:10px;height:16px;background:var(--sc-high);border-radius:99px}
+  .fill{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:var(--primary-fixed-dim)}
+  .fill.merge{background:var(--brass)}
+  .cut{position:absolute;top:-7px;bottom:-7px;width:3px;background:var(--tertiary);border-radius:2px}
+  /* label comes from data-label so the same stylesheet serves both language variants */
+  .cut::after{content:attr(data-label);position:absolute;left:8px;top:-2px;font-family:var(--mono);
+    font-size:10.5px;color:var(--tertiary);white-space:nowrap}
+  .verdict{margin-top:8px;font-size:13px;font-weight:500}
+  .verdict.yes{color:var(--on-tertiary-container)}
+  .verdict.no{color:var(--secondary)}
+
+  /* ---------- decisions ---------- */
+  .cols2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .tcard{background:var(--sc-lowest);border-radius:var(--r-xl);padding:28px}
+  .tcard h3{font-size:18px;color:var(--primary);text-transform:uppercase;letter-spacing:-.02em;
+    display:flex;align-items:baseline;gap:.6em}
+  .tcard h3 .g{font-family:var(--head);color:var(--brass);font-size:13px;background:var(--tertiary);
+    border-radius:var(--r-sm);padding:3px 10px;letter-spacing:0}
+  .tcard p{margin-top:12px;color:var(--on-surface-variant);font-size:15.5px;font-weight:400;line-height:1.62}
+  .tcard p b{color:var(--primary);font-weight:600}
+  .tagline{margin-top:28px;font-family:var(--head);font-weight:800;font-size:17px;color:var(--primary);
+    text-transform:uppercase;letter-spacing:-.02em;box-shadow:inset 4px 0 0 var(--brass);padding-left:16px;
+    line-height:1.35}
+
+  /* ---------- foot ---------- */
+  .foot{margin-top:8px;padding-top:22px;display:flex;flex-wrap:wrap;gap:10px 30px;
+    font-size:12.5px;color:var(--secondary);font-weight:400}
+  .foot b{font-weight:600;color:var(--primary)}
+  .foot .mono{font-size:12px}
+
+  /* ============================================================
+     Two-layer board (embeddings-explained-en.html): narrative for a
+     non-technical reader, with every engineering identifier pushed
+     into a visually separate "Under the hood" box. Additive only —
+     the classes below are unused by the older single-layer boards.
+     ============================================================ */
+
+  /* ---------- layer B: "Under the hood" ---------- */
+  .hood{margin-top:16px;background:var(--sc-high);border-radius:var(--r-lg);padding:18px 20px 19px 22px;
+    font-size:14.5px;font-weight:400;line-height:1.68;color:var(--on-surface);
+    box-shadow:inset 4px 0 0 var(--brass),inset 0 0 0 1px rgba(103,93,77,.13)}
+  .hood .ht{display:block;font-family:var(--head);font-size:10.5px;font-weight:700;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--primary);margin-bottom:11px}
+  .hood b{color:var(--primary);font-weight:600}
+  .hood code{font-family:var(--mono);font-size:12.5px;font-weight:550;color:var(--primary);
+    background:rgba(2,26,53,.07);border-radius:.25rem;padding:.08em .32em;overflow-wrap:anywhere;
+    box-decoration-break:clone;-webkit-box-decoration-break:clone}
+  .strip .hood,.card>.hood{max-width:88ch}
+  .pcards>.hood{max-width:none}
+  .pcards>.hood>p{max-width:86ch}
+  /* the same box on a navy surface (hero, highlighted strip, navy card) inverts */
+  .heroCard .hood,.strip.hot .hood,.card.dark .hood{background:rgba(251,249,242,.09);color:var(--primary-fixed-dim)}
+  .heroCard .hood .ht,.strip.hot .hood .ht,.card.dark .hood .ht{color:var(--brass)}
+  .heroCard .hood b,.strip.hot .hood b,.card.dark .hood b{color:var(--surface)}
+  .heroCard .hood code,.strip.hot .hood code,.card.dark .hood code{
+    color:var(--brass-soft);background:rgba(251,249,242,.1)}
+
+  /* cosine similarity, reduced to a two-coordinate worked example */
+  .cosviz{margin-top:14px;display:grid;grid-template-columns:minmax(0,.86fr) minmax(0,1.14fr);
+    gap:12px;line-height:1.42}
+  .cosplot,.cosmath{background:var(--sc-lowest);border-radius:var(--r-lg);padding:14px;
+    box-shadow:inset 0 0 0 1px rgba(103,93,77,.14)}
+  .coslabel{display:block;font-size:9.5px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
+    color:var(--secondary);margin-bottom:7px}
+  .cosplot svg{display:block;width:100%;height:auto}
+  .cosplot text{font-family:var(--mono);font-size:11px;fill:var(--secondary)}
+  .cosplot .cosplane{fill:var(--brass);opacity:.08}
+  .cosplot .cosgrid{stroke:var(--sc-high);stroke-width:1}
+  .cosplot .cosaxis{stroke:var(--outline-variant);stroke-width:1.2}
+  .cosplot .cosguide{stroke:var(--on-tertiary-container);stroke-width:1.4;stroke-dasharray:5 4}
+  .cosplot .costicks text{font-size:8px;text-anchor:middle;fill:var(--secondary)}
+  .cosplot .costicks text:nth-last-child(-n+5){text-anchor:end}
+  .cosplot .costicks .active{font-weight:700;fill:var(--on-tertiary-container)}
+  .cosplot .cosaxisname{font-family:var(--body);font-size:8.5px;letter-spacing:.04em;fill:var(--secondary)}
+  .cosplot .cosarc{fill:none;stroke:var(--secondary);stroke-width:1.5}
+  .cosplot .cosvector{stroke-width:3;stroke-linecap:round}
+  .cosplot .cosa{stroke:var(--primary)}
+  .cosplot .cosb{stroke:var(--on-tertiary-container)}
+  .cosplot .costheta{font-family:var(--head);font-size:13px;font-weight:800;fill:var(--primary)}
+  .cosplot .cosva{fill:var(--primary);font-weight:600}
+  .cosplot .cosvb{fill:var(--on-tertiary-container);font-weight:600}
+  .cosplot .coshint{font-size:12px;line-height:1.48;color:var(--on-surface-variant)}
+  .cosplot .coshint b{color:var(--primary)}
+  .cosmath{display:flex;flex-direction:column}
+  .cosformula{min-height:50px;background:var(--primary);border-radius:var(--r-sm);padding:8px 14px;
+    display:flex;align-items:center;justify-content:center;gap:10px;font-family:var(--mono);
+    font-size:15px;font-weight:600;color:var(--surface)}
+  .cosfrac{display:inline-grid;text-align:center;line-height:1.25}
+  .cosfrac span:first-child{padding:0 8px 3px;border-bottom:1px solid var(--brass)}
+  .cosfrac span:last-child{padding-top:3px;font-size:12px;color:var(--primary-fixed-dim)}
+  .cosnotation{margin-top:9px;display:grid;grid-template-columns:1.25fr 1fr;gap:8px;font-size:11.5px;
+    line-height:1.4;color:var(--secondary)}
+  .cosnotation span{background:var(--sc-low);border-radius:var(--r-sm);padding:6px 8px}
+  .cosnotation code{font-size:10.5px;font-weight:600;color:var(--primary);background:none;padding:0}
+  .cossteps{margin-top:11px;display:flex;flex-direction:column;gap:10px}
+  .cosstep{display:grid;grid-template-columns:22px 1fr;gap:8px;align-items:start;font-size:12px;
+    color:var(--on-surface-variant)}
+  .cosstep .sn{width:22px;height:22px;border-radius:50%;background:var(--secondary-container);
+    display:grid;place-items:center;font-family:var(--head);font-size:10px;font-weight:800;color:var(--tertiary)}
+  .cosstep code{display:block;margin-top:3px;font-size:11px;line-height:1.45;color:var(--primary);
+    background:none;padding:0}
+  .cosanswer{margin-top:10px;background:rgba(233,193,118,.22);border-radius:var(--r-sm);padding:9px 11px;
+    display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;color:var(--secondary);
+    font-size:11.5px;line-height:1.42}
+  .cosanswer strong{font-family:var(--head);font-size:23px;line-height:1;color:var(--primary)}
+  .coslegend{margin-top:8px;display:flex;justify-content:space-between;gap:6px;font-size:9.5px;
+    color:var(--secondary);text-align:center}
+  .cosangleback{margin-top:9px;font-size:11.5px;line-height:1.5;color:var(--secondary)}
+  .cosangleback code{font-size:10.5px;font-weight:600;color:var(--primary);background:none;padding:0}
+  .cosnote{margin-top:12px;font-size:12.5px;line-height:1.5}
+
+  /* ---------- primer: three facts + one diagram ---------- */
+  .primer{display:grid;grid-template-columns:1.55fr 1fr;gap:14px 20px;align-items:start}
+  .pcards{display:contents}
+  .pcards>.pcard{grid-column:1}
+  .pcards>.hood{grid-column:1 / -1}
+  .pcard{background:var(--sc-lowest);border-radius:var(--r-xl);padding:22px 26px;
+    display:grid;grid-template-columns:44px 1fr;gap:0 22px;align-items:start}
+  .pcard .n{font-family:var(--head);font-weight:800;font-size:14px;color:var(--on-brass);
+    background:var(--brass);border-radius:var(--r-sm);padding:4px 0;text-align:center;width:44px}
+  .pcard h3{font-size:17px;color:var(--primary);text-transform:uppercase;letter-spacing:-.02em}
+  .pcard p{margin-top:10px;color:var(--on-surface-variant);font-size:15.5px;font-weight:400;line-height:1.62}
+  .pcard p b{color:var(--primary);font-weight:600}
+  .mini{margin:0;background:var(--sc-lowest);border-radius:var(--r-xl);padding:24px;
+    grid-column:2;grid-row:1 / span 3;align-self:stretch;display:flex;flex-direction:column;
+    justify-content:center}
+  .mini svg{display:block;width:100%;height:auto}
+  .mini figcaption{margin-top:14px;font-family:var(--mono);font-size:12px;color:var(--secondary);
+    text-align:center;letter-spacing:-.01em}
+
+  /* ============================================================
+     Two-layer board, second pass: the opening definition and
+     workflow schematic, the TF-IDF comparison, the model card and
+     the closing "what else embeddings are for" grid. Additive
+     only — unused by the older single-layer boards.
+     ============================================================ */
+
+  /* ---------- one-sentence definition, sitting on the navy hero ---------- */
+  .defbox{margin-top:26px;background:rgba(233,193,118,.12);border-radius:var(--r-lg);
+    padding:16px 20px;box-shadow:inset 4px 0 0 var(--brass);max-width:66ch}
+  .defbox .dt{display:block;font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--brass);margin-bottom:7px}
+  .defbox p{font-size:16.5px;font-weight:400;line-height:1.6;color:var(--surface)}
+  .defbox b{font-weight:600}
+
+  /* ---------- workflow schematic ---------- */
+  .flowcard{background:var(--sc-lowest);border-radius:var(--r-xl);padding:clamp(20px,2.6vw,32px)}
+  .flowcard svg{display:block;width:100%;height:auto}
+  .flowcap{margin-top:18px;font-size:14.5px;font-weight:400;line-height:1.6;color:var(--on-surface-variant)}
+  .flowcap b{color:var(--primary);font-weight:600}
+  .cols2.tight{margin-top:16px}
+  .cols2.tight + .strips{margin-top:20px}
+
+  /* ---------- comparison table ---------- */
+  .cmp{width:100%;border-collapse:collapse;margin-top:20px;font-size:15px;font-weight:400;
+    color:var(--on-surface-variant)}
+  .cmp th,.cmp td{text-align:left;vertical-align:top;padding:13px 16px;line-height:1.5}
+  .cmp thead th{font-family:var(--head);font-weight:800;font-size:12px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--primary)}
+  .cmp tbody tr:nth-child(even){background:var(--sc-low)}
+  .cmp th:first-child,.cmp td:first-child{width:23%;font-weight:500;color:var(--primary)}
+  .cmp th:last-child,.cmp td:last-child{box-shadow:inset 3px 0 0 var(--brass)}
+  .cmp b{color:var(--primary);font-weight:600}
+
+  /* ---------- model card ---------- */
+  .model{display:grid;grid-template-columns:1.4fr 1fr;gap:20px;align-items:start}
+
+  /* ---------- code sample ---------- */
+  .codebox{margin-top:18px;background:var(--primary);border-radius:var(--r-lg);padding:20px 22px;
+    overflow-x:auto}
+  .codebox pre{margin:0;font-family:var(--mono);font-size:12.5px;line-height:1.7;
+    color:var(--primary-fixed-dim);white-space:pre}
+  .codebox .kw{color:var(--brass)}
+  .codebox .id{color:var(--surface)}
+  .codebox .str{color:#b3c8eb}
+  .codebox .cm{color:#7f93b3}
+  .codecap{margin-top:14px;color:var(--on-surface-variant);font-size:14.5px;font-weight:400;
+    line-height:1.55}
+  .codecap code{color:var(--primary)}
+
+  /* a navy card, for content that reads as a panel rather than a page block */
+  .card.dark{background:var(--primary)}
+  .card.dark h3{color:var(--surface)}
+  .card.dark .note{color:var(--primary-fixed-dim)}
+  .card.dark .note b{color:var(--surface)}
+
+  /* one full-width closing card */
+  .solo{margin-top:16px}
+
+  /* ---------- closing: what else embeddings are for ---------- */
+  .uses{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .ucard{background:var(--sc-lowest);border-radius:var(--r-xl);padding:22px 24px}
+  .ucard .tag{display:inline-block;font-family:var(--mono);font-size:10.5px;color:var(--secondary);
+    background:var(--sc-high);border-radius:var(--r-sm);padding:3px 9px;margin-bottom:11px}
+  .ucard .tag.here{color:var(--on-brass);background:var(--brass)}
+  .ucard h3{font-size:16px;color:var(--primary);text-transform:uppercase;letter-spacing:-.02em}
+  .ucard p{margin-top:10px;color:var(--on-surface-variant);font-size:15px;font-weight:400;line-height:1.6}
+  .ucard p b{color:var(--primary);font-weight:600}
+
+  @media(max-width:900px){
+    .model,.uses{grid-template-columns:1fr}
+    .cmp{font-size:13.5px}
+    .cmp th,.cmp td{padding:10px 12px}
+  }
+
+  @media(max-width:900px){
+    .kpis{grid-template-columns:1fr 1fr}
+    .specimen,.cols2{grid-template-columns:1fr}
+    .outcomes{grid-template-columns:1fr}
+    .strip{grid-template-columns:1fr;gap:14px}
+    .primer{grid-template-columns:1fr}
+    .mini{grid-column:1;grid-row:4}
+    .pcards>.hood{grid-column:1;grid-row:5}
+    .pcard{grid-template-columns:1fr;gap:12px}
+  }
+
+  @media(max-width:640px){
+    .cosviz{grid-template-columns:1fr}
+  }
