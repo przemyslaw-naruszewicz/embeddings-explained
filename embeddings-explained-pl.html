@@ -571,9 +571,11 @@
 
       <!-- Colours are the board tokens, written out because SVG presentation
            attributes are read before the cascade: navy #021a35, brass #e9c176,
-           secondary #675d4d, outline-variant #c4c6ce. -->
+           secondary #675d4d, outline-variant #c4c6ce.
+           The viewBox starts at -1 and is 3 units wider than the 1120-unit grid so
+           that the outer strokes of the first and last card are not clipped. -->
       <div class="flowcard">
-        <svg viewBox="0 0 1120 210" role="img"
+        <svg viewBox="-1 0 1123 210" role="img"
              aria-label="Sześć kroków: odbiór z deduplikacją po skrócie treści, filtr słów kluczowych, złożenie tekstu dla modelu, utworzenie lub odczytanie embeddingu z pamięci podręcznej, grupowanie po podobieństwie, analiza klastra. Embedding powstaje w kroku czwartym i jest używany w piątym.">
           <defs>
             <marker id="fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
