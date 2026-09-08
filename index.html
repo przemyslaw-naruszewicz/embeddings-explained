@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Five newsrooms, one story · Proximtype</title>
+<meta name="description" content="Choose a language version of the board: what an embedding is, and how a system merges five news reports into one story.">
+
+<!-- Strona rozdroża: sam wybór wersji językowej, bez treści merytorycznej.
+     Strona jest anglojęzyczna — po polsku stoi wyłącznie przycisk wersji PL.
+     Adres publikacji wstawia ./set-base-url.sh <adres> — tu, tak jak w obu
+     planszach, stoi na razie znacznik zastępczy __BASE_URL__. -->
+<link rel="canonical" href="__BASE_URL__/index.html">
+<link rel="alternate" hreflang="pl" href="__BASE_URL__/embeddings-explained-pl.html">
+<link rel="alternate" hreflang="en" href="__BASE_URL__/embeddings-explained-en.html">
+<link rel="alternate" hreflang="x-default" href="__BASE_URL__/embeddings-explained-en.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Proximtype">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="pl_PL">
+<meta property="og:title" content="Five newsrooms, one story">
+<meta property="og:description" content="What an embedding is, and how a system merges five different news reports into one story. The similarity scores come from a run of the model on test headlines.">
+<meta property="og:url" content="__BASE_URL__/index.html">
+<meta property="og:image" content="__BASE_URL__/og/og-en-v1.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Four heat strips: the first 56 of 768 coordinates for four headlines. The two headlines about the same event share an almost identical pattern; the other two differ clearly.">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="stylesheet" href="assets/fonts-gdynia.css">
+<link rel="stylesheet" href="assets/board-gdynia.css">
+<style>
+  /* ============================================================
+     Rozdroże językowe. Nadbudowa nad assets/board-gdynia.css:
+     stamtąd pochodzi cała paleta, typografia i dekoracje granatowego
+     panelu (.heroCard, .defbox, .blob1, .blob2, .grain). Ten arkusz
+     dodaje tylko kadr strony, ramkę podglądu, wiersz liczb i dwa
+     przyciski wyboru wersji.
+     ============================================================ */
+
+  /* Krój pisma nadaje reguła .board z arkusza planszy, a rozdroże planszą nie jest —
+     bez tego akapity spadłyby na domyślny krój przeglądarki. */
+  body{background:var(--surface);color:var(--on-surface);
+    font-family:var(--body);font-size:16.5px;line-height:1.62;
+    -webkit-font-smoothing:antialiased}
+  ::selection{background:var(--brass);color:var(--on-brass)}
+
+  .gate{min-height:100vh;display:flex;align-items:center;padding:clamp(20px,4vw,56px) 0}
+  .gate .wrap{width:100%}
+  .gate .heroCard{padding:clamp(26px,3.4vw,46px)}
+
+  /* Nagłówek karty: sygnatura tematu po lewej, znak wydawcy po prawej. */
+  .cardTop{position:relative;z-index:2;display:flex;flex-wrap:wrap;gap:8px 24px;
+    justify-content:space-between;align-items:baseline}
+  .mark{font-family:var(--head);font-weight:800;font-size:11px;letter-spacing:.3em;
+    text-transform:uppercase;color:var(--on-primary-container)}
+
+  /* Dwie kolumny na szerokim ekranie: po lewej definicja i zapowiedź treści,
+     po prawej podgląd planszy z wierszem liczb pod spodem. Wybór wersji
+     językowej stoi pod nimi, na pełnej szerokości karty — to jedyne działanie
+     tej strony, więc nie dzieli się miejscem z niczym innym. */
+  .cols{position:relative;z-index:2;margin-top:clamp(18px,2vw,26px);
+    display:grid;gap:clamp(24px,3.2vw,44px);
+    grid-template-columns:minmax(0,1fr) minmax(0,1.02fr);align-items:start}
+
+  .gate h1.hl{margin-top:12px;max-width:14ch;font-size:clamp(28px,3.8vw,46px)}
+  .gate .defbox{margin-top:20px}
+  .gate .sub{margin-top:20px;max-width:48ch;font-size:16.5px}
+
+  /* Trzy liczby z planszy — zapowiedź jej skali, nie streszczenie treści. */
+  .facts{margin:14px 0 0;padding:0;list-style:none;
+    display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+  .facts li{background:rgba(251,249,242,.08);border-radius:var(--r-lg);padding:14px 16px}
+  .facts .v{font-family:var(--head);font-weight:800;font-size:clamp(19px,1.9vw,23px);line-height:1;
+    letter-spacing:-.03em;color:var(--brass);font-variant-numeric:tabular-nums}
+  .facts .k{margin-top:9px;font-size:10px;font-weight:600;letter-spacing:.15em;
+    text-transform:uppercase;line-height:1.45;color:var(--on-primary-container)}
+
+  /* Podgląd: kadr Open Graph w wersji angielskiej, ten sam obrazek,
+     który zobaczy czytnik karty podglądu. */
+  .shot{margin:0;padding:10px;border-radius:calc(var(--r-lg) + 6px);
+    background:rgba(251,249,242,.08);
+    box-shadow:0 30px 60px -26px rgba(0,0,0,.7),inset 0 0 0 1px rgba(251,249,242,.14)}
+  .shot img{display:block;width:100%;height:auto;border-radius:var(--r-sm);
+    box-shadow:0 0 0 1px rgba(251,249,242,.14)}
+  .shot .cap{display:flex;align-items:center;gap:9px;padding:12px 8px 4px;
+    color:var(--on-primary-container);
+    font-size:10.5px;font-weight:600;letter-spacing:.18em;text-transform:uppercase}
+  .shot .cap::before{content:"";flex:none;width:7px;height:7px;border-radius:50%;background:var(--brass)}
+
+  /* Dwa przyciski, jeden na wersję językową — zwykłe odsyłacze do dwóch
+     osobnych plików źródłowych, bez skryptu. Oba mają tę samą wagę: strona
+     nie zgaduje, którego języka szuka czytelnik. */
+  .choose{position:relative;z-index:2;margin-top:clamp(26px,3vw,38px);
+    display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  .choose a{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:0 18px;align-items:center;
+    padding:19px 22px;border-radius:var(--r-lg);text-decoration:none;color:var(--surface);
+    background:rgba(251,249,242,.08);box-shadow:inset 0 0 0 1px rgba(251,249,242,.2);
+    transition:transform .16s ease,box-shadow .16s ease,background-color .16s ease}
+  .choose .code{grid-row:1 / span 2;width:54px;padding:9px 0;text-align:center;
+    border-radius:var(--r-sm);background:var(--brass);color:var(--on-brass);
+    font-family:var(--head);font-weight:800;font-size:15px;letter-spacing:.14em;line-height:1.2}
+  .choose .name{grid-column:2;grid-row:1;font-family:var(--head);font-weight:800;font-size:19px;
+    letter-spacing:-.02em;line-height:1.16}
+  .choose .what{grid-column:2;grid-row:2;margin-top:5px;font-size:13.5px;line-height:1.45;
+    color:var(--primary-fixed-dim)}
+  .choose .go{grid-column:3;grid-row:1 / span 2;font-family:var(--head);font-size:20px;
+    color:var(--brass);transition:transform .16s ease}
+  .choose a:hover{transform:translateY(-2px);background:rgba(251,249,242,.15);
+    box-shadow:inset 0 0 0 1px var(--brass),0 20px 36px -20px rgba(0,0,0,.8)}
+  .choose a:hover .go{transform:translateX(4px)}
+  .choose a:focus-visible{outline:3px solid var(--brass-soft);outline-offset:3px}
+
+  /* Skala mapy cieplnej w roli linii oddzielającej stopkę: ten sam gradient,
+     którym plansza opisuje wartość współrzędnej. */
+  .rule{position:relative;z-index:2;margin-top:clamp(24px,2.8vw,34px);height:6px;border-radius:99px;
+    background:linear-gradient(90deg,#021a35,#8fa3bf 35%,var(--sc-high) 50%,#e9c176 72%,#b4914b)}
+
+  .gate .foot{position:relative;z-index:2;margin-top:18px;padding-top:0;
+    display:flex;flex-wrap:wrap;gap:8px 26px;
+    color:var(--on-primary-container);font-size:13px}
+  /* .foot b w board-gdynia.css jest granatowe — na granatowej karcie znika. */
+  .gate .foot b{color:var(--surface)}
+  .gate .foot a{color:var(--primary-fixed-dim)}
+  .gate .foot a:hover{color:var(--brass-soft)}
+
+  @media (max-width:980px){
+    .gate{min-height:0}
+    .cols{grid-template-columns:1fr}
+    .gate h1.hl{max-width:20ch}
+    .gate .sub{max-width:58ch}
+  }
+  @media (max-width:640px){
+    /* Na wąskim ekranie sygnatura tematu łamie się na dwa wiersze i znak wydawcy
+       zostaje pod nią sam — wtedy lepiej czyta się jako winieta nad tematem. */
+    .cardTop{flex-direction:column-reverse;align-items:flex-start;gap:9px}
+    .cardTop .eyebrow{letter-spacing:.2em}
+  }
+  @media (max-width:560px){
+    .choose{grid-template-columns:1fr}
+    .facts{grid-template-columns:1fr}
+    .facts li{display:flex;align-items:baseline;gap:12px}
+    .facts .k{margin-top:0}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .choose a,.choose .go{transition:none}
+    .choose a:hover{transform:none}
+    .choose a:hover .go{transform:none}
+  }
+</style>
+</head>
+<body>
+
+<main class="gate">
+  <div class="wrap">
+    <div class="heroCard">
+      <div class="blob1"></div><div class="blob2"></div><div class="grain"></div>
+
+      <div class="cardTop">
+        <p class="eyebrow">Semantic clustering · the meaning layer</p>
+        <p class="mark">Proximtype</p>
+      </div>
+
+      <div class="cols">
+        <div class="intro">
+          <h1 class="hl">Five newsrooms.<br><span class="brasstx">One story.</span></h1>
+
+          <div class="defbox">
+            <span class="dt">In one sentence</span>
+            <p>
+              An <b>embedding</b> is a vector: a fixed-length list of numbers that a language
+              model computes for a piece of text. Texts with similar meanings usually produce
+              vectors that lie close together, so the system can measure their similarity
+              as a number.
+            </p>
+          </div>
+
+          <p class="sub">
+            The board follows one worked example: five newsrooms report the same event in their
+            own words, each report becomes a vector, and the angle between those vectors decides
+            which reports belong to the same story. The similarity scores come from a run of the
+            model; the headlines are test fixtures.
+          </p>
+        </div>
+
+        <div class="aside">
+          <figure class="shot">
+            <img src="og/og-en-v1.png" width="1200" height="630" loading="eager"
+                 alt="Preview of the English board: four heat strips showing the first 56 of 768
+                      coordinates for four headlines. The two headlines about the same event share an
+                      almost identical pattern; the other two differ clearly.">
+            <figcaption class="cap">Board preview · the first 56 of 768 coordinates</figcaption>
+          </figure>
+
+          <ul class="facts">
+            <li>
+              <div class="v">768</div>
+              <div class="k">coordinates per text</div>
+            </li>
+            <li>
+              <div class="v">0.70</div>
+              <div class="k">similarity threshold</div>
+            </li>
+            <li>
+              <div class="v">0.9933</div>
+              <div class="k">same event, different words</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <nav class="choose" aria-label="Language">
+        <a lang="pl" hreflang="pl" href="embeddings-explained-pl.html">
+          <span class="code">PL</span>
+          <span class="name">Wersja polska</span>
+          <span class="what">Pełna plansza po polsku</span>
+          <span class="go" aria-hidden="true">&rarr;</span>
+        </a>
+        <a lang="en" hreflang="en" href="embeddings-explained-en.html">
+          <span class="code">EN</span>
+          <span class="name">English version</span>
+          <span class="what">The full board in English</span>
+          <span class="go" aria-hidden="true">&rarr;</span>
+        </a>
+      </nav>
+
+      <div class="rule"></div>
+
+      <div class="foot">
+        <span><b>Model</b> <span class="mono">nomic-embed-text-v2-moe · 768 dimensions</span></span>
+        <span><b>PDF</b>
+          <a lang="pl" hreflang="pl" href="embeddings-explained-pl.pdf">PL</a> ·
+          <a lang="en" hreflang="en" href="embeddings-explained-en.pdf">EN</a></span>
+        <span><b>Page</b> runs no scripts and makes no external requests</span>
+      </div>
+    </div>
+  </div>
+</main>
+
+</body>
+</html>
