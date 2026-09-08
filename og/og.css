@@ -1,11 +1,11 @@
 /* ============================================================
-   Obrazek podglądu (Open Graph / LinkedIn), 1200 x 630 px.
-   Nadbudowa nad assets/board-gdynia.css: stamtąd pochodzą zmienne
-   koloru, paski mapy cieplnej (.heatrow, .cells, .scalebar) oraz
-   dekoracje granatowego panelu (.blob1, .blob2, .grain).
-   Ten plik ustala wyłącznie kadr 1200 x 630 i wielkości typografii,
-   bo obrazek jest oglądany jako mały kafelek w strumieniu LinkedIna.
-   Renderowanie: ./render.sh og
+   Preview image (Open Graph / LinkedIn), 1200 x 630 px.
+   Built on top of assets/board-gdynia.css, which is where the colour
+   variables, the heat strips (.heatrow, .cells, .scalebar) and the
+   navy panel decorations (.blob1, .blob2, .grain) come from.
+   This file sets only the 1200 x 630 frame and the type sizes, because
+   the image is seen as a small tile in the LinkedIn feed.
+   Rendering: ./render.sh og
    ============================================================ */
 html,body{margin:0;background:var(--surface)}
 
@@ -17,7 +17,7 @@ html,body{margin:0;background:var(--surface)}
   display:flex;flex-direction:column;
 }
 
-/* ---------- granatowy panel z tytułem ---------- */
+/* ---------- navy panel with the title ---------- */
 .ogtop{position:relative;overflow:hidden;background:var(--primary);color:var(--surface);
   padding:34px 56px 30px}
 .ogtopIn{position:relative;z-index:2}
@@ -25,10 +25,10 @@ html,body{margin:0;background:var(--surface)}
 .ogtop h1{margin:12px 0 0;font-family:var(--head);font-weight:800;letter-spacing:-.03em;
   line-height:1.04;font-size:54px;text-transform:uppercase}
 .ogtop h1 .brasstx{color:var(--brass)}
-/* pełna szerokość zamiast miary z planszy: podpis ma zmieścić się w jednej linii */
+/* full width instead of the board's measure: the subtitle has to fit on one line */
 .ogtop .sub{margin-top:14px;font-size:19px;max-width:100%}
 
-/* ---------- paski mapy cieplnej ---------- */
+/* ---------- heat strips ---------- */
 .ogheat{flex:1;padding:22px 56px 24px;display:flex;flex-direction:column;justify-content:center}
 .ogheat .heatrow{margin-top:0}
 .ogheat .heatrow + .heatrow{margin-top:12px}

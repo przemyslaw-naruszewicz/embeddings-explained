@@ -6,10 +6,10 @@
 <title>Pięć redakcji, jedna historia · Proximtype</title>
 <meta name="description" content="Czym jest embedding i jak system łączy pięć różnych doniesień prasowych w jedną historię. Prawdziwe liczby z działającego modelu, podane ograniczenia, bez hype’u.">
 
-<!-- Znaczniki podglądu i wersji językowych. Adres strony nie jest jeszcze znany, więc
-     w miejscu domeny stoi znacznik zastępczy; wypełnia go ./set-base-url.sh <adres>.
-     Kolejność publikacji jest sztywna: adres → deploy → LinkedIn Post Inspector → post,
-     bo karta podglądu zamraża się w chwili opublikowania posta. -->
+<!-- Preview and language tags. The site address is not decided yet, so a placeholder stands
+     in for the domain; ./set-base-url.sh <address> fills it in.
+     The publishing order is fixed: address → deploy → LinkedIn Post Inspector → post,
+     because the preview card freezes the moment the post goes out. -->
 <link rel="canonical" href="__BASE_URL__/embeddings-explained-pl.html">
 <link rel="alternate" hreflang="pl" href="__BASE_URL__/embeddings-explained-pl.html">
 <link rel="alternate" hreflang="en" href="__BASE_URL__/embeddings-explained-en.html">
@@ -33,9 +33,9 @@
 </head>
 <body>
 
-<!-- Przełącznik wersji językowej: dwa osobne pliki źródłowe, odsyłacz względny, bez skryptu.
-     data-render-hide — element znika przed zrzutem PNG/PDF, bo w wyeksportowanej planszy
-     odsyłacz do drugiego pliku i tak nie działa. -->
+<!-- Language switch: two separate source files, a relative link, no script.
+     data-render-hide means the element goes away before the PNG/PDF capture, because in an
+     exported board a link to the other file would not work anyway. -->
 <nav class="langbar" data-render-hide aria-label="Wersja językowa">
   <a lang="pl" hreflang="pl" href="embeddings-explained-pl.html" aria-current="page">PL</a>
   <a lang="en" hreflang="en" href="embeddings-explained-en.html">EN</a>
@@ -97,7 +97,7 @@
     </div>
   </div>
 
-  <!-- ============ ELEMENTARZ ============ -->
+  <!-- ============ PRIMER ============ -->
   <section>
     <div class="wrap">
       <div class="sec-head">
@@ -461,7 +461,7 @@
     </div>
   </section>
 
-  <!-- ============ MODEL I OLLAMA ============ -->
+  <!-- ============ MODEL AND OLLAMA ============ -->
   <section>
     <div class="wrap">
       <div class="sec-head">
@@ -557,7 +557,7 @@
     </div>
   </section>
 
-  <!-- ============ OBIEG ============ -->
+  <!-- ============ THE ROUTE ============ -->
   <section>
     <div class="wrap">
       <div class="sec-head">
@@ -569,8 +569,8 @@
         </p>
       </div>
 
-      <!-- Kolory to tokeny planszy, wpisane wprost, bo atrybuty prezentacyjne SVG
-           są czytane przed kaskadą: granat #021a35, mosiądz #e9c176,
+      <!-- Colours are the board tokens, written out because SVG presentation
+           attributes are read before the cascade: navy #021a35, brass #e9c176,
            secondary #675d4d, outline-variant #c4c6ce. -->
       <div class="flowcard">
         <svg viewBox="0 0 1120 210" role="img"
@@ -940,7 +940,7 @@
     </div>
   </section>
 
-  <!-- ============ PRÓBKA: RZECZYWISTY WEKTOR DLA FIKCYJNEGO TEKSTU ============ -->
+  <!-- ============ SPECIMEN: REAL VECTOR FOR FICTIONAL TEXT ============ -->
   <section class="band">
     <div class="wrap">
       <div class="sec-head">
@@ -1067,7 +1067,7 @@
     </div>
   </section>
 
-  <!-- ============ DECYZJE ============ -->
+  <!-- ============ DECISIONS ============ -->
   <section>
     <div class="wrap">
       <div class="sec-head">
@@ -1132,7 +1132,7 @@
     </div>
   </section>
 
-  <!-- ============ ZASTOSOWANIA ============ -->
+  <!-- ============ WHAT ELSE ============ -->
   <section class="band">
     <div class="wrap">
       <div class="sec-head">

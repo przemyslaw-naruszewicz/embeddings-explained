@@ -82,7 +82,7 @@
     box-shadow:inset 0 0 0 1px rgba(103,93,77,.14)
   }
 
-  /* ---------- pipeline strips (pasowe okna) ---------- */
+  /* ---------- pipeline strips ---------- */
   .strips{display:flex;flex-direction:column;gap:14px}
   .strip{background:var(--sc-lowest);border-radius:var(--r-xl);padding:24px 28px;
     display:grid;grid-template-columns:62px 1fr;gap:0 24px;align-items:start}
@@ -100,9 +100,9 @@
   .strip.hot p.txt{color:var(--primary-fixed-dim)}
   .strip p.txt b{color:var(--primary);font-weight:600}
   .strip.hot p.txt b{color:var(--surface)}
-  /* Wejście/wyjście kroku to jedyne miejsce, gdzie na planszy pada nazwa typu —
-     musi być czytelne z odległości nagłówka, stąd cieplejsze tło i wersalikowa
-     etykieta zamiast szarego drobiazgu (nadal bez ramek: tonalnie, nie kreską). */
+  /* A step's input and output are the only place on the board where a type name is
+     spelled out. It has to read from heading distance, hence the warmer background and
+     the uppercase label instead of small grey print (still no borders: tone, not rules). */
   .strip .io{margin-top:16px;display:flex;flex-wrap:wrap;gap:10px}
   .pill{background:var(--secondary-container);border-radius:var(--r-sm);padding:7px 13px;
     font-family:var(--mono);font-size:13px;color:var(--tertiary)}
@@ -384,10 +384,10 @@
     .cosviz{grid-template-columns:1fr}
   }
 
-  /* ---------- przełącznik PL/EN ---------- */
-  /* Pływa nad planszą, bo strona ma ponad 16 000 px wysokości: pasek osadzony
-     u góry byłby dostępny tylko na samym jej początku. W eksportach PNG i PDF
-     przełącznika nie ma — render usuwa elementy z atrybutem data-render-hide. */
+  /* ---------- PL/EN switch ---------- */
+  /* It floats over the board, because the page is over 16 000 px tall: a bar anchored
+     at the top would be reachable only at the very start of it. The PNG and PDF exports
+     have no switch, since the render drops elements carrying data-render-hide. */
   .langbar{position:fixed;top:14px;right:14px;z-index:20;display:flex;gap:2px;padding:3px;
     background:rgba(251,249,242,.92);border:1px solid var(--outline-variant);border-radius:99px;
     box-shadow:0 8px 20px -10px rgba(2,26,53,.5);
