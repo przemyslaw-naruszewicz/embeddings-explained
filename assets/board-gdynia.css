@@ -383,3 +383,16 @@
   @media(max-width:640px){
     .cosviz{grid-template-columns:1fr}
   }
+
+  /* ---------- przełącznik PL/EN ---------- */
+  /* Pływa nad planszą, bo strona ma ponad 16 000 px wysokości: pasek osadzony
+     u góry byłby dostępny tylko na samym jej początku. W eksportach PNG i PDF
+     przełącznika nie ma — render usuwa elementy z atrybutem data-render-hide. */
+  .langbar{position:fixed;top:14px;right:14px;z-index:20;display:flex;gap:2px;padding:3px;
+    background:rgba(251,249,242,.92);border:1px solid var(--outline-variant);border-radius:99px;
+    box-shadow:0 8px 20px -10px rgba(2,26,53,.5);
+    font-family:var(--head);font-size:12.5px;font-weight:700;letter-spacing:.1em}
+  .langbar a{display:block;padding:6px 13px;border-radius:99px;text-decoration:none;color:var(--secondary)}
+  .langbar a:hover{color:var(--primary);background:var(--sc-high)}
+  .langbar a[aria-current]{background:var(--primary);color:var(--surface)}
+  @media print{.langbar{display:none}}

@@ -4,10 +4,42 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Pięć redakcji, jedna historia · Proximtype</title>
+<meta name="description" content="Czym jest embedding i jak system łączy pięć różnych doniesień prasowych w jedną historię. Prawdziwe liczby z działającego modelu, podane ograniczenia, bez hype’u.">
+
+<!-- Znaczniki podglądu i wersji językowych. Adres strony nie jest jeszcze znany, więc
+     w miejscu domeny stoi znacznik zastępczy; wypełnia go ./set-base-url.sh <adres>.
+     Kolejność publikacji jest sztywna: adres → deploy → LinkedIn Post Inspector → post,
+     bo karta podglądu zamraża się w chwili opublikowania posta. -->
+<link rel="canonical" href="__BASE_URL__/embeddings-explained-pl.html">
+<link rel="alternate" hreflang="pl" href="__BASE_URL__/embeddings-explained-pl.html">
+<link rel="alternate" hreflang="en" href="__BASE_URL__/embeddings-explained-en.html">
+<link rel="alternate" hreflang="x-default" href="__BASE_URL__/embeddings-explained-en.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Proximtype">
+<meta property="og:locale" content="pl_PL">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:title" content="Pięć redakcji, jedna historia">
+<meta property="og:description" content="Czym jest embedding i jak system łączy pięć różnych doniesień prasowych w jedną historię. Prawdziwe liczby z działającego modelu, podane ograniczenia, bez hype’u.">
+<meta property="og:url" content="__BASE_URL__/embeddings-explained-pl.html">
+<meta property="og:image" content="__BASE_URL__/og/og-pl-v1.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Cztery paski mapy cieplnej: pierwsze 56 z 768 współrzędnych czterech nagłówków. Dwa nagłówki o tym samym wydarzeniu mają niemal identyczny wzór, dwa pozostałe wyraźnie inny.">
+<meta name="twitter:card" content="summary_large_image">
+
 <link rel="stylesheet" href="assets/fonts-gdynia.css">
 <link rel="stylesheet" href="assets/board-gdynia.css">
 </head>
 <body>
+
+<!-- Przełącznik wersji językowej: dwa osobne pliki źródłowe, odsyłacz względny, bez skryptu.
+     data-render-hide — element znika przed zrzutem PNG/PDF, bo w wyeksportowanej planszy
+     odsyłacz do drugiego pliku i tak nie działa. -->
+<nav class="langbar" data-render-hide aria-label="Wersja językowa">
+  <a lang="pl" hreflang="pl" href="embeddings-explained-pl.html" aria-current="page">PL</a>
+  <a lang="en" hreflang="en" href="embeddings-explained-en.html">EN</a>
+</nav>
 <main class="board">
 
   <!-- ============ HERO ============ -->
@@ -80,7 +112,7 @@
           <div class="pcard">
             <div class="n">01</div>
             <div>
-              <h3>Model przedstawia tekst za pomocą 768 współrzędnych</h3>
+              <h3>Tekst jako 768 współrzędnych</h3>
               <p>
                 Model zamienia zdanie w listę 768 liczb.
                 Wynik nie jest streszczeniem ani zestawem słów kluczowych. Te liczby są współrzędnymi,
@@ -119,8 +151,10 @@
           <div class="hood">
             <span class="ht">Od strony technicznej</span>
             <p>
-              Wektor to lista liczb. Żeby zobaczyć rachunek, użyjmy tylko dwóch współrzędnych.
-              Pierwsza mówi, jak daleko przesunąć koniec strzałki w poziomie, a druga w pionie.
+              Wektor to lista liczb. W tym przykładzie używamy dwóch współrzędnych, żeby łatwo
+              pokazać rysunek i rachunek. Wektory A i B dobraliśmy do przykładu; nie pochodzą z modelu.
+              Obie strzałki zaczynają się w punkcie [0; 0]. Pierwsza współrzędna mówi, jak daleko
+              przesunąć koniec strzałki w poziomie, a druga w pionie.
               Nie trzeba mierzyć kąta kątomierzem. Jego cosinus można policzyć bezpośrednio ze
               współrzędnych obu strzałek.
             </p>
@@ -192,7 +226,8 @@
                 </div>
                 <div class="cosnotation">
                   <span><code>A · B</code> to iloczyn skalarny: pomnóż pary liczb i dodaj wyniki.</span>
-                  <span><code>|A|</code> i <code>|B|</code> to długości strzałek.</span>
+                  <span><code>|A|</code> i <code>|B|</code> to długości strzałek. Obie muszą być większe
+                    od zera, bo nie można dzielić przez zero.</span>
                 </div>
                 <div class="cossteps">
                   <div class="cosstep">
@@ -203,8 +238,8 @@
                   </div>
                   <div class="cosstep">
                     <span class="sn">2</span>
-                    <div>Policz mianownik. Długość strzałki to przeciwprostokątna, więc użyj
-                      twierdzenia Pitagorasa:
+                    <div>Oblicz długości wektorów z twierdzenia Pitagorasa: podnieś współrzędne
+                      do kwadratu, dodaj wyniki i wyciągnij pierwiastek:
                       <code>|A| = √(1² + 0²) = 1<br>|B| = √(0,8² + 0,6²) = √(0,64 + 0,36) = 1</code>
                     </div>
                   </div>
@@ -218,8 +253,9 @@
                 </div>
                 <div class="cosanswer">
                   <strong>0,80</strong>
-                  <span>Wynik jest blisko 1, więc kierunki są podobne. Przekracza też próg 0,70,
-                    dlatego teksty trafiłyby do jednej grupy.</span>
+                  <span>Wynik przekracza przyjęty próg 0,70. Gdyby były to wektory dwóch tekstów,
+                    system połączyłby je w jedną grupę. Wynik 0,80 nie oznacza 80% pewności,
+                    że teksty opisują to samo wydarzenie.</span>
                 </div>
                 <div class="coslegend"><span>−1 · przeciwne</span><span>0 · prostopadłe</span><span>1 · ten sam kierunek</span></div>
                 <p class="cosangleback">Na rysunku widać kąt około 37°, ponieważ
@@ -229,10 +265,12 @@
             </div>
 
             <p class="cosnote">
-              Rysunek ma dwie osie, bo tyle da się pokazać na kartce. Prawdziwy wektor ma 768
-              współrzędnych, więc program mnoży 768 par liczb i dodaje wszystkie wyniki. Wektory
-              tego modelu mają długość 1 (normalizacja L2). Mianownik wynosi więc 1, ale kod nadal
-              go oblicza, aby obsługiwać również wektory o innej długości.
+              W używanym tu modelu wektor ma 768 współrzędnych. Aby obliczyć iloczyn skalarny,
+              program mnoży 768 par liczb i dodaje wyniki. Ollama przez <code>/api/embed</code>
+              zwraca wektory znormalizowane do długości 1 (normalizacja L2), z możliwymi drobnymi
+              odchyleniami wynikającymi z precyzji obliczeń. Dla wektorów o długości 1 mianownik
+              wynosi 1, więc cosinus jest równy iloczynowi skalarnemu. Pełny wzór działa również
+              dla wektorów o innych, niezerowych długościach.
             </p>
           </div>
 
@@ -314,14 +352,14 @@
         </div>
 
         <div class="card">
-          <h3>Gdzie się załamuje</h3>
+          <h3>Kiedy TF-IDF nie rozpoznaje podobieństwa</h3>
           <p class="note">
             Problem pojawia się, gdy dwa teksty mówią to samo innymi słowami. „Prezydent ustępuje” i „Macron
             rezygnuje” nie mają ani jednego wspólnego, istotnego słowa, więc ich podobieństwo wynosi
             dokładnie zero.
           </p>
           <p class="note">
-            Żeby te dwa zdania w ogóle się spotkały, trzeba dopisać listę synonimów, reguły
+            Żeby metoda rozpoznała podobieństwo tych zdań, trzeba dopisać listę synonimów, reguły
             sprowadzania słów do form podstawowych i wykaz nazwisk. Ktoś musi przygotować je ręcznie,
             a potem powtórzyć tę pracę dla każdego języka z osobna.
           </p>
@@ -439,15 +477,14 @@
         <div class="card">
           <h3>nomic-embed-text-v2-moe</h3>
           <p class="note">
-            Otwarty model przygotowany do tego jednego zadania: nie prowadzi rozmowy, nie
-            streszcza, nie odpowiada na pytania. Otrzymuje tekst, zwraca 768 liczb i na tym kończy
-            się jego rola.
+            To otwarty model, który zamienia tekst na 768 liczb. Nie prowadzi rozmowy,
+            nie streszcza tekstów ani nie odpowiada na pytania.
           </p>
           <p class="note">
             Skrót <b>MoE</b> w nazwie to <i>mixture of experts</i>: model zawiera kilka
             wyspecjalizowanych podsieci, ale dla każdego fragmentu tekstu uruchamia tylko część
-            z nich. Oferuje więc możliwości większego modelu, zużywając zasoby zbliżone do
-            mniejszego.
+            z nich. Ma więc możliwości większego modelu, choć zużywa podobną ilość zasobów
+            co mniejszy model.
           </p>
           <p class="note">
             W tym zadaniu liczy się przede wszystkim wielojęzyczność: francuska depesza
@@ -756,9 +793,9 @@
           <div>
             <h3>Jedna grupa, jedna analiza</h3>
             <p class="txt">
-              Grupę analizuje się raz, a nie raz na artykuł, więc pięć doniesień o tym samym
-              wydarzeniu wymaga łącznie jednej analizy. Grupowanie zmniejsza więc liczbę analiz
-              wykonywanych na ostatnim etapie. Wynikiem jest sygnał transakcyjny albo informacja, że dłuższy proces
+              Cała grupa przechodzi jedną analizę, więc pięć doniesień o tym samym wydarzeniu
+              wymaga łącznie jednej analizy zamiast pięciu. Zmniejsza to liczbę analiz na ostatnim
+              etapie. Wynikiem jest sygnał transakcyjny albo informacja, że dłuższy proces
               przeszedł do kolejnego etapu.
             </p>
             <div class="hood">
@@ -870,8 +907,8 @@
             <div class="oc">
               <h4>Tekst już znany</h4>
               <span class="cond">dowolny tryb</span>
-              <p>Liczby są odczytywane z bazy, a model nie jest w ogóle uruchamiany. Tak dzieje się,
-                gdy ten sam tekst pojawia się ponownie.</p>
+              <p>Gdy ten sam tekst pojawia się ponownie, program odczytuje liczby z bazy
+                bez uruchamiania modelu.</p>
             </div>
             <div class="oc warn">
               <h4>Nowy tekst, model dostępny</h4>
@@ -911,7 +948,7 @@
         <h2 class="title">Jak wygląda zapisany wektor</h2>
         <p class="lead">
           Nagłówek o rezygnacji Macrona jest fikcyjny i powstał na potrzeby scenariusza testowego.
-          Wektor nie jest jednak przykładowy. Zawiera wartości rzeczywiście obliczone przez działający model
+          Wektor zawiera wartości rzeczywiście obliczone przez działający model
           dla tego nagłówka i zapisane w danych testowych repozytorium. System produkcyjny zapisuje
           wektory w tym samym formacie.
           Jeden nagłówek na wejściu, jeden wiersz 768 liczb na wyjściu.
@@ -995,9 +1032,8 @@
         <div class="card wide">
           <h3>Gdzie wypada próg</h3>
           <p class="note">
-            Poniższe wartości pokazują podobieństwo każdego nagłówka do A1. Między wynikiem dla tej
-            samej historii a wynikami dla pozostałych widać wyraźny odstęp. W tej próbce próg 0,70
-            leży w przerwie między tymi wynikami.
+            Poniższe wartości pokazują podobieństwo każdego nagłówka do A1. Wynik dla tej samej
+            historii jest wyraźnie wyższy od pozostałych. W tej próbce próg 0,70 leży między nimi.
           </p>
           <div class="sims">
             <div class="simrow">
@@ -1067,9 +1103,9 @@
         <div class="tcard">
           <h3><span class="g">03</span> Jedna metoda grupowania we wszystkich trybach</h3>
           <p>
-            Ustawienie w konfiguracji rozstrzyga wyłącznie o tym, czy wolno wywołać model; nie wybiera
-            między dwiema metodami grupowania. Testy i tryb pracy bez dostępu do sieci korzystają
-            z wyników zapisanych razem z kodem i przechodzą dokładnie tę samą ścieżkę co produkcja.
+            Ustawienie w konfiguracji określa wyłącznie, czy program może wywołać model;
+            nie zmienia metody grupowania. Testy i tryb pracy bez dostępu do sieci korzystają
+            z wyników zapisanych razem z kodem. Przetwarzają je tak samo jak system produkcyjny.
           </p>
           <div class="hood">
             <span class="ht">Od strony technicznej</span>
@@ -1124,7 +1160,7 @@
           <h3>Dopasowanie między językami</h3>
           <p>
             Doniesienia po francusku, angielsku i polsku mogą trafić do jednej grupy
-            bez uprzedniego tłumaczenia.
+            bez wcześniejszego tłumaczenia.
           </p>
         </div>
 
@@ -1162,7 +1198,7 @@
           <span class="tag">powszechne</span>
           <h3>Klasyfikacja bez trenowania</h3>
           <p>
-            Każdą kategorię opisuje jedno zdanie, a tekst trafia do tej, która leży najbliżej. Dodanie
+            Każdą kategorię opisuje jedno zdanie, a tekst trafia do tej, której opis leży najbliżej. Dodanie
             kategorii wymaga kolejnego zdania, a nie ponownego zbierania danych i trenowania klasyfikatora.
           </p>
         </div>
@@ -1172,7 +1208,8 @@
           <h3>Rekomendacje i „podobne do tego”</h3>
           <p>
             System znajduje najbliższych sąsiadów w przestrzeni i na tej podstawie podpowiada podobne
-            artykuły, produkty, oferty pracy czy zgłoszenia bez ręcznie utrzymywanej taksonomii.
+            artykuły, produkty, oferty pracy czy zgłoszenia. Nie wymaga to ręcznego utrzymywania
+            taksonomii, czyli uporządkowanego systemu kategorii.
           </p>
         </div>
 

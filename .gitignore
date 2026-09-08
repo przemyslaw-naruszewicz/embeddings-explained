@@ -1,0 +1,4 @@
+# Źródła obrazka podglądu są generowane przez render/build-og.mjs przy każdym
+# uruchomieniu ./render.sh og — wersjonowany jest wynik (og-*-v1.png), nie wejście.
+og/og-pl.html
+og/og-en.html

@@ -1,0 +1,41 @@
+/* ============================================================
+   Obrazek podglądu (Open Graph / LinkedIn), 1200 x 630 px.
+   Nadbudowa nad assets/board-gdynia.css: stamtąd pochodzą zmienne
+   koloru, paski mapy cieplnej (.heatrow, .cells, .scalebar) oraz
+   dekoracje granatowego panelu (.blob1, .blob2, .grain).
+   Ten plik ustala wyłącznie kadr 1200 x 630 i wielkości typografii,
+   bo obrazek jest oglądany jako mały kafelek w strumieniu LinkedIna.
+   Renderowanie: ./render.sh og
+   ============================================================ */
+html,body{margin:0;background:var(--surface)}
+
+.og{
+  width:1200px;height:630px;overflow:hidden;
+  background:var(--surface);color:var(--on-surface);
+  font-family:var(--body);font-size:16.5px;line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+  display:flex;flex-direction:column;
+}
+
+/* ---------- granatowy panel z tytułem ---------- */
+.ogtop{position:relative;overflow:hidden;background:var(--primary);color:var(--surface);
+  padding:34px 56px 30px}
+.ogtopIn{position:relative;z-index:2}
+.ogtop .eyebrow{font-size:13px;letter-spacing:.28em}
+.ogtop h1{margin:12px 0 0;font-family:var(--head);font-weight:800;letter-spacing:-.03em;
+  line-height:1.04;font-size:54px;text-transform:uppercase}
+.ogtop h1 .brasstx{color:var(--brass)}
+/* pełna szerokość zamiast miary z planszy: podpis ma zmieścić się w jednej linii */
+.ogtop .sub{margin-top:14px;font-size:19px;max-width:100%}
+
+/* ---------- paski mapy cieplnej ---------- */
+.ogheat{flex:1;padding:22px 56px 24px;display:flex;flex-direction:column;justify-content:center}
+.ogheat .heatrow{margin-top:0}
+.ogheat .heatrow + .heatrow{margin-top:12px}
+.ogheat .heatrow .hh{margin-bottom:5px}
+.ogheat .heatrow .nm{font-size:15px}
+.ogheat .heatrow .sim{font-size:13.5px}
+.ogheat .cells{height:30px}
+.ogheat .scalebar{margin-top:16px;font-size:12.5px}
+.ogheat .scalebar .grad{flex:0 0 120px}
+.ogheat .scalebar .note{flex:1;color:var(--secondary)}
