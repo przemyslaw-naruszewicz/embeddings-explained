@@ -67,7 +67,7 @@
   html[lang="pl"] h1.hl{line-height:1.13}
   html[lang="pl"] h2.title{line-height:1.15}
   html[lang="pl"] .strip h3,html[lang="pl"] .card h3,html[lang="pl"] .tcard h3,
-  html[lang="pl"] .ucard h3{line-height:1.18}
+  html[lang="pl"] .ucard h3,html[lang="pl"] .coscard h3{line-height:1.18}
 
   /* ---------- sections ---------- */
   section{padding:clamp(34px,4.4vw,58px) 0}
@@ -78,7 +78,7 @@
   .lead b{font-weight:600;color:var(--on-surface)}
 
   /* A warm hairline keeps white content blocks distinct from the cream page. */
-  .strip:not(.hot),.card:not(.dark),.tcard,.pcard,.mini,.flowcard,.ucard{
+  .strip:not(.hot),.card:not(.dark),.tcard,.pcard,.coscard,.mini,.flowcard,.ucard{
     box-shadow:inset 0 0 0 1px rgba(103,93,77,.14)
   }
 
@@ -211,9 +211,11 @@
   .hood code{font-family:var(--mono);font-size:12.5px;font-weight:550;color:var(--primary);
     background:rgba(2,26,53,.07);border-radius:.25rem;padding:.08em .32em;overflow-wrap:anywhere;
     box-decoration-break:clone;-webkit-box-decoration-break:clone}
-  .strip .hood,.card>.hood{max-width:88ch}
-  .pcards>.hood{max-width:none}
-  .pcards>.hood>p{max-width:86ch}
+  /* The box spans the full width of its card, like the heading and the input/output
+     band around it; the reading measure is capped on the text inside instead, so the
+     shaded band never stops short of the card edge. */
+  .hood{max-width:none}
+  .hood>p{max-width:86ch}
   /* the same box on a navy surface (hero, highlighted strip, navy card) inverts */
   .heroCard .hood,.strip.hot .hood,.card.dark .hood{background:rgba(251,249,242,.09);color:var(--primary-fixed-dim)}
   .heroCard .hood .ht,.strip.hot .hood .ht,.card.dark .hood .ht{color:var(--brass)}
@@ -273,13 +275,20 @@
     color:var(--secondary);text-align:center}
   .cosangleback{margin-top:9px;font-size:11.5px;line-height:1.5;color:var(--secondary)}
   .cosangleback code{font-size:10.5px;font-weight:600;color:var(--primary);background:none;padding:0}
-  .cosnote{margin-top:12px;font-size:12.5px;line-height:1.5}
 
   /* ---------- primer: three facts + one diagram ---------- */
   .primer{display:grid;grid-template-columns:1.55fr 1fr;gap:14px 20px;align-items:start}
   .pcards{display:contents}
   .pcards>.pcard{grid-column:1}
-  .pcards>.hood{grid-column:1 / -1}
+  /* The cosine worked example is not an aside: everything downstream reads the 0.80 it
+     produces, so it stands in the narrative as its own card, and only the model-specific
+     tail stays in a technical box inside it. */
+  .pcards>.coscard{grid-column:1 / -1}
+  .coscard{background:var(--sc-lowest);border-radius:var(--r-xl);padding:22px 26px}
+  .coscard h3{font-size:17px;color:var(--primary);text-transform:uppercase;letter-spacing:-.02em}
+  .coscard>p{margin-top:10px;color:var(--on-surface-variant);font-size:15.5px;font-weight:400;
+    line-height:1.62;max-width:86ch}
+  .coscard>p b{color:var(--primary);font-weight:600}
   .pcard{background:var(--sc-lowest);border-radius:var(--r-xl);padding:22px 26px;
     display:grid;grid-template-columns:44px 1fr;gap:0 22px;align-items:start}
   .pcard .n{font-family:var(--head);font-weight:800;font-size:14px;color:var(--on-brass);
@@ -376,12 +385,49 @@
     .strip{grid-template-columns:1fr;gap:14px}
     .primer{grid-template-columns:1fr}
     .mini{grid-column:1;grid-row:4}
-    .pcards>.hood{grid-column:1;grid-row:5}
+    .pcards>.coscard{grid-column:1;grid-row:5}
     .pcard{grid-template-columns:1fr;gap:12px}
   }
 
   @media(max-width:640px){
     .cosviz{grid-template-columns:1fr}
+  }
+
+  /* ============================================================
+     Third pass (2026-09-09, ADR 0013): a story now outlives the
+     daily run. It has a row with a centre (centroid) in a pgvector
+     column, and a new article is matched against the nearest
+     centres instead of against every other article in the batch.
+     Classes below serve the "Stories" section: the nearest-centre
+     schematic, the four-step ribbon and the "who does what" tags.
+     Additive only. The running-average example reuses .cosviz.
+     ============================================================ */
+  .knn{margin-top:20px;display:grid;grid-template-columns:minmax(0,1.18fr) minmax(0,.82fr);gap:20px;
+    align-items:stretch}
+  .knnplot,.knnsteps{background:var(--sc-lowest);border-radius:var(--r-xl);padding:24px;
+    box-shadow:inset 0 0 0 1px rgba(103,93,77,.14)}
+  .knnplot{margin:0;display:flex;flex-direction:column;justify-content:center}
+  .knnplot svg{display:block;width:100%;height:auto}
+  .knnplot .match-diagram-mobile{display:none}
+  @media(max-width:600px){
+    .knnplot .match-diagram-wide{display:none}
+    .knnplot .match-diagram-mobile{display:block}
+  }
+  .knnplot figcaption{margin-top:14px;font-size:13px;line-height:1.5;color:var(--on-surface-variant)}
+  .knnplot figcaption b{color:var(--primary);font-weight:600}
+  .knnsteps ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:16px}
+  .knnsteps li{display:grid;grid-template-columns:44px 1fr;gap:0 16px;align-items:start}
+  .knnsteps .n{font-family:var(--head);font-weight:800;font-size:14px;color:var(--on-brass);
+    background:var(--brass);border-radius:var(--r-sm);padding:4px 0;text-align:center;width:44px}
+  .knnsteps h4{font-size:15px;color:var(--primary);text-transform:uppercase;letter-spacing:-.02em}
+  .knnsteps p{margin-top:6px;color:var(--on-surface-variant);font-size:14.5px;font-weight:400;line-height:1.55}
+  .knnsteps p b{color:var(--primary);font-weight:600}
+  /* who performs the step: the database (pgvector) or the program */
+  .who{display:inline-block;margin-top:7px;font-family:var(--mono);font-size:10.5px;letter-spacing:.02em;
+    color:var(--secondary);background:var(--sc-high);border-radius:var(--r-sm);padding:2px 8px}
+  .who.db{color:var(--on-brass);background:var(--brass)}
+  @media(max-width:900px){
+    .knn{grid-template-columns:1fr}
   }
 
   /* ---------- PL/EN switch ---------- */

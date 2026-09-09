@@ -179,8 +179,9 @@
           <p class="sub">
             The board follows one worked example: five newsrooms report the same event in their
             own words, each report becomes a vector, and the angle between those vectors decides
-            which reports belong to the same story. The similarity scores come from a run of the
-            model; the headlines are test fixtures.
+            which reports belong to the same story. That topic group keeps one identity from day to day,
+            in a PostgreSQL database with the pgvector extension. The similarity scores come from a
+            run of the model; the headlines are test fixtures.
           </p>
         </div>
 
@@ -200,7 +201,7 @@
             </li>
             <li>
               <div class="v">0.70</div>
-              <div class="k">similarity threshold</div>
+              <div class="k">threshold to join a group</div>
             </li>
             <li>
               <div class="v">0.9933</div>

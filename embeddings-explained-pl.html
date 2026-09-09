@@ -68,6 +68,11 @@
           odległości między punktami. Zamiast tego porównuje kierunki prowadzących do nich wektorów
           za pomocą cosinusa kąta. Wynik pozwala oszacować, czy teksty są ze sobą powiązane.
         </p>
+        <p class="sub">
+          Grupa tematyczna, do której należy artykuł, ma w bazie własny wiersz i trwa dłużej niż jeden dzień.
+          Nowe doniesienie nie jest porównywane z każdym innym artykułem, tylko ze środkami
+          istniejących grup. Wyszukuje je baza danych z rozszerzeniem <b>pgvector</b>.
+        </p>
       </div>
       <div class="kpis">
         <div class="kpi">
@@ -77,10 +82,10 @@
         </div>
         <div class="kpi">
           <div class="v">0,70</div>
-            <div class="k">próg podobieństwa</div>
-            <div class="d">Podobieństwo cosinusowe mieści się w przedziale od −1,00 do 1,00. Przy wyniku co najmniej
-              0,70 dwa teksty trafiają do jednej grupy; w pokazanej próbce ta sama historia osiąga wynik
-            0,9933, a inna 0,3872</div>
+            <div class="k">próg dopięcia do grupy</div>
+            <div class="d">Podobieństwo cosinusowe mieści się w przedziale od −1,00 do 1,00. Artykuł dopina się
+              do grupy, gdy jego podobieństwo do środka grupy wynosi co najmniej 0,70; w pokazanej próbce
+              ta sama grupa osiąga 0,9933, a inna 0,4010</div>
         </div>
         <div class="kpi">
           <div class="v">3</div>
@@ -128,9 +133,9 @@
               <h3>Bliskość wskazuje na pokrewieństwo</h3>
               <p>
                 Teksty o tym samym wydarzeniu często trafiają prawie w to samo miejsce, mimo że używają
-                innych słów. To „prawie” da się zmierzyć. Służy do tego miara oparta na kącie między
-                wektorami: 1,00 oznacza ten sam kierunek, 0,00 kierunki prostopadłe, a −1,00 kierunki
-                przeciwne. Dzięki temu nie trzeba ręcznie pisać reguł dotyczących
+                innych słów. To „prawie” da się zmierzyć: służy do tego <b>cosinus kąta</b> między
+                wektorami. Cały rachunek pokazuje karta „Jak liczy się ten wynik” pod spodem.
+                Dzięki temu nie trzeba ręcznie pisać reguł dotyczących
                 synonimów i szyku zdania.
               </p>
             </div>
@@ -148,14 +153,15 @@
             </div>
           </div>
 
-          <div class="hood">
-            <span class="ht">Od strony technicznej</span>
+          <div class="coscard">
+            <h3>Jak liczy się ten wynik</h3>
             <p>
-              Wektor to lista liczb. W tym przykładzie używamy dwóch współrzędnych, żeby łatwo
-              pokazać rysunek i rachunek. Wektory A i B dobraliśmy do przykładu; nie pochodzą z modelu.
-              Obie strzałki zaczynają się w punkcie [0; 0]. Pierwsza współrzędna mówi, jak daleko
-              przesunąć koniec strzałki w poziomie, a druga w pionie.
-              Nie trzeba mierzyć kąta kątomierzem. Jego cosinus można policzyć bezpośrednio ze
+              Miara z punktu 02 to <b>cosinus kąta</b> między wektorami, czyli to samo podobieństwo
+              cosinusowe, na którego skali leży próg 0,70. Wektor to lista liczb; tutaj bierzemy dwie
+              współrzędne zamiast 768, żeby cały rachunek zmieścił się na jednym rysunku. Wektory A i B
+              dobraliśmy do przykładu; nie pochodzą z modelu. Obie strzałki zaczynają się w punkcie
+              [0; 0]: pierwsza współrzędna mówi, jak daleko przesunąć koniec strzałki w poziomie,
+              a druga w pionie. Samego kąta nie trzeba znać — jego cosinus liczy się wprost ze
               współrzędnych obu strzałek.
             </p>
 
@@ -253,9 +259,7 @@
                 </div>
                 <div class="cosanswer">
                   <strong>0,80</strong>
-                  <span>Wynik przekracza przyjęty próg 0,70. Gdyby były to wektory dwóch tekstów,
-                    system połączyłby je w jedną grupę. Wynik 0,80 nie oznacza 80% pewności,
-                    że teksty opisują to samo wydarzenie.</span>
+                  <span>Wynik 0,80 opisuje podobieństwo kierunków. Nie oznacza 80% pewności, że teksty opisują to samo wydarzenie. W sekcji „Grupy tematyczne” ta miara posłuży do dopasowania artykułu do grupy.</span>
                 </div>
                 <div class="coslegend"><span>−1 · przeciwne</span><span>0 · prostopadłe</span><span>1 · ten sam kierunek</span></div>
                 <p class="cosangleback">Na rysunku widać kąt około 37°, ponieważ
@@ -264,14 +268,17 @@
               </div>
             </div>
 
-            <p class="cosnote">
-              W używanym tu modelu wektor ma 768 współrzędnych. Aby obliczyć iloczyn skalarny,
-              program mnoży 768 par liczb i dodaje wyniki. Ollama przez <code>/api/embed</code>
-              zwraca wektory znormalizowane do długości 1 (normalizacja L2), z możliwymi drobnymi
-              odchyleniami wynikającymi z precyzji obliczeń. Dla wektorów o długości 1 mianownik
-              wynosi 1, więc cosinus jest równy iloczynowi skalarnemu. Pełny wzór działa również
-              dla wektorów o innych, niezerowych długościach.
-            </p>
+            <div class="hood">
+              <span class="ht">Od strony technicznej</span>
+              <p>
+                W używanym tu modelu wektor ma 768 współrzędnych. Aby obliczyć iloczyn skalarny,
+                program mnoży 768 par liczb i dodaje wyniki. Ollama przez <code>/api/embed</code>
+                zwraca wektory znormalizowane do długości 1 (normalizacja L2), z możliwymi drobnymi
+                odchyleniami wynikającymi z precyzji obliczeń. Dla wektorów o długości 1 mianownik
+                wynosi 1, więc cosinus jest równy iloczynowi skalarnemu. Pełny wzór działa również
+                dla wektorów o innych, niezerowych długościach.
+              </p>
+            </div>
           </div>
 
         </div>
@@ -292,7 +299,7 @@
             <circle cx="280" cy="104" r="44" fill="#e9c176" fill-opacity="0.16"
                     stroke="#e9c176" stroke-width="1.5" stroke-dasharray="4 4"></circle>
             <text x="280" y="46" text-anchor="middle" font-family="Work Sans, sans-serif" font-size="11.5"
-                  font-weight="500" fill="#b4914b">jeden klaster</text>
+                  font-weight="500" fill="#b4914b">jedna grupa</text>
 
             <rect x="4" y="30" width="150" height="34" rx="8" fill="#ffffff" stroke="#c4c6ce"></rect>
             <text x="18" y="51" font-family="Work Sans, sans-serif" font-size="12" fill="#021a35">Macron rezygnuje</text>
@@ -548,9 +555,9 @@
           </p>
           <div class="hood">
             <span class="ht">Od strony technicznej</span>
-            <code>POST /api/embed</code>, wejście w paczkach po 3, <code>keep_alive: 0</code>
+            <p><code>POST /api/embed</code>, wejście w paczkach po 3, <code>keep_alive: 0</code>
             przy ostatniej paczce (zwolnienie pamięci). Adres i nazwa modelu pochodzą z konfiguracji
-            (<code>OLLAMA_EMBED_MODEL</code>).
+            (<code>OLLAMA_EMBED_MODEL</code>).</p>
           </div>
         </div>
       </div>
@@ -576,7 +583,7 @@
            that the outer strokes of the first and last card are not clipped. -->
       <div class="flowcard">
         <svg viewBox="-1 0 1123 210" role="img"
-             aria-label="Sześć kroków: odbiór z deduplikacją po skrócie treści, filtr słów kluczowych, złożenie tekstu dla modelu, utworzenie lub odczytanie embeddingu z pamięci podręcznej, grupowanie po podobieństwie, analiza klastra. Embedding powstaje w kroku czwartym i jest używany w piątym.">
+             aria-label="Sześć kroków: odbiór z deduplikacją po skrócie treści, filtr słów kluczowych, złożenie tekstu dla modelu, utworzenie lub odczytanie embeddingu z pamięci podręcznej, dopasowanie do najbliższej grupy w bazie, analiza grupy. Embedding powstaje w kroku czwartym i jest używany w piątym.">
           <defs>
             <marker id="fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
               <path d="M0 0 L10 5 L0 10 z" fill="#675d4d"></path>
@@ -614,9 +621,9 @@
 
           <rect x="772" y="54" width="156" height="96" rx="14" fill="#021a35"></rect>
           <text x="787" y="76" font-family="Work Sans, sans-serif" font-size="10" letter-spacing="1.6" fill="#e9c176">05</text>
-          <text x="787" y="99" font-family="Manrope, sans-serif" font-size="14.5" font-weight="700" fill="#ffffff">Grupowanie</text>
-          <text x="787" y="120" font-family="Work Sans, sans-serif" font-size="11.5" fill="#b3c8eb">podobne wektory</text>
-          <text x="787" y="135" font-family="Work Sans, sans-serif" font-size="11.5" fill="#b3c8eb">= jedna historia</text>
+          <text x="787" y="99" font-family="Manrope, sans-serif" font-size="14.5" font-weight="700" fill="#ffffff">Dopasowanie</text>
+          <text x="787" y="120" font-family="Work Sans, sans-serif" font-size="11.5" fill="#b3c8eb">najbliższy środek grupy,</text>
+          <text x="787" y="135" font-family="Work Sans, sans-serif" font-size="11.5" fill="#b3c8eb">wyszukany w bazie</text>
 
           <rect x="965" y="54" width="156" height="96" rx="14" fill="#ffffff" stroke="#c4c6ce"></rect>
           <text x="980" y="76" font-family="Work Sans, sans-serif" font-size="10" letter-spacing="1.6" fill="#b4914b">06</text>
@@ -640,8 +647,9 @@
         <p class="flowcap">
           Kroki od 01 do 03 nie analizują znaczenia: pierwszy porównuje znaki, drugi szuka słów
           z listy, a trzeci składa tekst dla modelu. Analiza znaczenia zaczyna się w kroku 04.
-          Jej wynik zostaje zapisany jako wiersz liczb i wykorzystany w kroku 05. Krok 06 otrzymuje
-          gotową grupę artykułów, nie wektor.
+          Jej wynik zostaje zapisany jako wiersz liczb i wykorzystany w kroku 05, gdzie baza
+          danych wskazuje grupę o najbliższym środku. Krok 06 otrzymuje grupę z nowymi
+          artykułami, nie wektor.
         </p>
       </div>
 
@@ -670,7 +678,8 @@
           <p>
             Każde z tych pytań wymaga innego narzędzia. Najpierw program porównuje skróty treści.
             To szybka operacja, która nie wymaga modelu. Dopiero teksty, które przeszły ten etap,
-            są porównywane pod względem znaczenia, co wymaga uruchomienia modelu.
+            dostają wektor i są porównywane ze środkami grup, które baza już zna. Grupa
+            założona w poniedziałek przyjmuje wtorkowe doniesienie pod tą samą tożsamością.
           </p>
         </div>
       </div>
@@ -689,10 +698,10 @@
             </p>
             <div class="hood">
               <span class="ht">Od strony technicznej</span>
-              <code>WorldEvent</code> · o tożsamości wydarzenia rozstrzyga identyfikator obliczany
+              <p><code>WorldEvent</code> · o tożsamości wydarzenia rozstrzyga identyfikator obliczany
               z nagłówka i treści za pomocą szybkiej, niekryptograficznej funkcji skrótu
               (<code>xxh128(title + content)</code>). To klucz <b>deduplikacji</b>, celowo inny niż ten,
-              którym posługuje się pamięć podręczna embeddingów.
+              którym posługuje się pamięć podręczna embeddingów.</p>
             </div>
             <div class="io"><span class="pill"><b>wejście</b> · materiały z RSS</span><span class="pill"><b>wyjście</b> · utrwalone wydarzenia</span></div>
           </div>
@@ -719,11 +728,11 @@
             </p>
             <div class="hood">
               <span class="ht">Od strony technicznej</span>
-              <code>WorldEventFilter → WorldEventFilterSpec</code>: bramka oparta na wyrażeniach
+              <p><code>WorldEventFilter → WorldEventFilterSpec</code>: bramka oparta na wyrażeniach
               regularnych, działająca wyłącznie na CPU. Przy pustej konfiguracji nie przepuszcza
               żadnego tekstu, zamiast domyślnie przepuszczać wszystkie. Podpowiadanie słów to osobna ścieżka, wywoływana z ekranu
               konfiguracji: <code>KeywordSuggesterInterface::suggest(opis, języki)</code>, adapter
-              <code>AnthropicKeywordSuggester</code> z pamięcią podręczną i limitem liczby zapytań.
+              <code>AnthropicKeywordSuggester</code> z pamięcią podręczną i limitem liczby zapytań.</p>
             </div>
             <div class="io"><span class="pill"><b>wejście</b> · migawka wydarzenia</span><span class="pill"><b>wyjście</b> · array: obiekty WorldEventDescriptor</span></div>
           </div>
@@ -739,8 +748,8 @@
             </p>
             <div class="hood">
               <span class="ht">Od strony technicznej</span>
-              <code>FilteredWorldEvent::getTextForClustering()</code> →
-              <code>title . ' ' . content</code>.
+              <p><code>FilteredWorldEvent::getTextForClustering()</code> →
+              <code>title . ' ' . content</code>.</p>
             </div>
             <div class="io"><span class="pill"><b>wyjście</b> · array: teksty</span></div>
           </div>
@@ -758,9 +767,9 @@
             <div class="io"><span class="pill"><b>wejście</b> · array: teksty</span><span class="pill"><b>wyjście</b> · array: wektory po 768 floatów</span></div>
             <div class="hood">
               <span class="ht">Od strony technicznej</span>
-              W PHP wynik ma typ <code>array</code>: zawiera wektory, a każdy z nich jest tablicą
+              <p>W PHP wynik ma typ <code>array</code>: zawiera wektory, a każdy z nich jest tablicą
               768 liczb typu <code>float</code>. PHPDoc zapisuje ten kształt dokładniej jako
-              <code>list&lt;list&lt;float&gt;&gt;</code>.
+              <code>list&lt;list&lt;float&gt;&gt;</code>.</p>
             </div>
           </div>
         </article>
@@ -768,25 +777,13 @@
         <article class="strip">
           <div class="num">05</div>
           <div>
-            <h3>Grupuj według podobieństwa</h3>
-            <p class="txt">
-              Program oblicza podobieństwo osobno dla każdej pary artykułów w dziennej porcji.
-              Jeśli wynik pary wynosi co najmniej 0,70, oba artykuły trafiają do tej samej grupy.
-              Grupy łączą się przez wspólny artykuł: gdy pary A z B oraz B z C osiągają próg,
-              A, B i C tworzą jedną grupę, nawet jeśli para A z C go nie osiąga. Dzienna porcja obejmuje
-              tylko kilkadziesiąt artykułów, dlatego można obliczyć wynik każdej pary bez przybliżeń.
-            </p>
+            <h3>Dopnij do grupy albo załóż nową</h3>
+            <p class="txt">Program szuka grupy najbardziej podobnej do nowego artykułu. Jeśli podobieństwo wynosi co najmniej 0,70, dopina artykuł do tej grupy; w przeciwnym razie zakłada nową. Sekcja „Grupy tematyczne” pokazuje, jak baza wyszukuje dopasowanie i jak zmienia się środek grupy.</p>
             <div class="hood">
               <span class="ht">Od strony technicznej</span>
-              <code>SimilarityGrouping</code>: podobieństwo liczone jest osobno dla każdej pary,
-              więc przy pięćdziesięciu artykułach potrzeba niecałych 1250 porównań po 768 liczb, czyli
-              ułamek sekundy. Pary z wynikiem co najmniej 0,70 scala struktura zwana <b>union-find</b>: każdy
-              artykuł zaczyna jako osobna grupa, a scalenie pary łączy grupy, do których należą
-              tworzące ją artykuły. Dlatego połączenie A z B oraz B z C tworzy jedną grupę ABC,
-              nawet jeśli para A z C nie osiąga progu. Algorytm niczego nie szacuje ani nie
-              próbkuje; podział wynika wprost z progu.
+              <p>Opis dotyczy dopasowania do trwałych grup tematycznych, czyli klastrów zapisanych w bazie. Obserwacja procesów wieloetapowych (<code>ProcessStepper</code>) tworzy osobne klastry w obrębie porcji: porównuje każdą parę i scala powiązane klastry, więc połączenia A z B oraz B z C dają klaster ABC.</p>
             </div>
-            <div class="io"><span class="pill"><b>wejście</b> · array: wektory po 768 floatów</span><span class="pill"><b>wyjście</b> · indeks → grupa</span></div>
+            <div class="io"><span class="pill"><b>wejście</b> · array: wektory po 768 floatów</span><span class="pill"><b>wyjście</b> · wydarzenie → identyfikator grupy</span></div>
           </div>
         </article>
 
@@ -802,10 +799,12 @@
             </p>
             <div class="hood">
               <span class="ht">Od strony technicznej</span>
-              <code>WorldEventCluster</code>: komponent grupujący ma dwóch odbiorców:
-              <code>SignalGenerationKernel</code> (wydarzenia → sygnały) i <code>ProcessStepper</code>,
-              który sortuje klastry według wielkości i zatrzymuje się na pierwszym, który przejdzie bramkę
-              etapu.
+              <p><code>WorldEventCluster</code>: do analizy idą wyłącznie grupy, którym w tym przebiegu
+              przybył artykuł. <code>SignalGenerationKernel</code> (wydarzenia → sygnały) dostaje
+              wydarzenia z już nadanym identyfikatorem grupy i tylko grupuje po nim
+              (<code>AssignedClusterGrouping</code>). <code>ProcessStepper</code> grupuje w obrębie
+              porcji, sortuje klastry według wielkości i zatrzymuje się na pierwszym, który przejdzie
+              bramkę etapu.</p>
             </div>
             <div class="io"><span class="pill"><b>wyjście</b> · Signal</span><span class="pill"><b>wyjście</b> · obserwacja etapu</span></div>
           </div>
@@ -927,14 +926,289 @@
           </div>
           <div class="hood">
             <span class="ht">Od strony technicznej</span>
-            Tabela <code>embedding_cache</code>, klucz złożony
+            <p>Tabela <code>embedding_cache</code>, klucz złożony
             <code>(sha256(trim(text)), model_id)</code>, wektor jako <code>jsonb</code>, bez TTL.
             Przy zapisie używane jest <code>ON CONFLICT DO NOTHING</code>, więc równoległe procesy robocze
             nie wchodzą w konflikt. Nazwa modelu jest częścią klucza: po jej zmianie program nie
             odczytuje już wcześniejszych wierszy dla tego samego tekstu. Wektor jest liczony od nowa.
             Wektory poprzedniego modelu zostają w tabeli, ale nie są już odczytywane, więc poprawność nie zależy od
             tego, czy ktoś pamięta o wyczyszczeniu pamięci podręcznej. Ustawienie: <code>OLLAMA_ENABLED</code>.
-            Inicjalizacja pamięci podręcznej: <code>bin/console app:embed:warm --days=1</code>.
+            Inicjalizacja pamięci podręcznej: <code>bin/console app:embed:warm --days=1</code>.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STORIES: PERSISTENT CLUSTERS ON PGVECTOR (ADR 0013) ============ -->
+  <section>
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="label">Grupy tematyczne</p>
+        <h2 class="title">Jak artykuł trafia do grupy tematycznej</h2>
+          <p class="lead">
+          Grupa tematyczna to zbiór artykułów, które system uznał za doniesienia o tym samym wydarzeniu. Gdy przychodzi kolejny tekst, program musi zdecydować: dołączyć go do znanej grupy czy założyć osobną? W tym celu korzysta z embeddingów, czyli liczbowych zapisów tekstów.
+        </p>
+      </div>
+
+      <div class="specimen">
+
+        <div class="card">
+          <h3>Czym jest „środek grupy”</h3>
+          <p class="note">Każdy artykuł ma wektor złożony z 768 liczb. Żeby uzyskać jeden wektor dla całej grupy, program liczy średnią osobno na każdej pozycji: z pierwszych liczb wszystkich artykułów, potem z drugich i tak dalej. Wynikiem jest kolejna lista 768 liczb. To właśnie środek grupy.</p>
+          <p class="note">Środek służy jako wspólny punkt odniesienia dla grupy. Program porównuje z nim wektor nowego tekstu. Przy jednym artykule środek jest równy jego wektorowi; przy dwóch jest ich średnią.</p>
+        </div>
+
+        <div class="card">
+          <h3>W czym pomaga pgvector</h3>
+          <p class="note">Model zamienia tekst na liczby. pgvector, rozszerzenie bazy PostgreSQL, pozwala zapisać te liczby i porównywać wektory bezpośrednio w bazie. Tutaj baza porównuje wektor nowego artykułu ze środkami zapisanych grup i zwraca najlepsze dopasowania.</p>
+          <p class="note">Program sprawdza następnie, czy najlepsze dopasowanie jest wystarczająco podobne. Samo znalezienie najbardziej podobnej grupy nie wystarcza, żeby przypisać do niej artykuł.</p>
+        </div>
+
+        <div class="card wide">
+          <h3>Czy wiadomość o wyborach pasuje do grupy o rezygnacji?</h3>
+          <p class="note">W tym fikcyjnym przykładzie system połączył już dwa nagłówki o rezygnacji Macrona w grupę A. Na rysunku oznaczamy je A1 i A2. Przychodzi nagłówek B1 o przedterminowych wyborach we Francji. Dotyczy tego samego kraju, ale innego wydarzenia. Wynik porównania wektorów zdecyduje, czy B1 trafi do grupy A.</p>
+          <div class="knn">
+            <figure class="knnplot">
+              <svg class="match-diagram-wide" viewBox="0 0 560 440" role="img" aria-label="Dwa artykuły o rezygnacji Macrona tworzą grupę A. Baza porównuje średnią ich wektorów z wektorem nowego nagłówka B1 o wyborach. Podobieństwo wynosi 0,4010, mniej niż próg 0,70, więc program zakłada dla B1 osobną grupę B.">
+                <defs><marker id="knn-arrow-pl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#675d4d"></path></marker></defs>
+                <rect x="10" y="10" width="255" height="180" rx="14" fill="#f6edda" stroke="#b4914b"></rect>
+                <rect x="295" y="10" width="255" height="180" rx="14" fill="#f6f4ec" stroke="#675d4d"></rect>
+                <g font-family="Work Sans, sans-serif" text-anchor="middle" fill="#021a35">
+                  <text x="137" y="35" font-size="11" font-weight="600">GRUPA A · ZAPISANA W BAZIE</text>
+                  <text x="137" y="66" font-size="17" font-weight="600">Rezygnacja Macrona</text>
+                  <text x="137" y="90" font-size="14">A1 + A2 · dwa artykuły</text>
+                  <text x="137" y="138" font-size="14">Średnia ich wektorów</text>
+                  <text x="137" y="160" font-size="14" font-weight="600">= środek grupy A</text>
+                  <text x="422" y="35" font-size="11" font-weight="600">NOWY ARTYKUŁ · B1</text>
+                  <text x="422" y="66" font-size="17" font-weight="600">Przedterminowe wybory</text>
+                  <text x="422" y="90" font-size="17">we Francji</text>
+                  <text x="422" y="149" font-size="14">Wektor nowego tekstu</text>
+                </g>
+                <g fill="none" stroke="#675d4d" stroke-width="1.5" marker-end="url(#knn-arrow-pl)">
+                  <path d="M137 190 L137 209 L255 209 L255 232"></path>
+                  <path d="M422 190 L422 209 L305 209 L305 232"></path>
+                  <path d="M280 320 L280 345"></path>
+                </g>
+                <rect x="90" y="234" width="380" height="86" rx="12" fill="#f6f4ec" stroke="#675d4d"></rect>
+                <rect x="55" y="349" width="450" height="80" rx="12" fill="#021a35"></rect>
+                <g font-family="Work Sans, sans-serif" text-anchor="middle">
+                  <text x="280" y="255" font-size="13" fill="#675d4d">Porównanie dwóch wektorów</text>
+                  <text x="280" y="282" font-size="21" font-weight="600" fill="#021a35">podobieństwo 0,4010</text>
+                  <text x="280" y="304" font-size="14" fill="#675d4d">mniej niż wymagane 0,70</text>
+                  <text x="280" y="370" font-size="10" fill="#e9c176">DECYZJA PROGRAMU</text>
+                  <text x="280" y="394" font-size="17" font-weight="600" fill="#fbf9f2">B1 rozpoczyna osobną grupę B</text>
+                  <text x="280" y="416" font-size="13" fill="#fbf9f2">Grupa A nadal zawiera A1 i A2</text>
+                </g>
+              </svg>
+<svg class="match-diagram-mobile" viewBox="0 0 300 600" role="img" aria-label="Dwa artykuły o rezygnacji Macrona tworzą grupę A. Baza porównuje średnią ich wektorów z wektorem nowego nagłówka B1 o wyborach. Podobieństwo wynosi 0,4010, mniej niż próg 0,70, więc program zakłada dla B1 osobną grupę B.">
+                <defs><marker id="knn-arrow-mobile-pl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#675d4d"></path></marker></defs>
+                <rect x="10" y="10" width="280" height="170" rx="14" fill="#f6edda" stroke="#b4914b"></rect>
+                <rect x="10" y="200" width="280" height="145" rx="14" fill="#f6f4ec" stroke="#675d4d"></rect>
+                <g font-family="Work Sans, sans-serif" text-anchor="middle" fill="#021a35">
+                  <text x="150" y="35" font-size="11" font-weight="600">GRUPA A · ZAPISANA W BAZIE</text>
+                  <text x="150" y="66" font-size="17" font-weight="600">Rezygnacja Macrona</text>
+                  <text x="150" y="90" font-size="14">A1 + A2 · dwa artykuły</text>
+                  <text x="150" y="138" font-size="14">Średnia ich wektorów</text>
+                  <text x="150" y="160" font-size="14" font-weight="600">= środek grupy A</text>
+                  <text x="150" y="225" font-size="11" font-weight="600">NOWY ARTYKUŁ · B1</text>
+                  <text x="150" y="255" font-size="17" font-weight="600">Przedterminowe wybory</text>
+                  <text x="150" y="280" font-size="17">we Francji</text>
+                  <text x="150" y="320" font-size="14">Wektor nowego tekstu</text>
+                </g>
+                <g fill="none" stroke="#675d4d" stroke-width="1.5" marker-end="url(#knn-arrow-mobile-pl)">
+                  <path d="M50 180 L5 180 L5 365 L125 365 L125 378"></path>
+                  <path d="M200 345 L200 378"></path>
+                  <path d="M150 465 L150 498"></path>
+                </g>
+                <rect x="10" y="380" width="280" height="85" rx="12" fill="#f6f4ec" stroke="#675d4d"></rect>
+                <rect x="10" y="500" width="280" height="90" rx="12" fill="#021a35"></rect>
+                <g font-family="Work Sans, sans-serif" text-anchor="middle">
+                  <text x="150" y="400" font-size="13" fill="#675d4d">Porównanie dwóch wektorów</text>
+                  <text x="150" y="426" font-size="21" font-weight="600" fill="#021a35">podobieństwo 0,4010</text>
+                  <text x="150" y="448" font-size="14" fill="#675d4d">mniej niż wymagane 0,70</text>
+                  <text x="150" y="520" font-size="10" fill="#e9c176">DECYZJA PROGRAMU</text>
+                  <text x="150" y="544" font-size="14" font-weight="600" fill="#fbf9f2">B1 rozpoczyna osobną grupę B</text>
+                  <text x="150" y="570" font-size="13" fill="#fbf9f2">Grupa A nadal zawiera A1 i A2</text>
+                </g>
+              </svg>
+              <figcaption>Strzałki pokazują kolejność działań. Położenie ramek nie oznacza odległości między wektorami. Wynik 0,4010 pochodzi z obliczeń na wektorach testowych, tych samych co w sekcji „Próbka”.</figcaption>
+            </figure>
+            <div class="knnsteps">
+              <ol>
+                <li><span class="n">1</span><div><h4>Zamień nowy tekst na liczby</h4><p>Program pobiera wektor nagłówka B1 z pamięci podręcznej. Jeśli nie ma zapisanego wyniku, zleca obliczenie modelowi.</p><span class="who">program</span></div></li>
+                <li><span class="n">2</span><div><h4>Porównaj go ze znanymi grupami</h4><p>Baza porównuje wektor B1 ze środkami grup, które bierze pod uwagę. W tym przykładzie pozostała jedna taka grupa: A, o rezygnacji Macrona.</p><span class="who db">baza · pgvector</span></div></li>
+                <li><span class="n">3</span><div><h4>Sprawdź, czy wynik wystarcza</h4><p>Podobieństwo B1 do środka A wynosi <b>0,4010</b>. Skala biegnie od −1 do 1; wyższy wynik oznacza większe podobieństwo. Program wymaga co najmniej <b>0,70</b>, więc B1 nie dołącza do A.</p><span class="who">program</span></div></li>
+                <li><span class="n">4</span><div><h4>Zapisz artykuł w osobnej grupie</h4><p>Program zakłada grupę B dla wiadomości o wyborach. Ma ona na razie jeden artykuł, więc jej środkiem jest wektor B1. Artykuł otrzymuje identyfikator nowej grupy.</p><span class="who db">program + baza</span></div></li>
+              </ol>
+            </div>
+          </div>
+          <p class="note">Gdyby następna redakcja przysłała nagłówek B2 o tych wyborach, jego podobieństwo do grupy B wyniosłoby <b>0,9942</b>. Ten wynik przekracza próg 0,70, więc program dołączyłby B2 do B. Grupa miałaby dwa artykuły, a jej środek byłby średnią ich wektorów. Sposób obliczenia tej średniej pokazuje następny rysunek.</p>
+          <div class="hood">
+            <span class="ht">Od strony technicznej</span>
+            <p>W bazie ta grupa tematyczna nazywa się klastrem: baza przeszukuje tabelę <code>world_event_clusters</code>. Bierze pod uwagę tylko grupy tego klienta z doniesieniem z ostatnich 14 dni i wektorami z tego samego modelu. Liczy odległość do każdego pasującego środka, bez indeksu przybliżonego, i zwraca do pięciu najbliższych. Program sprawdza najlepszy wynik. Grupa Z z ostatnim doniesieniem sprzed 16 dni nie spełnia warunku, więc poniższe zapytanie zwraca tylko A.</p>
+            <p>Środki leżą w kolumnie <code>centroid</code> typu <code>vector(768)</code>. Operator <code>&lt;=&gt;</code> zwraca odległość cosinusową. Program przelicza ją na podobieństwo: <code>1 − odległość</code>. W tym przykładzie baza zwraca 0,5990, co daje <code>1 − 0,5990 = 0,4010</code>. Próg 0,70 jest zapisany w kodzie programu.</p>
+          <div class="rowbox">
+<span class="c">-- krok 2 dla nagłówka B1, bez rzutowań; wiersze cudzych klientów odcina polityka RLS</span><br>
+<span class="k">SELECT</span> <span class="v">id, centroid &lt;=&gt; :wektor</span> <span class="k">AS</span> <span class="v">distance</span><br>
+<span class="k">FROM</span>   <span class="v">world_event_clusters</span><br>
+<span class="k">WHERE</span>  <span class="v">embedding_model_id = :model</span> <span class="k">AND</span> <span class="v">last_seen_at &gt;= :dzisiaj_minus_14_dni</span><br>
+<span class="k">ORDER BY</span> <span class="v">centroid &lt;=&gt; :wektor</span><br>
+<span class="k">LIMIT</span>  <span class="v">5</span>;<br>
+<br>
+<span class="c">-- wynik: w oknie mieści się jedna grupa</span><br>
+<span class="s">id</span> <span class="v">grupa A</span> <span class="s">· distance</span> <span class="v">0.5990</span><br>
+<span class="c">→ podobieństwo 1 − 0,5990 = 0,4010, poniżej progu 0,70 → nowa grupa B</span><br>
+<span class="c">(grupa Z nie spełnia warunku na datę, więc nie ma jej w wyniku)</span>
+          </div>
+          <p class="codecap">
+            Odległość 0,5990 zwróciło zapytanie do działającej bazy z rozszerzeniem pgvector,
+            uruchomione na wektorach z danych testowych. Ta sama para liczona w PHP daje 0,5990.
+            Zgodność obu wyników sprawdza test integracyjny, bo gdyby baza i program liczyły cosinus
+            inaczej, próg 0,70 znaczyłby w każdym z nich co innego.
+          </p>
+          </div>
+        </div>
+
+        <div class="card wide">
+          <h3>Jak przesuwa się środek</h3>
+          <p class="note">
+            Po dopięciu artykułu środek przesuwa się w stronę jego wektora. Im więcej artykułów grupa już ma, tym mniejszy wpływ pojedynczego doniesienia. Do obliczenia nowego środka wystarczą poprzedni środek, liczba artykułów i nowy wektor.
+          </p>
+
+          <div class="hood">
+            <span class="ht">Od strony technicznej</span>
+            <p>
+              Przykład w dwóch współrzędnych, z tymi samymi wektorami co w sekcji „Elementarz”.
+              Grupa ma jeden artykuł, więc jej środkiem jest wektor A = [1; 0]. Przychodzi
+              artykuł B = [0,8; 0,6]. Podobieństwo B do środka policzyliśmy już wcześniej: 0,80.
+            </p>
+
+            <div class="cosviz">
+              <div class="cosplot">
+                <span class="coslabel">1 · Stary środek, nowy artykuł, nowy środek</span>
+                <svg viewBox="0 0 320 280" role="img"
+                     aria-label="Układ współrzędnych od 0 do 1. Stary środek A leży w punkcie 1 i 0, nowy artykuł B w punkcie 0,8 i 0,6, a nowy środek w punkcie 0,9 i 0,3, w połowie drogi między nimi.">
+                  <defs>
+                    <marker id="avg-a-pl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                      <path d="M0 0 L10 5 L0 10 z" fill="#021a35"></path>
+                    </marker>
+                    <marker id="avg-b-pl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                      <path d="M0 0 L10 5 L0 10 z" fill="#b4914b"></path>
+                    </marker>
+                    <marker id="avg-n-pl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                      <path d="M0 0 L10 5 L0 10 z" fill="#675d4d"></path>
+                    </marker>
+                  </defs>
+                  <g class="cosgrid">
+                    <line x1="95" y1="20" x2="95" y2="220"></line>
+                    <line x1="135" y1="20" x2="135" y2="220"></line>
+                    <line x1="175" y1="20" x2="175" y2="220"></line>
+                    <line x1="215" y1="20" x2="215" y2="220"></line>
+                    <line x1="255" y1="20" x2="255" y2="220"></line>
+                    <line x1="55" y1="180" x2="255" y2="180"></line>
+                    <line x1="55" y1="140" x2="255" y2="140"></line>
+                    <line x1="55" y1="100" x2="255" y2="100"></line>
+                    <line x1="55" y1="60" x2="255" y2="60"></line>
+                    <line x1="55" y1="20" x2="255" y2="20"></line>
+                  </g>
+                  <line class="cosaxis" x1="40" y1="220" x2="280" y2="220"></line>
+                  <line class="cosaxis" x1="55" y1="235" x2="55" y2="12"></line>
+                  <g class="costicks">
+                    <text x="55" y="239">0</text>
+                    <text x="95" y="239">0,2</text>
+                    <text x="135" y="239">0,4</text>
+                    <text x="175" y="239">0,6</text>
+                    <text x="215" y="239">0,8</text>
+                    <text x="255" y="239">1</text>
+                    <text x="44" y="184">0,2</text>
+                    <text x="44" y="144">0,4</text>
+                    <text x="44" y="104">0,6</text>
+                    <text x="44" y="64">0,8</text>
+                    <text x="44" y="24">1</text>
+                  </g>
+                  <text class="cosaxisname" x="168" y="270" text-anchor="middle">1. współrzędna · poziomo</text>
+                  <text class="cosaxisname" transform="translate(13 126) rotate(-90)" text-anchor="middle">2. współrzędna · pionowo</text>
+                  <line class="cosguide" x1="215" y1="100" x2="255" y2="220"></line>
+                  <line class="cosvector cosa" x1="55" y1="220" x2="255" y2="220" marker-end="url(#avg-a-pl)"></line>
+                  <line class="cosvector cosb" x1="55" y1="220" x2="215" y2="100" marker-end="url(#avg-b-pl)"></line>
+                  <line class="cosvector" stroke="#675d4d" x1="55" y1="220" x2="235" y2="160" marker-end="url(#avg-n-pl)"></line>
+                  <circle cx="55" cy="220" r="4" fill="#675d4d"></circle>
+                  <circle cx="235" cy="160" r="6" fill="#021a35" stroke="#e9c176" stroke-width="2.5"></circle>
+                  <text class="cosva" x="250" y="212" text-anchor="end">stary środek [1; 0]</text>
+                  <text class="cosvb" x="150" y="82">B = [0,8; 0,6]</text>
+                  <text x="243" y="156" font-family="Work Sans, sans-serif" font-size="10.5" font-weight="600" fill="#021a35">nowy środek</text>
+                  <text x="243" y="170" font-family="Work Sans, sans-serif" font-size="10.5" fill="#675d4d">[0,9; 0,3]</text>
+                </svg>
+                <p class="coshint">
+                  Nowy środek leży dokładnie w połowie drogi, bo przy jednym artykule obie wagi
+                  wynoszą ½. Przy dziesięciu artykułach nowy wektor przesunąłby środek tylko o jedną
+                  jedenastą drogi.
+                </p>
+              </div>
+
+              <div class="cosmath">
+                <span class="coslabel">2 · Policz nowy środek</span>
+                <div class="cosformula" aria-label="Nowy środek równa się n razy stary środek plus nowy wektor, podzielone przez n plus 1">
+                  <span>środek′</span><span>=</span>
+                  <span class="cosfrac"><span>n × środek + B</span><span>n + 1</span></span>
+                </div>
+                <div class="cossteps">
+                  <div class="cosstep">
+                    <span class="sn">1</span>
+                    <div>Sprawdź próg. Podobieństwo B do środka wynosi 0,80, czyli co najmniej 0,70,
+                      więc B dopina się do grupy.</div>
+                  </div>
+                  <div class="cosstep">
+                    <span class="sn">2</span>
+                    <div>Podstaw n = 1, bo grupa miała jeden artykuł:
+                      <code>(1 × [1; 0] + [0,8; 0,6]) ÷ 2 = [1,8; 0,6] ÷ 2 = [0,9; 0,3]</code>
+                    </div>
+                  </div>
+                  <div class="cosstep">
+                    <span class="sn">3</span>
+                    <div>Licznik rośnie do 2, a data ostatniego doniesienia przesuwa się na dziś.
+                      Długość nowego środka to √(0,81 + 0,09) ≈ 0,95, mniej niż 1. Cosinus tego nie
+                      wymaga, bo dzieli przez długości.</div>
+                  </div>
+                </div>
+                <div class="cosanswer">
+                  <strong>[0,9; 0,3]</strong>
+                  <span>Nowy środek jest średnią obu wektorów. Baza aktualizuje go razem z licznikiem artykułów w jednej instrukcji, więc równoczesne dopięcia nie nadpisują sobie wyniku.</span>
+                </div>
+                <p class="cosangleback">W tabeli grup wektory mają 768 współrzędnych i ta sama
+                  instrukcja <code>UPDATE</code> robi to samo dla wszystkich 768 naraz.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card wide dark">
+          <h3>Co to zmienia w praktyce</h3>
+          <div class="outcomes">
+            <div class="oc">
+              <h4>Ta sama grupa przez wiele dni</h4>
+              <span class="cond">jedna tożsamość</span>
+              <p>Wtorkowe doniesienie dopina się do grupy założonej w poniedziałek. Do analizy idzie
+                ta sama grupa, ze swoim dotychczasowym identyfikatorem, a nie zbiór utworzony od nowa.</p>
+            </div>
+            <div class="oc warn">
+              <h4>Drugi przebieg tego samego dnia</h4>
+              <span class="cond">bez nowych artykułów</span>
+              <p>Grupa, której nic nie przybyło, nie wraca do analizy.</p>
+            </div>
+            <div class="oc stop">
+              <h4>Grupa, która ucichła na 14 dni</h4>
+              <span class="cond">poza oknem</span>
+              <p>Wraca jako nowa grupa. To decyzja celowa: kryzys w marcu i w październiku dają
+                bliskie wektory, ale dla sygnału rynkowego są to dwie sytuacje z innymi cenami
+                wyjściowymi.</p>
+            </div>
+          </div>
+          <div class="hood">
+            <span class="ht">Od strony technicznej</span>
+            <p>Próg 0,70 wymaga jeszcze sprawdzenia dla dopasowania artykułu do środka grupy. Dwa równoczesne przebiegi jednego klienta mogą założyć tę samą grupę dwa razy i spowodować dodatkową analizę.</p>
           </div>
         </div>
 
@@ -973,7 +1247,7 @@
             <dt>model</dt>
             <dd>nomic-embed-text-v2-moe</dd>
             <dt class="row-alt">wynik</dt>
-            <dd class="row-alt">768 liczb · długość 1,00 · około 9,3 kB w bazie</dd>
+            <dd class="row-alt">768 liczb · długość 1,00 · 5745 bajtów w wierszu</dd>
           </dl>
         </div>
 
@@ -983,7 +1257,8 @@
           <p class="note">
             Tabela ma trzy kolumny: <code>VARCHAR(64)</code>, <code>VARCHAR(255)</code> i <code>JSONB</code>,
             a także złożony klucz główny. Innych indeksów nie potrzeba: wyszukiwanie odbywa się po dokładnym kluczu,
-            nigdy po podobieństwie.
+            nigdy po podobieństwie. Po podobieństwie przeszukiwana jest inna tabela, ze środkami grup;
+            opisuje ją sekcja „Grupy tematyczne”.
           </p>
           <div class="rowbox">
 <span class="c">-- SELECT * FROM embedding_cache LIMIT 1;</span><br>
@@ -1011,11 +1286,11 @@
               <div class="cells"><i style="background:rgba(233,193,118,0.51)"></i><i style="background:rgba(2,26,53,0.26)"></i><i style="background:rgba(233,193,118,0.42)"></i><i style="background:rgba(2,26,53,0.52)"></i><i style="background:rgba(2,26,53,0.49)"></i><i style="background:rgba(233,193,118,0.53)"></i><i style="background:rgba(2,26,53,0.64)"></i><i style="background:rgba(233,193,118,0.50)"></i><i style="background:rgba(233,193,118,0.57)"></i><i style="background:rgba(233,193,118,0.67)"></i><i style="background:rgba(233,193,118,0.53)"></i><i style="background:rgba(233,193,118,0.46)"></i><i style="background:rgba(2,26,53,0.60)"></i><i style="background:rgba(2,26,53,0.44)"></i><i style="background:rgba(233,193,118,0.28)"></i><i style="background:rgba(233,193,118,0.63)"></i><i style="background:rgba(2,26,53,0.20)"></i><i style="background:rgba(2,26,53,0.38)"></i><i style="background:rgba(233,193,118,0.43)"></i><i style="background:rgba(233,193,118,0.70)"></i><i style="background:rgba(2,26,53,0.42)"></i><i style="background:rgba(233,193,118,0.21)"></i><i style="background:rgba(2,26,53,0.76)"></i><i style="background:rgba(2,26,53,0.68)"></i><i style="background:rgba(233,193,118,0.74)"></i><i style="background:rgba(2,26,53,0.95)"></i><i style="background:rgba(2,26,53,0.63)"></i><i style="background:rgba(233,193,118,0.50)"></i><i style="background:rgba(233,193,118,0.57)"></i><i style="background:rgba(2,26,53,0.76)"></i><i style="background:rgba(2,26,53,0.28)"></i><i style="background:rgba(2,26,53,0.73)"></i><i style="background:rgba(2,26,53,0.81)"></i><i style="background:rgba(233,193,118,0.81)"></i><i style="background:rgba(2,26,53,0.87)"></i><i style="background:rgba(233,193,118,0.51)"></i><i style="background:rgba(233,193,118,0.62)"></i><i style="background:rgba(2,26,53,0.72)"></i><i style="background:rgba(233,193,118,0.64)"></i><i style="background:rgba(233,193,118,0.29)"></i><i style="background:rgba(233,193,118,0.83)"></i><i style="background:rgba(2,26,53,0.80)"></i><i style="background:rgba(233,193,118,0.39)"></i><i style="background:rgba(233,193,118,0.52)"></i><i style="background:rgba(2,26,53,0.87)"></i><i style="background:rgba(233,193,118,0.68)"></i><i style="background:rgba(2,26,53,0.71)"></i><i style="background:rgba(233,193,118,0.84)"></i><i style="background:rgba(233,193,118,0.42)"></i><i style="background:rgba(233,193,118,0.69)"></i><i style="background:rgba(233,193,118,0.66)"></i><i style="background:rgba(233,193,118,0.66)"></i><i style="background:rgba(233,193,118,0.37)"></i><i style="background:rgba(233,193,118,0.92)"></i><i style="background:rgba(233,193,118,0.54)"></i><i style="background:rgba(2,26,53,0.36)"></i></div>
             </div>
             <div class="heatrow">
-              <div class="hh"><span class="nm">A2 · Macron resignation president abdication power… <span>France 24</span></span><span class="sim">cosinus 0,9933 → ten sam klaster</span></div>
+              <div class="hh"><span class="nm">A2 · Macron resignation president abdication power… <span>France 24</span></span><span class="sim">cosinus 0,9933 → ten sam temat</span></div>
               <div class="cells"><i style="background:rgba(233,193,118,0.51)"></i><i style="background:rgba(2,26,53,0.33)"></i><i style="background:rgba(233,193,118,0.41)"></i><i style="background:rgba(2,26,53,0.56)"></i><i style="background:rgba(2,26,53,0.41)"></i><i style="background:rgba(233,193,118,0.46)"></i><i style="background:rgba(2,26,53,0.64)"></i><i style="background:rgba(233,193,118,0.50)"></i><i style="background:rgba(233,193,118,0.54)"></i><i style="background:rgba(233,193,118,0.68)"></i><i style="background:rgba(233,193,118,0.53)"></i><i style="background:rgba(233,193,118,0.46)"></i><i style="background:rgba(2,26,53,0.59)"></i><i style="background:rgba(2,26,53,0.44)"></i><i style="background:rgba(233,193,118,0.35)"></i><i style="background:rgba(233,193,118,0.65)"></i><i style="background:rgba(2,26,53,0.32)"></i><i style="background:rgba(2,26,53,0.46)"></i><i style="background:rgba(233,193,118,0.46)"></i><i style="background:rgba(233,193,118,0.66)"></i><i style="background:rgba(2,26,53,0.42)"></i><i style="background:rgba(2,26,53,0.20)"></i><i style="background:rgba(2,26,53,0.76)"></i><i style="background:rgba(2,26,53,0.74)"></i><i style="background:rgba(233,193,118,0.72)"></i><i style="background:rgba(2,26,53,0.97)"></i><i style="background:rgba(2,26,53,0.65)"></i><i style="background:rgba(233,193,118,0.47)"></i><i style="background:rgba(233,193,118,0.55)"></i><i style="background:rgba(2,26,53,0.73)"></i><i style="background:rgba(2,26,53,0.21)"></i><i style="background:rgba(2,26,53,0.73)"></i><i style="background:rgba(2,26,53,0.84)"></i><i style="background:rgba(233,193,118,0.82)"></i><i style="background:rgba(2,26,53,0.87)"></i><i style="background:rgba(233,193,118,0.50)"></i><i style="background:rgba(233,193,118,0.62)"></i><i style="background:rgba(2,26,53,0.68)"></i><i style="background:rgba(233,193,118,0.67)"></i><i style="background:rgba(233,193,118,0.37)"></i><i style="background:rgba(233,193,118,0.83)"></i><i style="background:rgba(2,26,53,0.79)"></i><i style="background:rgba(233,193,118,0.34)"></i><i style="background:rgba(233,193,118,0.53)"></i><i style="background:rgba(2,26,53,0.83)"></i><i style="background:rgba(233,193,118,0.67)"></i><i style="background:rgba(2,26,53,0.65)"></i><i style="background:rgba(233,193,118,0.83)"></i><i style="background:rgba(233,193,118,0.49)"></i><i style="background:rgba(233,193,118,0.66)"></i><i style="background:rgba(233,193,118,0.67)"></i><i style="background:rgba(233,193,118,0.63)"></i><i style="background:rgba(233,193,118,0.44)"></i><i style="background:rgba(233,193,118,0.90)"></i><i style="background:rgba(233,193,118,0.55)"></i><i style="background:rgba(2,26,53,0.33)"></i></div>
             </div>
             <div class="heatrow">
-              <div class="hh"><span class="nm">B1 · France snap election parliament dissolved… <span>Euronews</span></span><span class="sim">cosinus 0,3872 → osobny klaster</span></div>
+              <div class="hh"><span class="nm">B1 · France snap election parliament dissolved… <span>Euronews</span></span><span class="sim">cosinus 0,3872 → inny temat</span></div>
               <div class="cells"><i style="background:rgba(233,193,118,0.69)"></i><i style="background:rgba(233,193,118,0.50)"></i><i style="background:rgba(233,193,118,0.71)"></i><i style="background:rgba(2,26,53,0.43)"></i><i style="background:rgba(2,26,53,0.52)"></i><i style="background:rgba(233,193,118,0.47)"></i><i style="background:rgba(2,26,53,0.70)"></i><i style="background:rgba(233,193,118,0.56)"></i><i style="background:rgba(2,26,53,0.40)"></i><i style="background:rgba(233,193,118,0.81)"></i><i style="background:rgba(233,193,118,0.52)"></i><i style="background:rgba(2,26,53,0.74)"></i><i style="background:rgba(2,26,53,0.33)"></i><i style="background:rgba(233,193,118,0.36)"></i><i style="background:rgba(233,193,118,0.70)"></i><i style="background:rgba(233,193,118,0.67)"></i><i style="background:rgba(233,193,118,0.39)"></i><i style="background:rgba(2,26,53,0.92)"></i><i style="background:rgba(233,193,118,0.68)"></i><i style="background:rgba(233,193,118,0.51)"></i><i style="background:rgba(2,26,53,0.67)"></i><i style="background:rgba(2,26,53,0.38)"></i><i style="background:rgba(233,193,118,0.43)"></i><i style="background:rgba(2,26,53,0.86)"></i><i style="background:rgba(233,193,118,0.38)"></i><i style="background:rgba(2,26,53,0.70)"></i><i style="background:rgba(2,26,53,0.72)"></i><i style="background:rgba(2,26,53,0.21)"></i><i style="background:rgba(233,193,118,0.53)"></i><i style="background:rgba(2,26,53,0.58)"></i><i style="background:rgba(2,26,53,0.55)"></i><i style="background:rgba(233,193,118,0.51)"></i><i style="background:rgba(2,26,53,0.48)"></i><i style="background:rgba(233,193,118,0.64)"></i><i style="background:rgba(2,26,53,0.44)"></i><i style="background:rgba(2,26,53,0.33)"></i><i style="background:rgba(233,193,118,0.49)"></i><i style="background:rgba(2,26,53,0.39)"></i><i style="background:rgba(233,193,118,0.42)"></i><i style="background:rgba(233,193,118,0.84)"></i><i style="background:rgba(233,193,118,0.56)"></i><i style="background:rgba(2,26,53,0.32)"></i><i style="background:rgba(233,193,118,0.63)"></i><i style="background:rgba(233,193,118,0.53)"></i><i style="background:rgba(2,26,53,0.65)"></i><i style="background:rgba(233,193,118,0.50)"></i><i style="background:rgba(233,193,118,0.43)"></i><i style="background:rgba(233,193,118,0.66)"></i><i style="background:rgba(233,193,118,0.49)"></i><i style="background:rgba(233,193,118,0.57)"></i><i style="background:rgba(2,26,53,0.72)"></i><i style="background:rgba(2,26,53,0.40)"></i><i style="background:rgba(233,193,118,0.34)"></i><i style="background:rgba(233,193,118,0.36)"></i><i style="background:rgba(2,26,53,0.23)"></i><i style="background:rgba(2,26,53,0.56)"></i></div>
             </div>
             <div class="heatrow">
@@ -1034,35 +1309,44 @@
         <div class="card wide">
           <h3>Gdzie wypada próg</h3>
           <p class="note">
-            Poniższe wartości pokazują podobieństwo każdego nagłówka do A1. Wynik dla tej samej
-            historii jest wyraźnie wyższy od pozostałych. W tej próbce próg 0,70 leży między nimi.
+            Trzy kolejne artykuły trafiają do grupy A, każdy porównywany z jej środkiem. Pierwszy
+            zastaje grupę z jednym artykułem, więc jej środkiem jest wtedy wektor A1. Dwa następne
+            zastają ją już z dwoma. Wartości pochodzą z zapytania do bazy z rozszerzeniem pgvector,
+            uruchomionego na wektorach z danych testowych.
           </p>
           <div class="sims">
             <div class="simrow">
               <div class="top">
-                <span class="pair">A1 ↔ A2<span>Ta sama rezygnacja, dwie redakcje, przestawione słowa</span></span>
+                <span class="pair">A2 → środek grupy A<span>Ta sama rezygnacja, druga redakcja, przestawione słowa</span></span>
                 <span class="val">0,9933</span>
               </div>
               <div class="track"><div class="fill merge" style="width:99.33%"></div><div class="cut" data-label="próg 0,70" style="left:70%"></div></div>
-              <p class="verdict yes">↳ powyżej progu: scalone w jeden klaster</p>
+              <p class="verdict yes">↳ powyżej progu: dopięcie do grupy A, środek przesuwa się o połowę drogi</p>
             </div>
             <div class="simrow">
               <div class="top">
-                <span class="pair">A1 ↔ B1<span>Ten sam kraj, ten sam kryzys, inne wydarzenie</span></span>
-                <span class="val">0,3872</span>
+                <span class="pair">B1 → środek grupy A<span>Ten sam kraj, ten sam kryzys, inne wydarzenie</span></span>
+                <span class="val">0,4010</span>
               </div>
-              <div class="track"><div class="fill" style="width:38.72%"></div><div class="cut" data-label="próg 0,70" style="left:70%"></div></div>
-              <p class="verdict no">↳ poniżej progu: tworzy osobny klaster</p>
+              <div class="track"><div class="fill" style="width:40.10%"></div><div class="cut" data-label="próg 0,70" style="left:70%"></div></div>
+              <p class="verdict no">↳ poniżej progu: zakłada własną grupę B</p>
             </div>
             <div class="simrow">
               <div class="top">
-                <span class="pair">A1 ↔ U1<span>Trzęsienie ziemi w Japonii, zupełnie inny temat</span></span>
-                <span class="val">0,1278</span>
+                <span class="pair">U1 → środek grupy A<span>Trzęsienie ziemi w Japonii, zupełnie niepowiązane wydarzenie</span></span>
+                <span class="val">0,1292</span>
               </div>
-              <div class="track"><div class="fill" style="width:12.78%"></div><div class="cut" data-label="próg 0,70" style="left:70%"></div></div>
+              <div class="track"><div class="fill" style="width:12.92%"></div><div class="cut" data-label="próg 0,70" style="left:70%"></div></div>
               <p class="verdict no">↳ daleko poniżej; taki nagłówek i tak zostałby wcześniej odsiany przez filtr słów kluczowych</p>
             </div>
           </div>
+          <p class="note">
+            Podobieństwo do środka nie jest tym samym co podobieństwo do pojedynczego artykułu.
+            Paski wyżej pokazują to drugie: B1 porównany wprost z A1 daje 0,3872, a ze środkiem
+            grupy A, czyli ze średnią A1 i A2, daje 0,4010. Przy tej grupie różnica nie zmienia
+            wyniku, ale przy grupie z kilkunastoma artykułami środek jest już czymś innym niż
+            którykolwiek z nich.
+          </p>
         </div>
 
       </div>
@@ -1111,22 +1395,25 @@
           </p>
           <div class="hood">
             <span class="ht">Od strony technicznej</span>
-            <code>OLLAMA_ENABLED</code> określa, czy przy braku wyniku w pamięci podręcznej wolno wywołać model;
+            <p><code>OLLAMA_ENABLED</code> określa, czy przy braku wyniku w pamięci podręcznej wolno wywołać model;
             nie wybiera strategii grupowania. Dane testowe z pliku
             <code>tests/fixtures/embeddings/nomic-embed-text-v2-moe.json</code> są wczytywane do
             <code>embedding_cache</code> przed każdym scenariuszem. We wszystkich trzech trybach
-            wywoływana jest klasa <code>CachedTextVectorizer</code>.
+            wywoływana jest klasa <code>CachedTextVectorizer</code>.</p>
           </div>
         </div>
 
         <div class="tcard">
-          <h3><span class="g">04</span> Zwykły JSON zamiast bazy wektorowej</h3>
+          <h3><span class="g">04</span> Dwa magazyny wektorów, dwa różne pytania</h3>
           <p>
-            Wyszukiwanie odbywa się po dokładnym kluczu, a porównania nie wykraczają poza jedną
-            niewielką porcję artykułów. Wyspecjalizowany indeks podobieństwa nie przyniósłby tu korzyści.
-            Wymusiłby za to przechowywanie wektorów o jednym rozmiarze, tymczasem magazyn ma obsługiwać
-            wyniki różnych modeli. Sytuacja zmieni się, gdy program zacznie porównywać
-            nowe wydarzenia z trwałym archiwum.
+            Pamięć podręczna odpowiada na pytanie „czy liczyłem już ten tekst”, więc szuka po dokładnym
+            kluczu i nigdy po podobieństwie. Została przy zwykłym JSON-ie: indeks podobieństwa byłby tam
+            utrzymywany przy każdym zapisie i nigdy nieodpytywany, a stały rozmiar wektora odebrałby
+            jej obsługę wielu modeli naraz.
+          </p>
+          <p>
+            Tabela grup odpowiada na pytanie „która grupa jest najbliżej”, więc dostała kolumnę typu
+            <b>vector</b> z rozszerzenia pgvector.
           </p>
         </div>
 
@@ -1190,7 +1477,7 @@
           <span class="tag">powszechne</span>
           <h3>Duplikaty, które nie są identyczne</h3>
           <p>
-            Może to być przeklejone ogłoszenie ze zmienionym numerem telefonu albo ta sama sprawa zgłoszona po
+            Może to być przeklejone ogłoszenie ze zmienionym numerem telefonu albo ta sama usterka zgłoszona po
             raz drugi innymi słowami. Skrót treści uzna je za różne, ale embedding może pomóc
             je ze sobą powiązać.
           </p>
@@ -1219,8 +1506,8 @@
           <span class="tag">powszechne</span>
           <h3>Kierowanie zgłoszeń</h3>
           <p>
-            Nowe zgłoszenie trafia do zespołu, którego dotychczasowe sprawy leżą najbliżej.
-            System opiera się na historii tych spraw, nie na zestawie reguł.
+            Nowe zgłoszenie trafia do zespołu, którego dotychczasowe zgłoszenia leżą najbliżej.
+            System opiera się na tej historii, nie na zestawie reguł.
           </p>
         </div>
 
@@ -1251,7 +1538,8 @@
       <div class="foot">
         <span><b>Port</b> <span class="mono">MarketSignals/Domain/WorldEvent/TextVectorizerInterface</span></span>
         <span><b>Adaptery</b> <span class="mono">CachedTextVectorizer → OllamaTextVectorizer</span></span>
-        <span><b>Magazyn</b> <span class="mono">embedding_cache (text_hash, model_id) → jsonb</span></span>
+        <span><b>Pamięć podręczna</b> <span class="mono">embedding_cache (text_hash, model_id) → jsonb</span></span>
+        <span><b>Grupy tematyczne</b> <span class="mono">world_event_clusters.centroid → vector(768), operator &lt;=&gt;</span></span>
         <span><b>Model</b> <span class="mono">nomic-embed-text-v2-moe · 768 wymiarów</span></span>
         <span><b>Inicjalizacja pamięci podręcznej</b> <span class="mono">bin/console app:embed:warm --days=1</span></span>
       </div>

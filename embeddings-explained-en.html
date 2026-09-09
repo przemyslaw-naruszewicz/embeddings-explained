@@ -53,8 +53,7 @@
           <p>
             An <b>embedding</b> is a vector: a fixed-length list of numbers that a language model
             computes for a piece of text. Texts with similar meanings usually produce vectors that
-            lie close together, so the system can calculate their similarity instead of comparing
-            them by eye.
+            lie close together, so the system can calculate how similar the texts are rather than rely on a reader’s judgement.
           </p>
         </div>
         <p class="sub">
@@ -69,6 +68,11 @@
           using the cosine of the angle between them. The resulting score estimates whether the texts
           are related.
         </p>
+        <p class="sub">
+          The topic group an article belongs to has its own row in the database and lasts longer than a day.
+          A new report is compared with the centres of existing groups rather than with every other
+          article. A PostgreSQL database with the <b>pgvector</b> extension performs that search.
+        </p>
       </div>
       <div class="kpis">
         <div class="kpi">
@@ -78,9 +82,10 @@
         </div>
         <div class="kpi">
           <div class="v">0.70</div>
-          <div class="k">similarity threshold</div>
-          <div class="d">Cosine similarity ranges from −1.00 to 1.00. At 0.70 and above, two texts go
-            into one group; in the sample, the same story scores 0.9933 and a different one 0.3872</div>
+          <div class="k">threshold to join a group</div>
+          <div class="d">Cosine similarity ranges from −1.00 to 1.00. An article joins a group when its
+            similarity to that group’s centre reaches 0.70; in the sample, the same group scores
+            0.9933 and a different one 0.4010</div>
         </div>
         <div class="kpi">
           <div class="v">3</div>
@@ -126,9 +131,9 @@
               <h3>Nearby vectors suggest related texts</h3>
               <p>
                 Texts about the same event often land in nearly the same place even when they use
-                different words. That “nearly” can be measured. The measure is based on the angle
-                between their vectors: 1.00 means the same direction, 0.00 means perpendicular
-                directions and −1.00 means opposite directions. This removes the need to write
+                different words. <b>Cosine similarity</b> measures that closeness using the angle
+                between their vectors; the card below, “How that score is computed”, works through
+                the whole calculation. This removes the need to write
                 separate rules for synonyms and word order.
               </p>
             </div>
@@ -147,14 +152,16 @@
             </div>
           </div>
 
-          <div class="hood">
-            <span class="ht">The technical side</span>
+          <div class="coscard">
+            <h3>How that score is computed</h3>
             <p>
-              A vector is a list of numbers. This example uses two coordinates to keep the diagram
-              and calculation easy to follow. A and B were chosen for the example; they are not model outputs.
-              Both arrows start at [0, 0]. The first coordinate says how far to move the arrow’s endpoint
-              horizontally; the second says how far to move it vertically. There is no need to measure the angle with
-              a protractor. Its cosine can be calculated directly from the arrows’ coordinates.
+              The measure from point 02 is the <b>cosine of the angle</b> between two vectors — the
+              same cosine similarity whose scale carries the 0.70 threshold. A vector is a list of
+              numbers; this example uses two coordinates instead of 768 so the whole calculation fits
+              in one diagram. A and B were chosen for the example; they are not model outputs.
+              Both arrows start at [0, 0]: the first coordinate says how far to move the arrow’s
+              endpoint horizontally, the second how far to move it vertically. The angle itself is
+              never needed — its cosine follows directly from the arrows’ coordinates.
             </p>
 
             <div class="cosviz">
@@ -251,9 +258,7 @@
                 </div>
                 <div class="cosanswer">
                   <strong>0.80</strong>
-                  <span>The score exceeds the chosen threshold of 0.70. If these were vectors for
-                    two texts, the system would group them together. A score of 0.80 does not mean
-                    an 80% probability that the texts describe the same event.</span>
+                  <span>The score of 0.80 describes similarity of direction. It does not mean an 80% probability that the texts describe the same event. The “Topic groups” section uses this measure to match an article to a group.</span>
                 </div>
                 <div class="coslegend"><span>−1 · opposite</span><span>0 · perpendicular</span><span>1 · same direction</span></div>
                 <p class="cosangleback">The diagram shows an angle of about 37° because
@@ -262,14 +267,17 @@
               </div>
             </div>
 
-            <p class="cosnote">
-              The model used here produces vectors with 768 coordinates. To calculate the dot product,
-              the program multiplies 768 pairs of numbers and adds the results. Ollama’s <code>/api/embed</code>
-              endpoint returns vectors normalised to length 1 (L2 normalisation), with possible small
-              deviations due to numerical precision. For vectors of length 1, the denominator is 1,
-              so the cosine equals the dot product. The full formula also works for vectors of other,
-              nonzero lengths.
-            </p>
+            <div class="hood">
+              <span class="ht">The technical side</span>
+              <p>
+                The model used here produces vectors with 768 coordinates. To calculate the dot product,
+                the program multiplies 768 pairs of numbers and adds the results. Ollama’s <code>/api/embed</code>
+                endpoint returns vectors normalised to length 1 (L2 normalisation), with possible small
+                deviations due to numerical precision. For vectors of length 1, the denominator is 1,
+                so the cosine equals the dot product. The full formula also works for vectors of other,
+                nonzero lengths.
+              </p>
+            </div>
           </div>
 
         </div>
@@ -290,7 +298,7 @@
             <circle cx="280" cy="104" r="44" fill="#e9c176" fill-opacity="0.16"
                     stroke="#e9c176" stroke-width="1.5" stroke-dasharray="4 4"></circle>
             <text x="280" y="46" text-anchor="middle" font-family="Work Sans, sans-serif" font-size="11.5"
-                  font-weight="500" fill="#b4914b">one cluster</text>
+                  font-weight="500" fill="#b4914b">one group</text>
 
             <rect x="4" y="30" width="150" height="34" rx="8" fill="#ffffff" stroke="#c4c6ce"></rect>
             <text x="18" y="51" font-family="Work Sans, sans-serif" font-size="12" fill="#021a35">Macron resigns</text>
@@ -543,9 +551,9 @@
           </p>
           <div class="hood">
             <span class="ht">The technical side</span>
-            <code>POST /api/embed</code>, input in chunks of 3, <code>keep_alive: 0</code> on the
+            <p><code>POST /api/embed</code>, input in chunks of 3, <code>keep_alive: 0</code> on the
             last chunk (releasing memory). Address and model name come from configuration
-            (<code>OLLAMA_EMBED_MODEL</code>).
+            (<code>OLLAMA_EMBED_MODEL</code>).</p>
           </div>
         </div>
       </div>
@@ -571,7 +579,7 @@
            that the outer strokes of the first and last card are not clipped. -->
       <div class="flowcard">
         <svg viewBox="-1 0 1123 210" role="img"
-             aria-label="Six steps: intake with content-checksum dedup, keyword filter, assembling the text the model reads, embedding via the cache, grouping by similarity, analysis of the cluster. The embedding is produced in step four and used in step five.">
+             aria-label="Six steps: intake with content-checksum dedup, keyword filter, assembling the text the model reads, embedding via the cache, matching against the nearest group centre in the database, analysis of the group. The embedding is produced in step four and used in step five.">
           <defs>
             <marker id="fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
               <path d="M0 0 L10 5 L0 10 z" fill="#675d4d"></path>
@@ -609,9 +617,9 @@
 
           <rect x="772" y="54" width="156" height="96" rx="14" fill="#021a35"></rect>
           <text x="787" y="76" font-family="Work Sans, sans-serif" font-size="10" letter-spacing="1.6" fill="#e9c176">05</text>
-          <text x="787" y="99" font-family="Manrope, sans-serif" font-size="14.5" font-weight="700" fill="#ffffff">Grouping</text>
-          <text x="787" y="120" font-family="Work Sans, sans-serif" font-size="11.5" fill="#b3c8eb">nearby vectors</text>
-          <text x="787" y="135" font-family="Work Sans, sans-serif" font-size="11.5" fill="#b3c8eb">= one story</text>
+          <text x="787" y="99" font-family="Manrope, sans-serif" font-size="14.5" font-weight="700" fill="#ffffff">Matching</text>
+          <text x="787" y="120" font-family="Work Sans, sans-serif" font-size="11.5" fill="#b3c8eb">nearest group centre,</text>
+          <text x="787" y="135" font-family="Work Sans, sans-serif" font-size="11.5" fill="#b3c8eb">found in the database</text>
 
           <rect x="965" y="54" width="156" height="96" rx="14" fill="#ffffff" stroke="#c4c6ce"></rect>
           <text x="980" y="76" font-family="Work Sans, sans-serif" font-size="10" letter-spacing="1.6" fill="#b4914b">06</text>
@@ -635,8 +643,9 @@
         <p class="flowcap">
           Steps 01 to 03 do not analyse meaning: the first compares characters, the second looks for
           words from a list, and the third assembles the text for the model. Semantic analysis begins
-          at step 04. Its result is stored as a row of numbers and used in step 05. Step 06 receives
-          a finished group of articles rather than a vector.
+          at step 04. Its result is stored as a row of numbers and used in step 05, where the database
+          points to the group with the nearest centre. Step 06 receives a group with its new articles
+          rather than a vector.
         </p>
       </div>
 
@@ -658,13 +667,12 @@
           <h3><span class="g">≈</span> Embedding and grouping (steps 04 and 05): is this the same story?</h3>
           <p>
             Five newsrooms describe one event in five different texts, so each checksum will be
-            different. An embedding makes it possible to measure how close those texts are and
-            join them into one group, even when they do not share a single sentence.
+            different. Embeddings let the program measure how close those texts are and group them even when they do not share a single sentence.
           </p>
           <p>
             Each question needs a different tool. The program first compares content checksums, a
-            fast operation that requires no model. Only texts that pass this stage are compared by
-            meaning, which requires the model to run.
+            fast operation that requires no model. Only texts that pass this stage get a vector and
+            are compared with the centres of groups the database already holds. A Tuesday report can join a group opened on Monday, keeping the same group id.
           </p>
         </div>
       </div>
@@ -682,10 +690,10 @@
             </p>
             <div class="hood">
               <span class="ht">The technical side</span>
-              <code>WorldEvent</code> · an identifier computed from the headline and body determines
+              <p><code>WorldEvent</code> · an identifier computed from the headline and body determines
               whether an event has already been seen. It uses a fast, non-cryptographic hash function
               (<code>xxh128(title + content)</code>). This is the <b>deduplication</b> key,
-              deliberately a different one from the key the embedding cache uses.
+              deliberately a different one from the key the embedding cache uses.</p>
             </div>
             <div class="io"><span class="pill"><b>in</b> · RSS feed items</span><span class="pill"><b>out</b> · persisted events</span></div>
           </div>
@@ -712,12 +720,12 @@
             </p>
             <div class="hood">
               <span class="ht">The technical side</span>
-              <code>WorldEventFilter → WorldEventFilterSpec</code>: a CPU-only regex gate. When its
+              <p><code>WorldEventFilter → WorldEventFilterSpec</code>: a CPU-only regex gate. When its
               configuration is empty, it rejects every text instead of allowing all of them through.
               Keyword suggestion is a separate path, called from the
               configuration screen:
               <code>KeywordSuggesterInterface::suggest(description, languages)</code>, adapter
-              <code>AnthropicKeywordSuggester</code> behind a cache and a rate limiter.
+              <code>AnthropicKeywordSuggester</code> behind a cache and a rate limiter.</p>
             </div>
             <div class="io"><span class="pill"><b>in</b> · event snapshot</span><span class="pill"><b>out</b> · array: WorldEventDescriptor objects</span></div>
           </div>
@@ -733,8 +741,8 @@
             </p>
             <div class="hood">
               <span class="ht">The technical side</span>
-              <code>FilteredWorldEvent::getTextForClustering()</code> →
-              <code>title . ' ' . content</code>.
+              <p><code>FilteredWorldEvent::getTextForClustering()</code> →
+              <code>title . ' ' . content</code>.</p>
             </div>
             <div class="io"><span class="pill"><b>out</b> · array: texts</span></div>
           </div>
@@ -751,9 +759,9 @@
             <div class="io"><span class="pill"><b>in</b> · array: texts</span><span class="pill"><b>out</b> · array: vectors of 768 floats</span></div>
             <div class="hood">
               <span class="ht">The technical side</span>
-              In PHP the result has type <code>array</code>: it contains vectors, each of which is
+              <p>In PHP the result has type <code>array</code>: it contains vectors, each of which is
               an array of 768 <code>float</code> values. PHPDoc describes this shape more precisely as
-              <code>list&lt;list&lt;float&gt;&gt;</code>.
+              <code>list&lt;list&lt;float&gt;&gt;</code>.</p>
             </div>
           </div>
         </article>
@@ -761,25 +769,13 @@
         <article class="strip">
           <div class="num">05</div>
           <div>
-          <h3>Group by similarity</h3>
-            <p class="txt">
-              The program calculates a separate similarity score for every pair of articles in a
-              daily batch. If a pair scores 0.70 or above, both articles enter the same group.
-              Groups merge through shared articles: if A-B and B-C clear the threshold, A, B and C
-              form one group even when A-C scores below it. A daily batch contains only a few dozen
-              articles, so every pair can be evaluated without approximation.
-            </p>
+          <h3>Join a group or open a new one</h3>
+            <p class="txt">The program looks for the group most similar to the new article. If similarity is at least 0.70, the article joins that group; otherwise it opens a new one. The “Topic groups” section shows how the database finds a match and how the group’s centre changes.</p>
             <div class="hood">
               <span class="ht">The technical side</span>
-              <code>SimilarityGrouping</code>: similarity is computed separately for every pair, so
-              fifty articles require just under 1,250 comparisons of 768 numbers each, a fraction of
-              a second. Pairs at or above the threshold are merged by a structure called <b>union-find</b>: each
-              article starts as its own group, and merging a pair joins the two groups containing
-              those articles. This is why A-B and B-C form one group ABC even if A-C does not clear
-              the threshold. No estimation or sampling is involved; the groups follow directly from
-              the threshold.
+              <p>This describes matching to persistent topic groups, the clusters stored in the database. Multi-stage process tracking (<code>ProcessStepper</code>) builds separate clusters within a batch: it compares every pair and merges connected clusters, so links from A to B and B to C form cluster ABC.</p>
             </div>
-            <div class="io"><span class="pill"><b>in</b> · array: vectors of 768 floats</span><span class="pill"><b>out</b> · index → group</span></div>
+            <div class="io"><span class="pill"><b>in</b> · array: vectors of 768 floats</span><span class="pill"><b>out</b> · event → group id</span></div>
           </div>
         </article>
 
@@ -795,9 +791,11 @@
             </p>
             <div class="hood">
               <span class="ht">The technical side</span>
-              <code>WorldEventCluster</code>: the clusterer has two consumers:
-              <code>SignalGenerationKernel</code> (events → signals) and <code>ProcessStepper</code>,
-              which sorts clusters by size and stops at the first one to pass the stage gate.
+              <p><code>WorldEventCluster</code>: only groups that gained an article in this run go to
+              analysis. <code>SignalGenerationKernel</code> (events → signals) receives events that
+              already carry a group id and merely groups them by it
+              (<code>AssignedClusterGrouping</code>). <code>ProcessStepper</code> groups within the
+              batch, sorts clusters by size and stops at the first one to pass the stage gate.</p>
             </div>
             <div class="io"><span class="pill"><b>out</b> · Signal</span><span class="pill"><b>out</b> · stage observation</span></div>
           </div>
@@ -843,8 +841,7 @@
             database-aware class can wrap the model class. That is the decorator pattern.
           </p>
           <p class="note">
-            The rest of the program simply requests that texts be turned into vectors and does not
-            need to know whether the result came from the database or the model. The cache can therefore be
+            The rest of the program asks for vectors without needing to know whether they came from the database or the model. The cache can therefore be
             removed, replaced or extended with another layer without changing the code that uses it.
           </p>
         </div>
@@ -921,14 +918,283 @@
           </div>
           <div class="hood">
             <span class="ht">The technical side</span>
-            Table <code>embedding_cache</code>, composite key
+            <p>Table <code>embedding_cache</code>, composite key
             <code>(sha256(trim(text)), model_id)</code>, vector as <code>jsonb</code>, no TTL.
             Writes use <code>ON CONFLICT DO NOTHING</code>, so parallel workers don’t collide.
             The model name is part of the key: once it changes, the same text no longer matches the
             old rows and the vector is computed afresh. The previous model’s vectors
             stay in the table but are no longer read, so correctness does not depend
             on anyone remembering to clear the cache. Setting: <code>OLLAMA_ENABLED</code>. Cache
-            initialisation: <code>bin/console app:embed:warm --days=1</code>.
+            initialisation: <code>bin/console app:embed:warm --days=1</code>.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TOPIC GROUPS: PERSISTENT CLUSTERS ON PGVECTOR (ADR 0013) ============ -->
+  <section>
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="label">Topic groups</p>
+        <h2 class="title">How an article joins a topic group</h2>
+          <p class="lead">
+          A topic group is a set of articles that the system has identified as reports about the same event. When another article arrives, the program must decide whether to add it to a known group or start a separate one. It uses embeddings, the numerical representations of those texts, to make that decision.
+        </p>
+      </div>
+
+      <div class="specimen">
+
+        <div class="card">
+          <h3>What is a group’s centre?</h3>
+          <p class="note">Each article has a vector of 768 numbers. To get one vector for the whole group, the program averages each position separately: first the first number from every article, then the second, and so on. The result is another list of 768 numbers. This is the group’s centre.</p>
+          <p class="note">The centre is a shared reference point for the group. The program compares the new article’s vector with it. For a group with one article, the centre is that article’s vector; with two, it is their average.</p>
+        </div>
+
+        <div class="card">
+          <h3>Where pgvector helps</h3>
+          <p class="note">The model turns text into numbers. pgvector, a PostgreSQL extension, stores those numbers and compares vectors directly in the database. Here, the database compares the new article’s vector with the stored group centres and returns the closest matches.</p>
+          <p class="note">The program then checks whether the best match is similar enough. Finding the most similar group does not, by itself, mean the article belongs there.</p>
+        </div>
+
+        <div class="card wide">
+          <h3>Does an election report belong in the resignation group?</h3>
+          <p class="note">In this fictional example, the system has already grouped two headlines about Macron’s resignation into group A. The diagram labels them A1 and A2. Now headline B1 arrives, about a snap election in France. It concerns the same country but a different event. The vector comparison will determine whether B1 joins group A.</p>
+          <div class="knn">
+            <figure class="knnplot">
+              <svg class="match-diagram-wide" viewBox="0 0 560 440" role="img" aria-label="Two articles about Macron’s resignation form group A. The database compares their average vector with the vector of a new election headline, B1. Similarity is 0.4010, below the threshold of 0.70, so the program opens a separate group B for B1.">
+                <defs><marker id="knn-arrow-en" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#675d4d"></path></marker></defs>
+                <rect x="10" y="10" width="255" height="180" rx="14" fill="#f6edda" stroke="#b4914b"></rect>
+                <rect x="295" y="10" width="255" height="180" rx="14" fill="#f6f4ec" stroke="#675d4d"></rect>
+                <g font-family="Work Sans, sans-serif" text-anchor="middle" fill="#021a35">
+                  <text x="137" y="35" font-size="11" font-weight="600">GROUP A · ALREADY STORED</text>
+                  <text x="137" y="66" font-size="17" font-weight="600">Macron’s resignation</text>
+                  <text x="137" y="90" font-size="14">A1 + A2 · two articles</text>
+                  <text x="137" y="138" font-size="14">Average of their vectors</text>
+                  <text x="137" y="160" font-size="14" font-weight="600">= centre of group A</text>
+                  <text x="422" y="35" font-size="11" font-weight="600">NEW ARTICLE · B1</text>
+                  <text x="422" y="66" font-size="17" font-weight="600">A snap election</text>
+                  <text x="422" y="90" font-size="17">in France</text>
+                  <text x="422" y="149" font-size="14">Vector of the new text</text>
+                </g>
+                <g fill="none" stroke="#675d4d" stroke-width="1.5" marker-end="url(#knn-arrow-en)">
+                  <path d="M137 190 L137 209 L255 209 L255 232"></path>
+                  <path d="M422 190 L422 209 L305 209 L305 232"></path>
+                  <path d="M280 320 L280 345"></path>
+                </g>
+                <rect x="90" y="234" width="380" height="86" rx="12" fill="#f6f4ec" stroke="#675d4d"></rect>
+                <rect x="55" y="349" width="450" height="80" rx="12" fill="#021a35"></rect>
+                <g font-family="Work Sans, sans-serif" text-anchor="middle">
+                  <text x="280" y="255" font-size="13" fill="#675d4d">Compare the two vectors</text>
+                  <text x="280" y="282" font-size="21" font-weight="600" fill="#021a35">similarity 0.4010</text>
+                  <text x="280" y="304" font-size="14" fill="#675d4d">below the required 0.70</text>
+                  <text x="280" y="370" font-size="10" fill="#e9c176">PROGRAM’S DECISION</text>
+                  <text x="280" y="394" font-size="17" font-weight="600" fill="#fbf9f2">B1 starts a separate group B</text>
+                  <text x="280" y="416" font-size="13" fill="#fbf9f2">Group A still contains A1 and A2</text>
+                </g>
+              </svg>
+<svg class="match-diagram-mobile" viewBox="0 0 300 600" role="img" aria-label="Two articles about Macron’s resignation form group A. The database compares their average vector with the vector of a new election headline, B1. Similarity is 0.4010, below the threshold of 0.70, so the program opens a separate group B for B1.">
+                <defs><marker id="knn-arrow-mobile-en" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#675d4d"></path></marker></defs>
+                <rect x="10" y="10" width="280" height="170" rx="14" fill="#f6edda" stroke="#b4914b"></rect>
+                <rect x="10" y="200" width="280" height="145" rx="14" fill="#f6f4ec" stroke="#675d4d"></rect>
+                <g font-family="Work Sans, sans-serif" text-anchor="middle" fill="#021a35">
+                  <text x="150" y="35" font-size="11" font-weight="600">GROUP A · ALREADY STORED</text>
+                  <text x="150" y="66" font-size="17" font-weight="600">Macron’s resignation</text>
+                  <text x="150" y="90" font-size="14">A1 + A2 · two articles</text>
+                  <text x="150" y="138" font-size="14">Average of their vectors</text>
+                  <text x="150" y="160" font-size="14" font-weight="600">= centre of group A</text>
+                  <text x="150" y="225" font-size="11" font-weight="600">NEW ARTICLE · B1</text>
+                  <text x="150" y="255" font-size="17" font-weight="600">A snap election</text>
+                  <text x="150" y="280" font-size="17">in France</text>
+                  <text x="150" y="320" font-size="14">Vector of the new text</text>
+                </g>
+                <g fill="none" stroke="#675d4d" stroke-width="1.5" marker-end="url(#knn-arrow-mobile-en)">
+                  <path d="M50 180 L5 180 L5 365 L125 365 L125 378"></path>
+                  <path d="M200 345 L200 378"></path>
+                  <path d="M150 465 L150 498"></path>
+                </g>
+                <rect x="10" y="380" width="280" height="85" rx="12" fill="#f6f4ec" stroke="#675d4d"></rect>
+                <rect x="10" y="500" width="280" height="90" rx="12" fill="#021a35"></rect>
+                <g font-family="Work Sans, sans-serif" text-anchor="middle">
+                  <text x="150" y="400" font-size="13" fill="#675d4d">Compare the two vectors</text>
+                  <text x="150" y="426" font-size="21" font-weight="600" fill="#021a35">similarity 0.4010</text>
+                  <text x="150" y="448" font-size="14" fill="#675d4d">below the required 0.70</text>
+                  <text x="150" y="520" font-size="10" fill="#e9c176">PROGRAM’S DECISION</text>
+                  <text x="150" y="544" font-size="14" font-weight="600" fill="#fbf9f2">B1 starts a separate group B</text>
+                  <text x="150" y="570" font-size="13" fill="#fbf9f2">Group A still contains A1 and A2</text>
+                </g>
+              </svg>
+              <figcaption>The arrows show the sequence of actions. The positions of the boxes do not represent distances between vectors. The score of 0.4010 was computed from the same test vectors used in the “Specimen” section.</figcaption>
+            </figure>
+            <div class="knnsteps">
+              <ol>
+                <li><span class="n">1</span><div><h4>Turn the new text into numbers</h4><p>The program retrieves the vector for headline B1 from the cache. If there is no stored result, it asks the model to compute one.</p><span class="who">program</span></div></li>
+                <li><span class="n">2</span><div><h4>Compare it with known groups</h4><p>The database compares B1’s vector with the centres of the groups included in the search. In this example, only one group qualifies: A, about Macron’s resignation.</p><span class="who db">database · pgvector</span></div></li>
+                <li><span class="n">3</span><div><h4>Check whether the score is high enough</h4><p>B1’s similarity to the centre of A is <b>0.4010</b>. The scale runs from −1 to 1; a higher score means greater similarity. The program requires at least <b>0.70</b>, so B1 does not join A.</p><span class="who">program</span></div></li>
+                <li><span class="n">4</span><div><h4>Save the article in a separate group</h4><p>The program opens group B for the election report. It has only one article so far, so its centre is B1’s vector. The article receives the new group’s id.</p><span class="who db">program + database</span></div></li>
+              </ol>
+            </div>
+          </div>
+          <p class="note">If another newsroom then sent headline B2 about the election, its similarity to group B would be <b>0.9942</b>. That exceeds the 0.70 threshold, so the program would add B2 to B. The group would have two articles, and its centre would be the average of their vectors. The next diagram shows how to calculate that average.</p>
+          <div class="hood">
+            <span class="ht">The technical side</span>
+            <p>In the database this topic group is called a cluster: it searches <code>world_event_clusters</code>. It includes only this customer’s groups with a report from the last 14 days and vectors from the same model. It computes the distance to every qualifying centre, without an approximate index, and returns up to five nearest matches. The program checks the best result. Group Z, whose last report was 16 days ago, does not qualify, so the query below returns only A.</p>
+            <p>Centres are stored in the <code>centroid</code> column of type <code>vector(768)</code>. The <code>&lt;=&gt;</code> operator returns cosine distance. The program converts it to similarity: <code>1 − distance</code>. Here the database returns 0.5990, giving <code>1 − 0.5990 = 0.4010</code>. The program’s code defines the 0.70 threshold.</p>
+          <div class="rowbox">
+<span class="c">-- step 2 for headline B1, casts omitted; other customers' rows are cut by the RLS policy</span><br>
+<span class="k">SELECT</span> <span class="v">id, centroid &lt;=&gt; :vector</span> <span class="k">AS</span> <span class="v">distance</span><br>
+<span class="k">FROM</span>   <span class="v">world_event_clusters</span><br>
+<span class="k">WHERE</span>  <span class="v">embedding_model_id = :model</span> <span class="k">AND</span> <span class="v">last_seen_at &gt;= :today_minus_14_days</span><br>
+<span class="k">ORDER BY</span> <span class="v">centroid &lt;=&gt; :vector</span><br>
+<span class="k">LIMIT</span>  <span class="v">5</span>;<br>
+<br>
+<span class="c">-- result: one group falls inside the window</span><br>
+<span class="s">id</span> <span class="v">group A</span> <span class="s">· distance</span> <span class="v">0.5990</span><br>
+<span class="c">→ similarity 1 − 0.5990 = 0.4010, below the 0.70 threshold → new group B</span><br>
+<span class="c">(group Z fails the date condition, so it is absent from the result)</span>
+          </div>
+          <p class="codecap">
+            A query using pgvector on the test vectors returned a distance of 0.5990. PHP computes the same distance for this pair. An integration test checks that both calculations agree so that the 0.70 threshold has the same meaning in the database and the program.
+          </p>
+          </div>
+        </div>
+
+        <div class="card wide">
+          <h3>How the centre moves</h3>
+          <p class="note">
+            When an article joins, the centre moves towards its vector. The more articles a group has, the less weight each new report carries in the average. Computing the new centre requires only the old centre, the article count and the new vector.
+          </p>
+
+          <div class="hood">
+            <span class="ht">The technical side</span>
+            <p>
+              A two-coordinate example, using the same vectors as the “Primer” section. The group has one
+              article, so its centre is that article’s vector A = [1, 0]. Article B = [0.8, 0.6] arrives.
+              Its similarity to the centre was calculated earlier: 0.80.
+            </p>
+
+            <div class="cosviz">
+              <div class="cosplot">
+                <span class="coslabel">1 · Old centre, new article, new centre</span>
+                <svg viewBox="0 0 320 280" role="img"
+                     aria-label="A coordinate system from 0 to 1. The old centre A is at the point 1 and 0, the new article B at 0.8 and 0.6, and the new centre at 0.9 and 0.3, halfway between them.">
+                  <defs>
+                    <marker id="avg-a-en" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                      <path d="M0 0 L10 5 L0 10 z" fill="#021a35"></path>
+                    </marker>
+                    <marker id="avg-b-en" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                      <path d="M0 0 L10 5 L0 10 z" fill="#b4914b"></path>
+                    </marker>
+                    <marker id="avg-n-en" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                      <path d="M0 0 L10 5 L0 10 z" fill="#675d4d"></path>
+                    </marker>
+                  </defs>
+                  <g class="cosgrid">
+                    <line x1="95" y1="20" x2="95" y2="220"></line>
+                    <line x1="135" y1="20" x2="135" y2="220"></line>
+                    <line x1="175" y1="20" x2="175" y2="220"></line>
+                    <line x1="215" y1="20" x2="215" y2="220"></line>
+                    <line x1="255" y1="20" x2="255" y2="220"></line>
+                    <line x1="55" y1="180" x2="255" y2="180"></line>
+                    <line x1="55" y1="140" x2="255" y2="140"></line>
+                    <line x1="55" y1="100" x2="255" y2="100"></line>
+                    <line x1="55" y1="60" x2="255" y2="60"></line>
+                    <line x1="55" y1="20" x2="255" y2="20"></line>
+                  </g>
+                  <line class="cosaxis" x1="40" y1="220" x2="280" y2="220"></line>
+                  <line class="cosaxis" x1="55" y1="235" x2="55" y2="12"></line>
+                  <g class="costicks">
+                    <text x="55" y="239">0</text>
+                    <text x="95" y="239">0.2</text>
+                    <text x="135" y="239">0.4</text>
+                    <text x="175" y="239">0.6</text>
+                    <text x="215" y="239">0.8</text>
+                    <text x="255" y="239">1</text>
+                    <text x="44" y="184">0.2</text>
+                    <text x="44" y="144">0.4</text>
+                    <text x="44" y="104">0.6</text>
+                    <text x="44" y="64">0.8</text>
+                    <text x="44" y="24">1</text>
+                  </g>
+                  <text class="cosaxisname" x="168" y="270" text-anchor="middle">1st coordinate · horizontal</text>
+                  <text class="cosaxisname" transform="translate(13 126) rotate(-90)" text-anchor="middle">2nd coordinate · vertical</text>
+                  <line class="cosguide" x1="215" y1="100" x2="255" y2="220"></line>
+                  <line class="cosvector cosa" x1="55" y1="220" x2="255" y2="220" marker-end="url(#avg-a-en)"></line>
+                  <line class="cosvector cosb" x1="55" y1="220" x2="215" y2="100" marker-end="url(#avg-b-en)"></line>
+                  <line class="cosvector" stroke="#675d4d" x1="55" y1="220" x2="235" y2="160" marker-end="url(#avg-n-en)"></line>
+                  <circle cx="55" cy="220" r="4" fill="#675d4d"></circle>
+                  <circle cx="235" cy="160" r="6" fill="#021a35" stroke="#e9c176" stroke-width="2.5"></circle>
+                  <text class="cosva" x="250" y="212" text-anchor="end">old centre [1, 0]</text>
+                  <text class="cosvb" x="150" y="82">B = [0.8, 0.6]</text>
+                  <text x="243" y="156" font-family="Work Sans, sans-serif" font-size="10.5" font-weight="600" fill="#021a35">new centre</text>
+                  <text x="243" y="170" font-family="Work Sans, sans-serif" font-size="10.5" fill="#675d4d">[0.9, 0.3]</text>
+                </svg>
+                <p class="coshint">
+                  The new centre is exactly halfway between the two vectors because both have a weight of ½.
+                  With ten articles, a new vector would move the centre only one eleventh of the way.
+                </p>
+              </div>
+
+              <div class="cosmath">
+                <span class="coslabel">2 · Calculate the new centre</span>
+                <div class="cosformula" aria-label="The new centre equals n times the centre plus the new vector, divided by n plus 1">
+                  <span>centre′</span><span>=</span>
+                  <span class="cosfrac"><span>n × centre + B</span><span>n + 1</span></span>
+                </div>
+                <div class="cossteps">
+                  <div class="cosstep">
+                    <span class="sn">1</span>
+                    <div>Check the threshold. B scores 0.80 against the centre, which is at least 0.70,
+                      so B joins the group.</div>
+                  </div>
+                  <div class="cosstep">
+                    <span class="sn">2</span>
+                    <div>Substitute n = 1, because the group had one article:
+                      <code>(1 × [1, 0] + [0.8, 0.6]) ÷ 2 = [1.8, 0.6] ÷ 2 = [0.9, 0.3]</code>
+                    </div>
+                  </div>
+                  <div class="cosstep">
+                    <span class="sn">3</span>
+                    <div>The count rises to 2 and the date of the latest report moves to today. The new
+                      centre has length √(0.81 + 0.09) ≈ 0.95, less than 1. Cosine similarity still works because the formula divides by the vector lengths.</div>
+                  </div>
+                </div>
+                <div class="cosanswer">
+                  <strong>[0.9, 0.3]</strong>
+                  <span>The new centre is the average of both vectors. The database updates it together with the article count in one statement, so concurrent joins do not overwrite each other’s result.</span>
+                </div>
+                <p class="cosangleback">In the group table the vectors have 768 coordinates, and the same
+                  <code>UPDATE</code> statement does this for all 768 at once.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card wide dark">
+          <h3>How topic groups behave</h3>
+          <div class="outcomes">
+            <div class="oc">
+              <h4>One group across many days</h4>
+              <span class="cond">a single identity</span>
+              <p>A Tuesday report joins the group opened on Monday. The program analyses that same group under its existing id; nothing new is created.</p>
+            </div>
+            <div class="oc warn">
+              <h4>A second run on the same day</h4>
+              <span class="cond">no new articles</span>
+              <p>The program does not analyse a group again unless it has new articles.</p>
+            </div>
+            <div class="oc stop">
+              <h4>A group quiet for 14 days</h4>
+              <span class="cond">outside the window</span>
+              <p>It returns as a new group. That is deliberate: a crisis in March and one in October
+                produce similar vectors, yet for a market signal they are two situations with different
+                opening prices.</p>
+            </div>
+          </div>
+          <div class="hood">
+            <span class="ht">The technical side</span>
+            <p>The 0.70 threshold still needs validation for matching an article to a group centre. Two concurrent runs for one customer can open the same group twice and trigger an extra analysis.</p>
           </div>
         </div>
 
@@ -967,7 +1233,7 @@
             <dt>model</dt>
             <dd>nomic-embed-text-v2-moe</dd>
             <dt class="row-alt">result</dt>
-            <dd class="row-alt">768 numbers · length 1.00 · ≈ 9.3 kB stored</dd>
+            <dd class="row-alt">768 numbers · length 1.00 · 5,745 bytes in the row</dd>
           </dl>
         </div>
 
@@ -977,7 +1243,8 @@
           <p class="note">
             The table has three columns, <code>VARCHAR(64)</code>, <code>VARCHAR(255)</code> and
             <code>JSONB</code>, plus a composite primary key. No additional index is needed because
-            lookups use an exact key, never a similarity search.
+            lookups use an exact key, never a similarity search. Similarity searches run against a
+            different table, the one holding group centres, described in the “Topic groups” section.
           </p>
           <div class="rowbox">
 <span class="c">-- SELECT * FROM embedding_cache LIMIT 1;</span><br>
@@ -1005,11 +1272,11 @@
               <div class="cells"><i style="background:rgba(233,193,118,0.51)"></i><i style="background:rgba(2,26,53,0.26)"></i><i style="background:rgba(233,193,118,0.42)"></i><i style="background:rgba(2,26,53,0.52)"></i><i style="background:rgba(2,26,53,0.49)"></i><i style="background:rgba(233,193,118,0.53)"></i><i style="background:rgba(2,26,53,0.64)"></i><i style="background:rgba(233,193,118,0.50)"></i><i style="background:rgba(233,193,118,0.57)"></i><i style="background:rgba(233,193,118,0.67)"></i><i style="background:rgba(233,193,118,0.53)"></i><i style="background:rgba(233,193,118,0.46)"></i><i style="background:rgba(2,26,53,0.60)"></i><i style="background:rgba(2,26,53,0.44)"></i><i style="background:rgba(233,193,118,0.28)"></i><i style="background:rgba(233,193,118,0.63)"></i><i style="background:rgba(2,26,53,0.20)"></i><i style="background:rgba(2,26,53,0.38)"></i><i style="background:rgba(233,193,118,0.43)"></i><i style="background:rgba(233,193,118,0.70)"></i><i style="background:rgba(2,26,53,0.42)"></i><i style="background:rgba(233,193,118,0.21)"></i><i style="background:rgba(2,26,53,0.76)"></i><i style="background:rgba(2,26,53,0.68)"></i><i style="background:rgba(233,193,118,0.74)"></i><i style="background:rgba(2,26,53,0.95)"></i><i style="background:rgba(2,26,53,0.63)"></i><i style="background:rgba(233,193,118,0.50)"></i><i style="background:rgba(233,193,118,0.57)"></i><i style="background:rgba(2,26,53,0.76)"></i><i style="background:rgba(2,26,53,0.28)"></i><i style="background:rgba(2,26,53,0.73)"></i><i style="background:rgba(2,26,53,0.81)"></i><i style="background:rgba(233,193,118,0.81)"></i><i style="background:rgba(2,26,53,0.87)"></i><i style="background:rgba(233,193,118,0.51)"></i><i style="background:rgba(233,193,118,0.62)"></i><i style="background:rgba(2,26,53,0.72)"></i><i style="background:rgba(233,193,118,0.64)"></i><i style="background:rgba(233,193,118,0.29)"></i><i style="background:rgba(233,193,118,0.83)"></i><i style="background:rgba(2,26,53,0.80)"></i><i style="background:rgba(233,193,118,0.39)"></i><i style="background:rgba(233,193,118,0.52)"></i><i style="background:rgba(2,26,53,0.87)"></i><i style="background:rgba(233,193,118,0.68)"></i><i style="background:rgba(2,26,53,0.71)"></i><i style="background:rgba(233,193,118,0.84)"></i><i style="background:rgba(233,193,118,0.42)"></i><i style="background:rgba(233,193,118,0.69)"></i><i style="background:rgba(233,193,118,0.66)"></i><i style="background:rgba(233,193,118,0.66)"></i><i style="background:rgba(233,193,118,0.37)"></i><i style="background:rgba(233,193,118,0.92)"></i><i style="background:rgba(233,193,118,0.54)"></i><i style="background:rgba(2,26,53,0.36)"></i></div>
             </div>
             <div class="heatrow">
-              <div class="hh"><span class="nm">A2 · Macron resignation president abdication power… <span>France 24</span></span><span class="sim">cosine 0.9933 → same cluster</span></div>
+              <div class="hh"><span class="nm">A2 · Macron resignation president abdication power… <span>France 24</span></span><span class="sim">cosine 0.9933 → same story</span></div>
               <div class="cells"><i style="background:rgba(233,193,118,0.51)"></i><i style="background:rgba(2,26,53,0.33)"></i><i style="background:rgba(233,193,118,0.41)"></i><i style="background:rgba(2,26,53,0.56)"></i><i style="background:rgba(2,26,53,0.41)"></i><i style="background:rgba(233,193,118,0.46)"></i><i style="background:rgba(2,26,53,0.64)"></i><i style="background:rgba(233,193,118,0.50)"></i><i style="background:rgba(233,193,118,0.54)"></i><i style="background:rgba(233,193,118,0.68)"></i><i style="background:rgba(233,193,118,0.53)"></i><i style="background:rgba(233,193,118,0.46)"></i><i style="background:rgba(2,26,53,0.59)"></i><i style="background:rgba(2,26,53,0.44)"></i><i style="background:rgba(233,193,118,0.35)"></i><i style="background:rgba(233,193,118,0.65)"></i><i style="background:rgba(2,26,53,0.32)"></i><i style="background:rgba(2,26,53,0.46)"></i><i style="background:rgba(233,193,118,0.46)"></i><i style="background:rgba(233,193,118,0.66)"></i><i style="background:rgba(2,26,53,0.42)"></i><i style="background:rgba(2,26,53,0.20)"></i><i style="background:rgba(2,26,53,0.76)"></i><i style="background:rgba(2,26,53,0.74)"></i><i style="background:rgba(233,193,118,0.72)"></i><i style="background:rgba(2,26,53,0.97)"></i><i style="background:rgba(2,26,53,0.65)"></i><i style="background:rgba(233,193,118,0.47)"></i><i style="background:rgba(233,193,118,0.55)"></i><i style="background:rgba(2,26,53,0.73)"></i><i style="background:rgba(2,26,53,0.21)"></i><i style="background:rgba(2,26,53,0.73)"></i><i style="background:rgba(2,26,53,0.84)"></i><i style="background:rgba(233,193,118,0.82)"></i><i style="background:rgba(2,26,53,0.87)"></i><i style="background:rgba(233,193,118,0.50)"></i><i style="background:rgba(233,193,118,0.62)"></i><i style="background:rgba(2,26,53,0.68)"></i><i style="background:rgba(233,193,118,0.67)"></i><i style="background:rgba(233,193,118,0.37)"></i><i style="background:rgba(233,193,118,0.83)"></i><i style="background:rgba(2,26,53,0.79)"></i><i style="background:rgba(233,193,118,0.34)"></i><i style="background:rgba(233,193,118,0.53)"></i><i style="background:rgba(2,26,53,0.83)"></i><i style="background:rgba(233,193,118,0.67)"></i><i style="background:rgba(2,26,53,0.65)"></i><i style="background:rgba(233,193,118,0.83)"></i><i style="background:rgba(233,193,118,0.49)"></i><i style="background:rgba(233,193,118,0.66)"></i><i style="background:rgba(233,193,118,0.67)"></i><i style="background:rgba(233,193,118,0.63)"></i><i style="background:rgba(233,193,118,0.44)"></i><i style="background:rgba(233,193,118,0.90)"></i><i style="background:rgba(233,193,118,0.55)"></i><i style="background:rgba(2,26,53,0.33)"></i></div>
             </div>
             <div class="heatrow">
-              <div class="hh"><span class="nm">B1 · France snap election parliament dissolved… <span>Euronews</span></span><span class="sim">cosine 0.3872 → separate cluster</span></div>
+              <div class="hh"><span class="nm">B1 · France snap election parliament dissolved… <span>Euronews</span></span><span class="sim">cosine 0.3872 → different story</span></div>
               <div class="cells"><i style="background:rgba(233,193,118,0.69)"></i><i style="background:rgba(233,193,118,0.50)"></i><i style="background:rgba(233,193,118,0.71)"></i><i style="background:rgba(2,26,53,0.43)"></i><i style="background:rgba(2,26,53,0.52)"></i><i style="background:rgba(233,193,118,0.47)"></i><i style="background:rgba(2,26,53,0.70)"></i><i style="background:rgba(233,193,118,0.56)"></i><i style="background:rgba(2,26,53,0.40)"></i><i style="background:rgba(233,193,118,0.81)"></i><i style="background:rgba(233,193,118,0.52)"></i><i style="background:rgba(2,26,53,0.74)"></i><i style="background:rgba(2,26,53,0.33)"></i><i style="background:rgba(233,193,118,0.36)"></i><i style="background:rgba(233,193,118,0.70)"></i><i style="background:rgba(233,193,118,0.67)"></i><i style="background:rgba(233,193,118,0.39)"></i><i style="background:rgba(2,26,53,0.92)"></i><i style="background:rgba(233,193,118,0.68)"></i><i style="background:rgba(233,193,118,0.51)"></i><i style="background:rgba(2,26,53,0.67)"></i><i style="background:rgba(2,26,53,0.38)"></i><i style="background:rgba(233,193,118,0.43)"></i><i style="background:rgba(2,26,53,0.86)"></i><i style="background:rgba(233,193,118,0.38)"></i><i style="background:rgba(2,26,53,0.70)"></i><i style="background:rgba(2,26,53,0.72)"></i><i style="background:rgba(2,26,53,0.21)"></i><i style="background:rgba(233,193,118,0.53)"></i><i style="background:rgba(2,26,53,0.58)"></i><i style="background:rgba(2,26,53,0.55)"></i><i style="background:rgba(233,193,118,0.51)"></i><i style="background:rgba(2,26,53,0.48)"></i><i style="background:rgba(233,193,118,0.64)"></i><i style="background:rgba(2,26,53,0.44)"></i><i style="background:rgba(2,26,53,0.33)"></i><i style="background:rgba(233,193,118,0.49)"></i><i style="background:rgba(2,26,53,0.39)"></i><i style="background:rgba(233,193,118,0.42)"></i><i style="background:rgba(233,193,118,0.84)"></i><i style="background:rgba(233,193,118,0.56)"></i><i style="background:rgba(2,26,53,0.32)"></i><i style="background:rgba(233,193,118,0.63)"></i><i style="background:rgba(233,193,118,0.53)"></i><i style="background:rgba(2,26,53,0.65)"></i><i style="background:rgba(233,193,118,0.50)"></i><i style="background:rgba(233,193,118,0.43)"></i><i style="background:rgba(233,193,118,0.66)"></i><i style="background:rgba(233,193,118,0.49)"></i><i style="background:rgba(233,193,118,0.57)"></i><i style="background:rgba(2,26,53,0.72)"></i><i style="background:rgba(2,26,53,0.40)"></i><i style="background:rgba(233,193,118,0.34)"></i><i style="background:rgba(233,193,118,0.36)"></i><i style="background:rgba(2,26,53,0.23)"></i><i style="background:rgba(2,26,53,0.56)"></i></div>
             </div>
             <div class="heatrow">
@@ -1028,35 +1295,42 @@
         <div class="card wide">
           <h3>Where the threshold lands</h3>
           <p class="note">
-            The values below show how similar each headline is to A1. The score for the same story
-            is well above the others. In this sample, the 0.70 threshold lies between them.
+            The program compares three successive articles with the centre of group A. When the first arrives, group A contains only A1, so A1’s vector is also its centre. By the time the next two arrive, group A contains two articles. The values come from a query against a database with the pgvector
+            extension, run on the vectors in the test fixture.
           </p>
           <div class="sims">
             <div class="simrow">
               <div class="top">
-                <span class="pair">A1 ↔ A2<span>Same resignation, two newsrooms, reshuffled wording</span></span>
+                <span class="pair">A2 → centre of group A<span>Same resignation, second newsroom, reshuffled wording</span></span>
                 <span class="val">0.9933</span>
               </div>
               <div class="track"><div class="fill merge" style="width:99.33%"></div><div class="cut" data-label="0.70 threshold" style="left:70%"></div></div>
-              <p class="verdict yes">↳ above the threshold: merged into one cluster</p>
+              <p class="verdict yes">↳ above the threshold: joins group A, and the centre moves halfway towards A2</p>
             </div>
             <div class="simrow">
               <div class="top">
-                <span class="pair">A1 ↔ B1<span>Same country, same crisis, different event</span></span>
-                <span class="val">0.3872</span>
+                <span class="pair">B1 → centre of group A<span>Same country, same crisis, different event</span></span>
+                <span class="val">0.4010</span>
               </div>
-              <div class="track"><div class="fill" style="width:38.72%"></div><div class="cut" data-label="0.70 threshold" style="left:70%"></div></div>
-              <p class="verdict no">↳ below the threshold: stays separate, analysed on its own</p>
+              <div class="track"><div class="fill" style="width:40.10%"></div><div class="cut" data-label="0.70 threshold" style="left:70%"></div></div>
+              <p class="verdict no">↳ below the threshold: opens group B of its own</p>
             </div>
             <div class="simrow">
               <div class="top">
-                <span class="pair">A1 ↔ U1<span>Japan earthquake, unrelated subject</span></span>
-                <span class="val">0.1278</span>
+                <span class="pair">U1 → centre of group A<span>Japan earthquake, unrelated subject</span></span>
+                <span class="val">0.1292</span>
               </div>
-              <div class="track"><div class="fill" style="width:12.78%"></div><div class="cut" data-label="0.70 threshold" style="left:70%"></div></div>
+              <div class="track"><div class="fill" style="width:12.92%"></div><div class="cut" data-label="0.70 threshold" style="left:70%"></div></div>
               <p class="verdict no">↳ far below; the keyword filter would have dropped it first</p>
             </div>
           </div>
+          <p class="note">
+            Similarity to a centre is a different measurement from similarity to a single article. The
+            strips above show the second kind: B1 compared directly with A1 gives 0.3872, while against
+            the centre of group A, the average of A1 and A2, it gives 0.4010. For this group the
+            difference does not change the outcome, but for a group with a dozen articles the centre is
+            no longer close to any single one of them.
+          </p>
         </div>
 
       </div>
@@ -1105,22 +1379,21 @@
           </p>
           <div class="hood">
             <span class="ht">The technical side</span>
-            <code>OLLAMA_ENABLED</code> determines whether the model may be called when the cache has
+            <p><code>OLLAMA_ENABLED</code> determines whether the model may be called when the cache has
             no result; it does not select the grouping strategy. The fixture
             <code>tests/fixtures/embeddings/nomic-embed-text-v2-moe.json</code> is seeded into
             <code>embedding_cache</code> before every scenario. All three modes call
-            <code>CachedTextVectorizer</code>.
+            <code>CachedTextVectorizer</code>.</p>
           </div>
         </div>
 
         <div class="tcard">
-          <h3><span class="g">04</span> Plain JSON instead of a vector database</h3>
+          <h3><span class="g">04</span> Two vector stores, two different questions</h3>
           <p>
-            Lookups use an exact key and comparisons stay within one small batch of articles, so a
-            specialised similarity index would provide no benefit here. It would, however, impose
-            a single vector size on a store intended to hold results from different models. That
-            situation changes when the program starts matching new events against a
-            permanent archive.
+            The cache checks whether a text already has a computed vector by looking up its exact key. It stores vectors as plain JSON. A similarity index would need updating on every write but would never be queried. A fixed vector size would also prevent the cache from holding results from several models at once.
+          </p>
+          <p>
+            The topic-group table uses a <b>vector</b> column from pgvector to find the nearest group.
           </p>
         </div>
 
@@ -1194,8 +1467,7 @@
           <span class="tag">common</span>
           <h3>Classification without training</h3>
           <p>
-            Each category is described by one sentence, and each text is assigned to the category
-            whose description lies nearest. Adding a category requires one more sentence rather than
+            One sentence describes each category. The system assigns a text to the category with the nearest description. Adding a category requires one more sentence rather than
             another round of data collection and classifier training.
           </p>
         </div>
@@ -1244,7 +1516,8 @@
       <div class="foot">
         <span><b>Port</b> <span class="mono">MarketSignals/Domain/WorldEvent/TextVectorizerInterface</span></span>
         <span><b>Adapters</b> <span class="mono">CachedTextVectorizer → OllamaTextVectorizer</span></span>
-        <span><b>Store</b> <span class="mono">embedding_cache (text_hash, model_id) → jsonb</span></span>
+        <span><b>Cache</b> <span class="mono">embedding_cache (text_hash, model_id) → jsonb</span></span>
+        <span><b>Topic groups</b> <span class="mono">world_event_clusters.centroid → vector(768), operator &lt;=&gt;</span></span>
         <span><b>Model</b> <span class="mono">nomic-embed-text-v2-moe · 768 dimensions</span></span>
         <span><b>Cache initialisation</b> <span class="mono">bin/console app:embed:warm --days=1</span></span>
       </div>
