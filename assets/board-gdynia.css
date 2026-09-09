@@ -212,10 +212,10 @@
     background:rgba(2,26,53,.07);border-radius:.25rem;padding:.08em .32em;overflow-wrap:anywhere;
     box-decoration-break:clone;-webkit-box-decoration-break:clone}
   /* The box spans the full width of its card, like the heading and the input/output
-     band around it; the reading measure is capped on the text inside instead, so the
-     shaded band never stops short of the card edge. */
+     band around it, and so does the text inside it: a reading measure capped on the
+     paragraphs left a dead strip of shading along the right edge of every wide box. */
   .hood{max-width:none}
-  .hood>p{max-width:86ch}
+  .hood>p{max-width:none}
   /* the same box on a navy surface (hero, highlighted strip, navy card) inverts */
   .heroCard .hood,.strip.hot .hood,.card.dark .hood{background:rgba(251,249,242,.09);color:var(--primary-fixed-dim)}
   .heroCard .hood .ht,.strip.hot .hood .ht,.card.dark .hood .ht{color:var(--brass)}
