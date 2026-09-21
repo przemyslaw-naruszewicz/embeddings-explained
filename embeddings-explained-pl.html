@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Pięć redakcji, jedna historia · Proximtype</title>
-<meta name="description" content="Czym jest embedding i jak system łączy pięć różnych doniesień prasowych w jedną historię. Prawdziwe liczby z działającego modelu, podane ograniczenia, bez hype’u.">
+<meta name="description" content="Czym jest embedding i jak system łączy pięć różnych doniesień prasowych w jedną historię. Wyniki podobieństwa obliczone przez model i wyjaśnienie jego ograniczeń.">
 
 <!-- Preview and language tags. The site address is not decided yet, so a placeholder stands
      in for the domain; ./set-base-url.sh <address> fills it in.
@@ -19,9 +19,9 @@
 <meta property="og:locale" content="pl_PL">
 <meta property="og:locale:alternate" content="en_US">
 <meta property="og:title" content="Pięć redakcji, jedna historia">
-<meta property="og:description" content="Czym jest embedding i jak system łączy pięć różnych doniesień prasowych w jedną historię. Prawdziwe liczby z działającego modelu, podane ograniczenia, bez hype’u.">
+<meta property="og:description" content="Czym jest embedding i jak system łączy pięć różnych doniesień prasowych w jedną historię. Wyniki podobieństwa obliczone przez model i wyjaśnienie jego ograniczeń.">
 <meta property="og:url" content="https://przemyslaw-naruszewicz.github.io/embeddings-explained/embeddings-explained-pl.html">
-<meta property="og:image" content="https://przemyslaw-naruszewicz.github.io/embeddings-explained/og/og-pl-v1.png">
+<meta property="og:image" content="https://przemyslaw-naruszewicz.github.io/embeddings-explained/og/og-pl-v2.png">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -53,8 +53,8 @@
           <p>
             <b>Embedding</b> to wektor, czyli lista liczb o stałej długości, którą model językowy
             oblicza dla danego fragmentu tekstu. Teksty o podobnym znaczeniu zwykle otrzymują
-            wektory położone blisko siebie, więc system może obliczyć ich podobieństwo, zamiast
-            oceniać je na wyczucie.
+            wektory położone blisko siebie, więc system może zmierzyć ich podobieństwo bez
+            subiektywnej oceny czytelnika.
           </p>
         </div>
         <p class="sub">
@@ -69,9 +69,10 @@
           za pomocą cosinusa kąta. Wynik pozwala oszacować, czy teksty są ze sobą powiązane.
         </p>
         <p class="sub">
-          Grupa tematyczna, do której należy artykuł, ma w bazie własny wiersz i trwa dłużej niż jeden dzień.
+          Grupa tematyczna, do której należy artykuł, ma w bazie własny wiersz i istnieje przez
+          wiele dni.
           Nowe doniesienie nie jest porównywane z każdym innym artykułem, tylko ze środkami
-          istniejących grup. Wyszukuje je baza danych z rozszerzeniem <b>pgvector</b>.
+          istniejących grup. Wyszukuje je baza danych PostgreSQL z rozszerzeniem <b>pgvector</b>.
         </p>
       </div>
       <div class="kpis">
@@ -82,10 +83,8 @@
         </div>
         <div class="kpi">
           <div class="v">0,70</div>
-            <div class="k">próg dopięcia do grupy</div>
-            <div class="d">Podobieństwo cosinusowe mieści się w przedziale od −1,00 do 1,00. Artykuł dopina się
-              do grupy, gdy jego podobieństwo do środka grupy wynosi co najmniej 0,70; w pokazanej próbce
-              ta sama grupa osiąga 0,9933, a inna 0,4010</div>
+            <div class="k">próg dołączenia do grupy</div>
+            <div class="d">Podobieństwo cosinusowe mieści się w przedziale od −1,00 do 1,00. Artykuł dołącza do grupy, gdy jego podobieństwo do środka grupy wynosi co najmniej 0,70; w pokazanej próbce doniesienie o tym samym wydarzeniu uzyskuje względem środka wynik 0,9933, a doniesienie o innym wydarzeniu 0,4010</div>
         </div>
         <div class="kpi">
           <div class="v">3</div>
@@ -108,7 +107,8 @@
       <div class="sec-head">
         <p class="label">Elementarz</p>
         <h2 class="title">Znaczenie zapisane jako współrzędne</h2>
-        <p class="lead">Trzy właściwości sprawiają, że embeddingi nadają się do tego zadania.</p>
+        <p class="lead">Trzy punkty poniżej pokazują, jak z tekstu powstaje embedding, jak porównuje
+          się embeddingi i dlaczego raz obliczony wynik można zachować.</p>
       </div>
 
       <div class="primer">
@@ -135,7 +135,7 @@
                 Teksty o tym samym wydarzeniu często trafiają prawie w to samo miejsce, mimo że używają
                 innych słów. To „prawie” da się zmierzyć: służy do tego <b>cosinus kąta</b> między
                 wektorami. Cały rachunek pokazuje karta „Jak liczy się ten wynik” pod spodem.
-                Dzięki temu nie trzeba ręcznie pisać reguł dotyczących
+                Dzięki embeddingom nie trzeba ręcznie pisać reguł dotyczących
                 synonimów i szyku zdania.
               </p>
             </div>
@@ -169,7 +169,7 @@
               <div class="cosplot">
                 <span class="coslabel">1 · Odczytaj współrzędne</span>
                 <svg viewBox="0 0 320 280" role="img"
-                     aria-label="Układ współrzędnych od 0 do 1. Wektor A kończy się w punkcie 1 i 0, a wektor B w punkcie 0,8 i 0,6. Wektory tworzą kąt około 37 stopni.">
+                     aria-label="Układ współrzędnych od 0 do 1. Wektor A kończy się w punkcie o współrzędnych 1 i 0, a wektor B w punkcie o współrzędnych 0,8 i 0,6. Wektory tworzą kąt około 37 stopni.">
                   <defs>
                     <marker id="cos-a-pl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
                       <path d="M0 0 L10 5 L0 10 z" fill="#021a35"></path>
@@ -226,7 +226,7 @@
 
               <div class="cosmath">
                 <span class="coslabel">2 · Policz podobieństwo kierunków</span>
-                <div class="cosformula" aria-label="Cosinus kąta równa się iloczyn skalarny A i B podzielony przez iloczyn długości A i B">
+                <div class="cosformula" aria-label="Cosinus kąta jest równy iloczynowi skalarnemu A i B podzielonemu przez iloczyn długości A i B">
                   <span>cos(θ)</span><span>=</span>
                   <span class="cosfrac"><span>A · B</span><span>|A| × |B|</span></span>
                 </div>
@@ -451,14 +451,14 @@
             Początkowo sposób grupowania zależał od ustawienia: środowisko programisty bez modelu
             korzystało z TF-IDF, a środowisko produkcyjne z embeddingów. W rezultacie ta sama porcja
             artykułów układała się w inne grupy w środowisku programisty niż w środowisku produkcyjnym,
-            a jeden próg podobieństwa musiał obsłużyć dwa różne rozkłady wyników. Gdy na podstawie grup
+            a ten sam próg podobieństwa stosowano do dwóch różnych rozkładów wyników. Gdy na podstawie grup
             artykułów powstają sygnały mogące wspierać decyzje inwestycyjne, „u mnie wyszło inaczej”
             przestaje być drobiazgiem.
           </p>
           <p class="note">
-            Jedyną przewagą liczenia słów był brak zależności od modelu. Zniknęła ona po jednorazowym
-            obliczeniu embeddingów dla zbioru danych używanego w testach i zapisaniu ich w pliku danych
-            testowych dołączonym do kodu. Przed każdym scenariuszem testowym gotowe wektory są wczytywane
+            Liczenie słów miało tylko jedną przewagę: nie wymagało modelu. Zniknęła, gdy raz obliczono
+            embeddingi dla danych testowych i zapisano je w pliku dołączonym do kodu.
+            Przed każdym scenariuszem testowym gotowe wektory są wczytywane
             do pamięci podręcznej. Testy korzystają więc z tych samych embeddingów i tej samej metody grupowania co środowisko
             produkcyjne, ale nie muszą wywoływać modelu.
           </p>
@@ -490,8 +490,7 @@
           <p class="note">
             Skrót <b>MoE</b> w nazwie to <i>mixture of experts</i>: model zawiera kilka
             wyspecjalizowanych podsieci, ale dla każdego fragmentu tekstu uruchamia tylko część
-            z nich. Ma więc możliwości większego modelu, choć zużywa podobną ilość zasobów
-            co mniejszy model.
+            z nich. Ma więc możliwości większego modelu, choć zużywa podobną ilość zasobów jak mniejszy model.
           </p>
           <p class="note">
             W tym zadaniu liczy się przede wszystkim wielojęzyczność: francuska depesza
@@ -502,7 +501,7 @@
 
         <div class="card">
           <p class="label">Dane techniczne</p>
-          <h3>Rozmiar i kształt</h3>
+          <h3>Parametry modelu</h3>
           <dl class="kv">
             <dt>wyjście</dt>
             <dd>768 liczb · da się skrócić kosztem jakości</dd>
@@ -529,9 +528,8 @@
         <div class="tcard">
           <h3><span class="g">?</span> Czym jest Ollama</h3>
           <p>
-            To program, który uruchamia modele językowe na własnym komputerze albo serwerze.
-            Ollamę instaluje się raz, a model pobiera się jednym poleceniem. Działa wtedy pod
-            lokalnym adresem, podobnie jak baza danych, do której aplikacja wysyła zapytanie
+            Ollama to program do uruchamiania modeli językowych na własnym komputerze albo serwerze.
+            Ollamę instaluje się raz, a model pobiera się jednym poleceniem. Model działa wtedy pod lokalnym adresem, podobnie jak baza danych, do której aplikacja wysyła zapytanie
             i z której otrzymuje wynik.
           </p>
           <p>
@@ -555,7 +553,7 @@
           </p>
           <div class="hood">
             <span class="ht">Od strony technicznej</span>
-            <p><code>POST /api/embed</code>, wejście w paczkach po 3, <code>keep_alive: 0</code>
+            <p><code>POST /api/embed</code>, po 3 teksty w paczce, <code>keep_alive: 0</code>
             przy ostatniej paczce (zwolnienie pamięci). Adres i nazwa modelu pochodzą z konfiguracji
             (<code>OLLAMA_EMBED_MODEL</code>).</p>
           </div>
@@ -678,8 +676,7 @@
           <p>
             Każde z tych pytań wymaga innego narzędzia. Najpierw program porównuje skróty treści.
             To szybka operacja, która nie wymaga modelu. Dopiero teksty, które przeszły ten etap,
-            dostają wektor i są porównywane ze środkami grup, które baza już zna. Grupa
-            założona w poniedziałek przyjmuje wtorkowe doniesienie pod tą samą tożsamością.
+            dostają wektor i są porównywane ze środkami grup, które baza już zna. Wtorkowe doniesienie może dołączyć do grupy założonej w poniedziałek, która zachowuje swój identyfikator.
           </p>
         </div>
       </div>
@@ -728,8 +725,7 @@
             </p>
             <div class="hood">
               <span class="ht">Od strony technicznej</span>
-              <p><code>WorldEventFilter → WorldEventFilterSpec</code>: bramka oparta na wyrażeniach
-              regularnych, działająca wyłącznie na CPU. Przy pustej konfiguracji nie przepuszcza
+              <p><code>WorldEventFilter → WorldEventFilterSpec</code>: filtr oparty na wyrażeniach regularnych, działający wyłącznie na CPU. Przy pustej konfiguracji nie przepuszcza
               żadnego tekstu, zamiast domyślnie przepuszczać wszystkie. Podpowiadanie słów to osobna ścieżka, wywoływana z ekranu
               konfiguracji: <code>KeywordSuggesterInterface::suggest(opis, języki)</code>, adapter
               <code>AnthropicKeywordSuggester</code> z pamięcią podręczną i limitem liczby zapytań.</p>
@@ -760,7 +756,7 @@
           <div>
             <h3>Zamień tekst na liczby</h3>
             <p class="txt">
-              Model zużywa więcej zasobów niż pozostałe kroki, dlatego system najpierw sprawdza,
+              Obliczenie wektora zużywa więcej zasobów niż pozostałe kroki, dlatego system najpierw sprawdza,
               czy tekst został już wcześniej przeliczony. Model otrzymuje wyłącznie teksty, dla
               których nie ma zapisanego wyniku.
             </p>
@@ -768,7 +764,7 @@
             <div class="hood">
               <span class="ht">Od strony technicznej</span>
               <p>W PHP wynik ma typ <code>array</code>: zawiera wektory, a każdy z nich jest tablicą
-              768 liczb typu <code>float</code>. PHPDoc zapisuje ten kształt dokładniej jako
+              768 liczb typu <code>float</code>. PHPDoc opisuje tę strukturę dokładniej jako
               <code>list&lt;list&lt;float&gt;&gt;</code>.</p>
             </div>
           </div>
@@ -777,11 +773,11 @@
         <article class="strip">
           <div class="num">05</div>
           <div>
-            <h3>Dopnij do grupy albo załóż nową</h3>
-            <p class="txt">Program szuka grupy najbardziej podobnej do nowego artykułu. Jeśli podobieństwo wynosi co najmniej 0,70, dopina artykuł do tej grupy; w przeciwnym razie zakłada nową. Sekcja „Grupy tematyczne” pokazuje, jak baza wyszukuje dopasowanie i jak zmienia się środek grupy.</p>
+            <h3>Dołącz do grupy albo załóż nową</h3>
+            <p class="txt">Program szuka grupy najbardziej podobnej do nowego artykułu. Jeśli podobieństwo wynosi co najmniej 0,70, dołącza artykuł do tej grupy; w przeciwnym razie zakłada nową. Sekcja „Grupy tematyczne” pokazuje, jak baza wyszukuje dopasowanie i jak zmienia się środek grupy.</p>
             <div class="hood">
               <span class="ht">Od strony technicznej</span>
-              <p>Opis dotyczy dopasowania do trwałych grup tematycznych, czyli klastrów zapisanych w bazie. Obserwacja procesów wieloetapowych (<code>ProcessStepper</code>) tworzy osobne klastry w obrębie porcji: porównuje każdą parę i scala powiązane klastry, więc połączenia A z B oraz B z C dają klaster ABC.</p>
+              <p>Opis dotyczy dopasowania do trwałych grup tematycznych, czyli klastrów zapisanych w bazie. Podczas obserwacji procesów wieloetapowych <code>ProcessStepper</code> korzysta z tego samego podziału: filtruje wydarzenia według słów kluczowych danego etapu, a pozostałe grupuje według identyfikatora nadanego w tym kroku. Nie tworzy osobnych klastrów.</p>
             </div>
             <div class="io"><span class="pill"><b>wejście</b> · array: wektory po 768 floatów</span><span class="pill"><b>wyjście</b> · wydarzenie → identyfikator grupy</span></div>
           </div>
@@ -792,19 +788,20 @@
           <div>
             <h3>Jedna grupa, jedna analiza</h3>
             <p class="txt">
-              Cała grupa przechodzi jedną analizę, więc pięć doniesień o tym samym wydarzeniu
-              wymaga łącznie jednej analizy zamiast pięciu. Zmniejsza to liczbę analiz na ostatnim
-              etapie. Wynikiem jest sygnał transakcyjny albo informacja, że dłuższy proces
-              przeszedł do kolejnego etapu.
+              Na ostatnim etapie program analizuje całą grupę wspólnie, więc pięć doniesień
+              o tym samym wydarzeniu wymaga jednej analizy zamiast pięciu.
+              Wynikiem jest sygnał transakcyjny albo informacja, że dłuższy proces
+              przeszedł do kolejnego etapu. Kiedy analiza grupy da sygnał, kolejne doniesienia
+              o tym samym dołączają do grupy, ale nie wywołują nowej analizy, dopóki ten sygnał
+              obowiązuje.
             </p>
             <div class="hood">
               <span class="ht">Od strony technicznej</span>
-              <p><code>WorldEventCluster</code>: do analizy idą wyłącznie grupy, którym w tym przebiegu
-              przybył artykuł. <code>SignalGenerationKernel</code> (wydarzenia → sygnały) dostaje
-              wydarzenia z już nadanym identyfikatorem grupy i tylko grupuje po nim
-              (<code>AssignedClusterGrouping</code>). <code>ProcessStepper</code> grupuje w obrębie
-              porcji, sortuje klastry według wielkości i zatrzymuje się na pierwszym, który przejdzie
-              bramkę etapu.</p>
+              <p>Klaster wraca do analizy tylko wtedy, gdy przybył mu nowy artykuł. Przerwy po
+              sygnale pilnuje <code>SignalCooldownPolicy</code>. Przy obserwacji procesu etap nie
+              pyta drugi raz o klaster, który już ocenił, chyba że doszedł do niego artykuł
+              pasujący do tego etapu. Kroki 05 i 06 mają osobne przełączniki: można dalej grupować
+              artykuły, a wstrzymać płatną analizę.</p>
             </div>
             <div class="io"><span class="pill"><b>wyjście</b> · Signal</span><span class="pill"><b>wyjście</b> · obserwacja etapu</span></div>
           </div>
@@ -948,7 +945,7 @@
         <p class="label">Grupy tematyczne</p>
         <h2 class="title">Jak artykuł trafia do grupy tematycznej</h2>
           <p class="lead">
-          Grupa tematyczna to zbiór artykułów, które system uznał za doniesienia o tym samym wydarzeniu. Gdy przychodzi kolejny tekst, program musi zdecydować: dołączyć go do znanej grupy czy założyć osobną? W tym celu korzysta z embeddingów, czyli liczbowych zapisów tekstów.
+          Grupa tematyczna to zbiór artykułów, które system uznał za doniesienia o tym samym wydarzeniu. Gdy przychodzi kolejny tekst, program musi zdecydować: dołączyć go do znanej grupy czy założyć osobną? Korzysta przy tym z embeddingów, czyli liczbowych reprezentacji tekstów.
         </p>
       </div>
 
@@ -963,7 +960,7 @@
         <div class="card">
           <h3>W czym pomaga pgvector</h3>
           <p class="note">Model zamienia tekst na liczby. pgvector, rozszerzenie bazy PostgreSQL, pozwala zapisać te liczby i porównywać wektory bezpośrednio w bazie. Tutaj baza porównuje wektor nowego artykułu ze środkami zapisanych grup i zwraca najlepsze dopasowania.</p>
-          <p class="note">Program sprawdza następnie, czy najlepsze dopasowanie jest wystarczająco podobne. Samo znalezienie najbardziej podobnej grupy nie wystarcza, żeby przypisać do niej artykuł.</p>
+          <p class="note">Program sprawdza następnie, czy podobieństwo do najlepiej dopasowanej grupy jest wystarczająco wysokie. Samo znalezienie najbardziej podobnej grupy nie wystarcza, żeby przypisać do niej artykuł.</p>
         </div>
 
         <div class="card wide">
@@ -1047,8 +1044,8 @@
           <p class="note">Gdyby następna redakcja przysłała nagłówek B2 o tych wyborach, jego podobieństwo do grupy B wyniosłoby <b>0,9942</b>. Ten wynik przekracza próg 0,70, więc program dołączyłby B2 do B. Grupa miałaby dwa artykuły, a jej środek byłby średnią ich wektorów. Sposób obliczenia tej średniej pokazuje następny rysunek.</p>
           <div class="hood">
             <span class="ht">Od strony technicznej</span>
-            <p>W bazie ta grupa tematyczna nazywa się klastrem: baza przeszukuje tabelę <code>world_event_clusters</code>. Bierze pod uwagę tylko grupy tego klienta z doniesieniem z ostatnich 14 dni i wektorami z tego samego modelu. Liczy odległość do każdego pasującego środka, bez indeksu przybliżonego, i zwraca do pięciu najbliższych. Program sprawdza najlepszy wynik. Grupa Z z ostatnim doniesieniem sprzed 16 dni nie spełnia warunku, więc poniższe zapytanie zwraca tylko A.</p>
-            <p>Środki leżą w kolumnie <code>centroid</code> typu <code>vector(768)</code>. Operator <code>&lt;=&gt;</code> zwraca odległość cosinusową. Program przelicza ją na podobieństwo: <code>1 − odległość</code>. W tym przykładzie baza zwraca 0,5990, co daje <code>1 − 0,5990 = 0,4010</code>. Próg 0,70 jest zapisany w kodzie programu.</p>
+            <p>W bazie grupa tematyczna nazywa się klastrem. Zapytanie przeszukuje tabelę <code>world_event_clusters</code>. Bierze pod uwagę tylko grupy tego klienta z doniesieniem z ostatnich 14 dni i wektorami z tego samego modelu. Liczy odległość do każdego pasującego środka, bez indeksu przybliżonego, i zwraca do pięciu najbliższych. Program sprawdza najlepszy wynik. Grupa Z z ostatnim doniesieniem sprzed 16 dni nie spełnia warunku, więc poniższe zapytanie zwraca tylko A.</p>
+            <p>Środki są zapisane w kolumnie <code>centroid</code> typu <code>vector(768)</code>. Operator <code>&lt;=&gt;</code> zwraca odległość cosinusową. Program przelicza ją na podobieństwo: <code>1 − odległość</code>. W tym przykładzie baza zwraca 0,5990, co daje <code>1 − 0,5990 = 0,4010</code>. Próg 0,70 jest zapisany w kodzie programu.</p>
           <div class="rowbox">
 <span class="c">-- krok 2 dla nagłówka B1, bez rzutowań; wiersze cudzych klientów odcina polityka RLS</span><br>
 <span class="k">SELECT</span> <span class="v">id, centroid &lt;=&gt; :wektor</span> <span class="k">AS</span> <span class="v">distance</span><br>
@@ -1063,8 +1060,8 @@
 <span class="c">(grupa Z nie spełnia warunku na datę, więc nie ma jej w wyniku)</span>
           </div>
           <p class="codecap">
-            Odległość 0,5990 zwróciło zapytanie do działającej bazy z rozszerzeniem pgvector,
-            uruchomione na wektorach z danych testowych. Ta sama para liczona w PHP daje 0,5990.
+            Zapytanie do działającej bazy z rozszerzeniem pgvector, wykonane na wektorach testowych,
+            zwróciło odległość 0,5990. Obliczenie odległości dla tej samej pary w PHP daje 0,5990.
             Zgodność obu wyników sprawdza test integracyjny, bo gdyby baza i program liczyły cosinus
             inaczej, próg 0,70 znaczyłby w każdym z nich co innego.
           </p>
@@ -1074,7 +1071,7 @@
         <div class="card wide">
           <h3>Jak przesuwa się środek</h3>
           <p class="note">
-            Po dopięciu artykułu środek przesuwa się w stronę jego wektora. Im więcej artykułów grupa już ma, tym mniejszy wpływ pojedynczego doniesienia. Do obliczenia nowego środka wystarczą poprzedni środek, liczba artykułów i nowy wektor.
+            Po dołączeniu artykułu środek przesuwa się w stronę jego wektora. Im więcej artykułów grupa już ma, tym mniejszy wpływ pojedynczego doniesienia. Do obliczenia nowego środka wystarczą poprzedni środek, liczba artykułów i nowy wektor.
           </p>
 
           <div class="hood">
@@ -1089,7 +1086,7 @@
               <div class="cosplot">
                 <span class="coslabel">1 · Stary środek, nowy artykuł, nowy środek</span>
                 <svg viewBox="0 0 320 280" role="img"
-                     aria-label="Układ współrzędnych od 0 do 1. Stary środek A leży w punkcie 1 i 0, nowy artykuł B w punkcie 0,8 i 0,6, a nowy środek w punkcie 0,9 i 0,3, w połowie drogi między nimi.">
+                     aria-label="Układ współrzędnych od 0 do 1. Stary środek A leży w punkcie o współrzędnych 1 i 0, nowy artykuł B w punkcie o współrzędnych 0,8 i 0,6, a nowy środek w punkcie o współrzędnych 0,9 i 0,3, w połowie drogi między nimi.">
                   <defs>
                     <marker id="avg-a-pl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
                       <path d="M0 0 L10 5 L0 10 z" fill="#021a35"></path>
@@ -1150,7 +1147,7 @@
 
               <div class="cosmath">
                 <span class="coslabel">2 · Policz nowy środek</span>
-                <div class="cosformula" aria-label="Nowy środek równa się n razy stary środek plus nowy wektor, podzielone przez n plus 1">
+                <div class="cosformula" aria-label="Nowy środek obliczamy, dodając nowy wektor do n razy starego środka i dzieląc całą sumę przez n plus 1">
                   <span>środek′</span><span>=</span>
                   <span class="cosfrac"><span>n × środek + B</span><span>n + 1</span></span>
                 </div>
@@ -1158,7 +1155,7 @@
                   <div class="cosstep">
                     <span class="sn">1</span>
                     <div>Sprawdź próg. Podobieństwo B do środka wynosi 0,80, czyli co najmniej 0,70,
-                      więc B dopina się do grupy.</div>
+                      więc B dołącza do grupy.</div>
                   </div>
                   <div class="cosstep">
                     <span class="sn">2</span>
@@ -1169,29 +1166,27 @@
                   <div class="cosstep">
                     <span class="sn">3</span>
                     <div>Licznik rośnie do 2, a data ostatniego doniesienia przesuwa się na dziś.
-                      Długość nowego środka to √(0,81 + 0,09) ≈ 0,95, mniej niż 1. Cosinus tego nie
-                      wymaga, bo dzieli przez długości.</div>
+                      Długość nowego środka to √(0,81 + 0,09) ≈ 0,95, mniej niż 1. Podobieństwo cosinusowe nadal można obliczyć, bo we wzorze dzielimy przez długości wektorów.</div>
                   </div>
                 </div>
                 <div class="cosanswer">
                   <strong>[0,9; 0,3]</strong>
-                  <span>Nowy środek jest średnią obu wektorów. Baza aktualizuje go razem z licznikiem artykułów w jednej instrukcji, więc równoczesne dopięcia nie nadpisują sobie wyniku.</span>
+                  <span>Nowy środek jest średnią obu wektorów. Baza aktualizuje go razem z licznikiem artykułów w jednej instrukcji, więc równoczesne dołączenia artykułów nie nadpisują wzajemnie swoich wyników.</span>
                 </div>
-                <p class="cosangleback">W tabeli grup wektory mają 768 współrzędnych i ta sama
-                  instrukcja <code>UPDATE</code> robi to samo dla wszystkich 768 naraz.</p>
+                <p class="cosangleback">W tabeli grup wektory mają 768 współrzędnych.
+                  Instrukcja <code>UPDATE</code> aktualizuje je wszystkie naraz.</p>
               </div>
             </div>
           </div>
         </div>
 
         <div class="card wide dark">
-          <h3>Co to zmienia w praktyce</h3>
+          <h3>Jak działają grupy tematyczne</h3>
           <div class="outcomes">
             <div class="oc">
               <h4>Ta sama grupa przez wiele dni</h4>
-              <span class="cond">jedna tożsamość</span>
-              <p>Wtorkowe doniesienie dopina się do grupy założonej w poniedziałek. Do analizy idzie
-                ta sama grupa, ze swoim dotychczasowym identyfikatorem, a nie zbiór utworzony od nowa.</p>
+              <span class="cond">stały identyfikator</span>
+              <p>Wtorkowe doniesienie dołącza do grupy założonej w poniedziałek i nie powstaje nowy zbiór. Jeśli grupa idzie do analizy, model widzi oba doniesienia, każde z datą publikacji.</p>
             </div>
             <div class="oc warn">
               <h4>Drugi przebieg tego samego dnia</h4>
@@ -1199,11 +1194,12 @@
               <p>Grupa, której nic nie przybyło, nie wraca do analizy.</p>
             </div>
             <div class="oc stop">
-              <h4>Grupa, która ucichła na 14 dni</h4>
+              <h4>Brak nowych doniesień przez 14 dni</h4>
               <span class="cond">poza oknem</span>
-              <p>Wraca jako nowa grupa. To decyzja celowa: kryzys w marcu i w październiku dają
+              <p>Późniejsze doniesienie rozpoczyna nową grupę. To celowa decyzja: kryzys w marcu i w październiku dają
                 bliskie wektory, ale dla sygnału rynkowego są to dwie sytuacje z innymi cenami
-                wyjściowymi.</p>
+                wyjściowymi. Okno zamyka grupę tylko dla nowych artykułów. Te, które już do niej
+                trafiły, zostają w niej na stałe.</p>
             </div>
           </div>
           <div class="hood">
@@ -1309,7 +1305,7 @@
         <div class="card wide">
           <h3>Gdzie wypada próg</h3>
           <p class="note">
-            Trzy kolejne artykuły trafiają do grupy A, każdy porównywany z jej środkiem. Pierwszy
+            Program porównuje trzy kolejne artykuły ze środkiem grupy A. Pierwszy
             zastaje grupę z jednym artykułem, więc jej środkiem jest wtedy wektor A1. Dwa następne
             zastają ją już z dwoma. Wartości pochodzą z zapytania do bazy z rozszerzeniem pgvector,
             uruchomionego na wektorach z danych testowych.
@@ -1321,7 +1317,7 @@
                 <span class="val">0,9933</span>
               </div>
               <div class="track"><div class="fill merge" style="width:99.33%"></div><div class="cut" data-label="próg 0,70" style="left:70%"></div></div>
-              <p class="verdict yes">↳ powyżej progu: dopięcie do grupy A, środek przesuwa się o połowę drogi</p>
+              <p class="verdict yes">↳ powyżej progu: dołączenie do grupy A; środek przesuwa się o połowę drogi w stronę wektora A2</p>
             </div>
             <div class="simrow">
               <div class="top">
@@ -1344,8 +1340,8 @@
             Podobieństwo do środka nie jest tym samym co podobieństwo do pojedynczego artykułu.
             Paski wyżej pokazują to drugie: B1 porównany wprost z A1 daje 0,3872, a ze środkiem
             grupy A, czyli ze średnią A1 i A2, daje 0,4010. Przy tej grupie różnica nie zmienia
-            wyniku, ale przy grupie z kilkunastoma artykułami środek jest już czymś innym niż
-            którykolwiek z nich.
+            wyniku, ale przy grupie z kilkunastoma artykułami środek reprezentuje średnią wektorów
+            całej grupy, a nie pojedynczy artykuł.
           </p>
         </div>
 
@@ -1392,6 +1388,7 @@
             Ustawienie w konfiguracji określa wyłącznie, czy program może wywołać model;
             nie zmienia metody grupowania. Testy i tryb pracy bez dostępu do sieci korzystają
             z wyników zapisanych razem z kodem. Przetwarzają je tak samo jak system produkcyjny.
+            Ta sama metoda obejmuje oba rodzaje analizy: podczas obserwacji dłuższego procesu program grupuje artykuły według identyfikatora nadanego w kroku 05. Nie tworzy osobnych klastrów.
           </p>
           <div class="hood">
             <span class="ht">Od strony technicznej</span>
@@ -1406,13 +1403,14 @@
         <div class="tcard">
           <h3><span class="g">04</span> Dwa magazyny wektorów, dwa różne pytania</h3>
           <p>
-            Pamięć podręczna odpowiada na pytanie „czy liczyłem już ten tekst”, więc szuka po dokładnym
-            kluczu i nigdy po podobieństwie. Została przy zwykłym JSON-ie: indeks podobieństwa byłby tam
-            utrzymywany przy każdym zapisie i nigdy nieodpytywany, a stały rozmiar wektora odebrałby
-            jej obsługę wielu modeli naraz.
+            Pamięć podręczna sprawdza po dokładnym kluczu, czy wektor tekstu został już obliczony.
+            Nie wyszukuje po podobieństwie i przechowuje wektory w zwykłym JSON-ie. Indeks
+            podobieństwa wymagałby aktualizacji przy każdym zapisie, choć żadne zapytanie by
+            go nie używało. Stały rozmiar wektora uniemożliwiłby przechowywanie wyników
+            z wielu modeli naraz.
           </p>
           <p>
-            Tabela grup odpowiada na pytanie „która grupa jest najbliżej”, więc dostała kolumnę typu
+            Tabela grup służy do wyszukiwania najbliższej grupy, dlatego zawiera kolumnę typu
             <b>vector</b> z rozszerzenia pgvector.
           </p>
         </div>
@@ -1436,7 +1434,7 @@
       <div class="uses">
 
         <div class="ucard">
-          <span class="tag here">tak działa Proximtype</span>
+          <span class="tag here">opisane tutaj</span>
           <h3>Grupowanie i wykrywanie tematów</h3>
           <p>
             Teksty bez przypisanych kategorii układają się w skupiska, a każde z nich odpowiada jednemu
@@ -1445,7 +1443,7 @@
         </div>
 
         <div class="ucard">
-          <span class="tag here">tak działa Proximtype</span>
+          <span class="tag here">opisane tutaj</span>
           <h3>Dopasowanie między językami</h3>
           <p>
             Doniesienia po francusku, angielsku i polsku mogą trafić do jednej grupy
@@ -1529,8 +1527,9 @@
             Nie ustala, czy dwa teksty są identyczne. Aby sprawdzić, czy ktoś przysłał
             dokładnie ten sam tekst, wystarczy skrót treści z kroku 01. Sam wynik nie jest też
             wyjaśnieniem: pokazuje, że dwa teksty są blisko siebie, ale nie mówi, dlaczego. Model
-            korzysta tylko z zależności, których nauczył się podczas trenowania. Gdy artykuł dotyczy
-            wydarzenia z zeszłego tygodnia, wektor opisuje tylko przekazany tekst.
+            korzysta z zależności, których nauczył się podczas trenowania, ale nie sprawdza faktów
+            ani nie szuka innych doniesień. Jeśli artykuł opisuje wydarzenie z zeszłego tygodnia,
+            embedding powstaje wyłącznie z jego treści, bez informacji pobieranych z innych źródeł.
           </p>
         </div>
       </div>

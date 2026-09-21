@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Five newsrooms, one story · Proximtype</title>
-<meta name="description" content="What an embedding is, and how a system merges five different news reports into one story. Real numbers from a running model, stated limits, no hype.">
+<meta name="description" content="What an embedding is, and how a system merges five different news reports into one story. Includes similarity scores computed by the model and explains its limits.">
 
 <!-- Preview and language tags. The site address is not decided yet, so a placeholder stands
      in for the domain; ./set-base-url.sh <address> fills it in.
@@ -19,9 +19,9 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:locale:alternate" content="pl_PL">
 <meta property="og:title" content="Five newsrooms, one story">
-<meta property="og:description" content="What an embedding is, and how a system merges five different news reports into one story. Real numbers from a running model, stated limits, no hype.">
+<meta property="og:description" content="What an embedding is, and how a system merges five different news reports into one story. Includes similarity scores computed by the model and explains its limits.">
 <meta property="og:url" content="https://przemyslaw-naruszewicz.github.io/embeddings-explained/embeddings-explained-en.html">
-<meta property="og:image" content="https://przemyslaw-naruszewicz.github.io/embeddings-explained/og/og-en-v1.png">
+<meta property="og:image" content="https://przemyslaw-naruszewicz.github.io/embeddings-explained/og/og-en-v2.png">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -53,7 +53,8 @@
           <p>
             An <b>embedding</b> is a vector: a fixed-length list of numbers that a language model
             computes for a piece of text. Texts with similar meanings usually produce vectors that
-            lie close together, so the system can calculate how similar the texts are rather than rely on a reader’s judgement.
+            lie close together, so the system can measure their similarity without relying
+            on a reader’s judgement.
           </p>
         </div>
         <p class="sub">
@@ -69,7 +70,7 @@
           are related.
         </p>
         <p class="sub">
-          The topic group an article belongs to has its own row in the database and lasts longer than a day.
+          An article’s topic group has its own database row and persists over multiple days.
           A new report is compared with the centres of existing groups rather than with every other
           article. A PostgreSQL database with the <b>pgvector</b> extension performs that search.
         </p>
@@ -84,8 +85,7 @@
           <div class="v">0.70</div>
           <div class="k">threshold to join a group</div>
           <div class="d">Cosine similarity ranges from −1.00 to 1.00. An article joins a group when its
-            similarity to that group’s centre reaches 0.70; in the sample, the same group scores
-            0.9933 and a different one 0.4010</div>
+            similarity to that group’s centre reaches 0.70; in the sample, a report about the same event scores 0.9933 against the centre, while one about a different event scores 0.4010</div>
         </div>
         <div class="kpi">
           <div class="v">3</div>
@@ -107,7 +107,8 @@
       <div class="sec-head">
         <p class="label">Primer</p>
         <h2 class="title">Meaning expressed as coordinates</h2>
-        <p class="lead">Three properties make embeddings useful for this task.</p>
+        <p class="lead">The three points below explain how a text becomes an embedding, how embeddings
+          are compared and why a computed result can be stored.</p>
       </div>
 
       <div class="primer">
@@ -133,7 +134,7 @@
                 Texts about the same event often land in nearly the same place even when they use
                 different words. <b>Cosine similarity</b> measures that closeness using the angle
                 between their vectors; the card below, “How that score is computed”, works through
-                the whole calculation. This removes the need to write
+                the whole calculation. Using embeddings removes the need to write
                 separate rules for synonyms and word order.
               </p>
             </div>
@@ -155,20 +156,20 @@
           <div class="coscard">
             <h3>How that score is computed</h3>
             <p>
-              The measure from point 02 is the <b>cosine of the angle</b> between two vectors — the
-              same cosine similarity whose scale carries the 0.70 threshold. A vector is a list of
+              The measure from point 02 is the <b>cosine of the angle</b> between two vectors.
+              The 0.70 threshold uses this same cosine similarity scale. A vector is a list of
               numbers; this example uses two coordinates instead of 768 so the whole calculation fits
               in one diagram. A and B were chosen for the example; they are not model outputs.
               Both arrows start at [0, 0]: the first coordinate says how far to move the arrow’s
               endpoint horizontally, the second how far to move it vertically. The angle itself is
-              never needed — its cosine follows directly from the arrows’ coordinates.
+              never needed: its cosine follows directly from the arrows’ coordinates.
             </p>
 
             <div class="cosviz">
               <div class="cosplot">
                 <span class="coslabel">1 · Read the coordinates</span>
                 <svg viewBox="0 0 320 280" role="img"
-                     aria-label="A coordinate system from 0 to 1. Vector A ends at the point 1 and 0, while vector B ends at the point 0.8 and 0.6. The vectors form an angle of about 37 degrees.">
+                     aria-label="A coordinate system from 0 to 1. Vector A ends at the point with coordinates 1 and 0, while vector B ends at the point with coordinates 0.8 and 0.6. The vectors form an angle of about 37 degrees.">
                   <defs>
                     <marker id="cos-a-en" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
                       <path d="M0 0 L10 5 L0 10 z" fill="#021a35"></path>
@@ -224,7 +225,7 @@
               </div>
 
               <div class="cosmath">
-                <span class="coslabel">2 · Calculate direction similarity</span>
+                <span class="coslabel">2 · Calculate cosine similarity</span>
                 <div class="cosformula" aria-label="The cosine of the angle equals the dot product of A and B divided by the product of the lengths of A and B">
                   <span>cos(θ)</span><span>=</span>
                   <span class="cosfrac"><span>A · B</span><span>|A| × |B|</span></span>
@@ -500,7 +501,7 @@
 
         <div class="card">
           <p class="label">Specifications</p>
-          <h3>Size and shape</h3>
+          <h3>Model specifications</h3>
           <dl class="kv">
             <dt>output</dt>
             <dd>768 numbers · can be shortened with some loss of quality</dd>
@@ -551,7 +552,7 @@
           </p>
           <div class="hood">
             <span class="ht">The technical side</span>
-            <p><code>POST /api/embed</code>, input in chunks of 3, <code>keep_alive: 0</code> on the
+            <p><code>POST /api/embed</code>, input in chunks of 3 texts, <code>keep_alive: 0</code> on the
             last chunk (releasing memory). Address and model name come from configuration
             (<code>OLLAMA_EMBED_MODEL</code>).</p>
           </div>
@@ -579,7 +580,7 @@
            that the outer strokes of the first and last card are not clipped. -->
       <div class="flowcard">
         <svg viewBox="-1 0 1123 210" role="img"
-             aria-label="Six steps: intake with content-checksum dedup, keyword filter, assembling the text the model reads, embedding via the cache, matching against the nearest group centre in the database, analysis of the group. The embedding is produced in step four and used in step five.">
+             aria-label="Six steps: intake with duplicate detection using a content checksum, keyword filtering, assembling the text the model reads, computing or retrieving an embedding via the cache, matching against the nearest group centre in the database, analysis of the group. The embedding is produced in step four and used in step five.">
           <defs>
             <marker id="fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
               <path d="M0 0 L10 5 L0 10 z" fill="#675d4d"></path>
@@ -720,7 +721,7 @@
             </p>
             <div class="hood">
               <span class="ht">The technical side</span>
-              <p><code>WorldEventFilter → WorldEventFilterSpec</code>: a CPU-only regex gate. When its
+              <p><code>WorldEventFilter → WorldEventFilterSpec</code>: a filter that uses regular expressions and runs entirely on the CPU. When its
               configuration is empty, it rejects every text instead of allowing all of them through.
               Keyword suggestion is a separate path, called from the
               configuration screen:
@@ -770,10 +771,10 @@
           <div class="num">05</div>
           <div>
           <h3>Join a group or open a new one</h3>
-            <p class="txt">The program looks for the group most similar to the new article. If similarity is at least 0.70, the article joins that group; otherwise it opens a new one. The “Topic groups” section shows how the database finds a match and how the group’s centre changes.</p>
+            <p class="txt">The program looks for the group most similar to the new article. If similarity is at least 0.70, the article joins that group; otherwise the program opens a new one. The “Topic groups” section shows how the database finds a match and how the group’s centre changes.</p>
             <div class="hood">
               <span class="ht">The technical side</span>
-              <p>This describes matching to persistent topic groups, the clusters stored in the database. Multi-stage process tracking (<code>ProcessStepper</code>) builds separate clusters within a batch: it compares every pair and merges connected clusters, so links from A to B and B to C form cluster ABC.</p>
+              <p>This describes matching to persistent topic groups, the clusters stored in the database. For multi-stage process tracking, <code>ProcessStepper</code> uses the same grouping: it filters events using the current stage’s keywords, then groups the remaining events by the group id assigned in this step. It does not create separate clusters.</p>
             </div>
             <div class="io"><span class="pill"><b>in</b> · array: vectors of 768 floats</span><span class="pill"><b>out</b> · event → group id</span></div>
           </div>
@@ -787,15 +788,17 @@
               A group is analysed once, not once per article, so five reports of the same
               event require one analysis in total. Grouping therefore also reduces the work at the
               final stage. The result is either a trading signal or an indication that a longer
-              process has moved to its next stage.
+              process has moved to its next stage. Once a group’s analysis has produced a signal,
+              later reports on the same story still join the group but trigger no new analysis
+              while that signal remains valid.
             </p>
             <div class="hood">
               <span class="ht">The technical side</span>
-              <p><code>WorldEventCluster</code>: only groups that gained an article in this run go to
-              analysis. <code>SignalGenerationKernel</code> (events → signals) receives events that
-              already carry a group id and merely groups them by it
-              (<code>AssignedClusterGrouping</code>). <code>ProcessStepper</code> groups within the
-              batch, sorts clusters by size and stops at the first one to pass the stage gate.</p>
+              <p>A cluster goes back to analysis only when it has gained a new article. The pause
+              after a signal is enforced by <code>SignalCooldownPolicy</code>. When tracking a
+              process, a stage does not ask again about a cluster it has already assessed unless
+              an article matching that stage has arrived. Steps 05 and 06 have separate switches,
+              so articles can keep being grouped while the paid analysis is paused.</p>
             </div>
             <div class="io"><span class="pill"><b>out</b> · Signal</span><span class="pill"><b>out</b> · stage observation</span></div>
           </div>
@@ -905,13 +908,13 @@
             </div>
             <div class="oc warn">
               <h4>New text, model available</h4>
-              <span class="cond">backend enabled</span>
+              <span class="cond">model calls enabled</span>
               <p>The model runs the computation locally, three texts at a time. The result is stored immediately,
                 so the model will not be needed for that text again.</p>
             </div>
             <div class="oc stop">
               <h4>New text, model switched off</h4>
-              <span class="cond">backend disabled</span>
+              <span class="cond">model calls disabled</span>
               <p>The program stops and reports which text has no result and which command can
                 generate it. It does not fall back to a weaker method.</p>
             </div>
@@ -1039,7 +1042,7 @@
           <p class="note">If another newsroom then sent headline B2 about the election, its similarity to group B would be <b>0.9942</b>. That exceeds the 0.70 threshold, so the program would add B2 to B. The group would have two articles, and its centre would be the average of their vectors. The next diagram shows how to calculate that average.</p>
           <div class="hood">
             <span class="ht">The technical side</span>
-            <p>In the database this topic group is called a cluster: it searches <code>world_event_clusters</code>. It includes only this customer’s groups with a report from the last 14 days and vectors from the same model. It computes the distance to every qualifying centre, without an approximate index, and returns up to five nearest matches. The program checks the best result. Group Z, whose last report was 16 days ago, does not qualify, so the query below returns only A.</p>
+            <p>In the database, a topic group is called a cluster. The query searches <code>world_event_clusters</code> and includes only this customer’s groups with a report from the last 14 days and vectors from the same model. The database computes the distance to every qualifying centre, without an approximate index, and returns up to five nearest matches. The program checks the best result. Group Z, whose last report was 16 days ago, does not qualify, so the query below returns only A.</p>
             <p>Centres are stored in the <code>centroid</code> column of type <code>vector(768)</code>. The <code>&lt;=&gt;</code> operator returns cosine distance. The program converts it to similarity: <code>1 − distance</code>. Here the database returns 0.5990, giving <code>1 − 0.5990 = 0.4010</code>. The program’s code defines the 0.70 threshold.</p>
           <div class="rowbox">
 <span class="c">-- step 2 for headline B1, casts omitted; other customers' rows are cut by the RLS policy</span><br>
@@ -1078,7 +1081,7 @@
               <div class="cosplot">
                 <span class="coslabel">1 · Old centre, new article, new centre</span>
                 <svg viewBox="0 0 320 280" role="img"
-                     aria-label="A coordinate system from 0 to 1. The old centre A is at the point 1 and 0, the new article B at 0.8 and 0.6, and the new centre at 0.9 and 0.3, halfway between them.">
+                     aria-label="A coordinate system from 0 to 1. The old centre A is at the point with coordinates 1 and 0, the new article B at the point with coordinates 0.8 and 0.6, and the new centre at the point with coordinates 0.9 and 0.3, halfway between them.">
                   <defs>
                     <marker id="avg-a-en" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
                       <path d="M0 0 L10 5 L0 10 z" fill="#021a35"></path>
@@ -1177,7 +1180,7 @@
             <div class="oc">
               <h4>One group across many days</h4>
               <span class="cond">a single identity</span>
-              <p>A Tuesday report joins the group opened on Monday. The program analyses that same group under its existing id; nothing new is created.</p>
+              <p>A Tuesday report joins the group opened on Monday, and nothing new is created. If the group goes to analysis, the model sees both reports, each with its publication date.</p>
             </div>
             <div class="oc warn">
               <h4>A second run on the same day</h4>
@@ -1185,11 +1188,12 @@
               <p>The program does not analyse a group again unless it has new articles.</p>
             </div>
             <div class="oc stop">
-              <h4>A group quiet for 14 days</h4>
+              <h4>No new reports for 14 days</h4>
               <span class="cond">outside the window</span>
-              <p>It returns as a new group. That is deliberate: a crisis in March and one in October
+              <p>A later report starts a new group. This is deliberate: a crisis in March and one in October
                 produce similar vectors, yet for a market signal they are two situations with different
-                opening prices.</p>
+                opening prices. The window closes the group only to new articles. The ones already in it
+                stay there.</p>
             </div>
           </div>
           <div class="hood">
@@ -1328,8 +1332,8 @@
             Similarity to a centre is a different measurement from similarity to a single article. The
             strips above show the second kind: B1 compared directly with A1 gives 0.3872, while against
             the centre of group A, the average of A1 and A2, it gives 0.4010. For this group the
-            difference does not change the outcome, but for a group with a dozen articles the centre is
-            no longer close to any single one of them.
+            difference does not change the outcome, but for a group with a dozen articles, the centre
+            represents the group’s average rather than one individual article.
           </p>
         </div>
 
@@ -1351,7 +1355,7 @@
           <p>
             Every article carries a content checksum used to recognise duplicates. Both checksums
             are built from the headline and body, but the content checksum cannot safely serve as the
-            cache key. If the text sent to the model were assembled differently, the duplicate
+            cache key. If the text sent to the model were assembled differently, the content
             checksum would stay the same even though the model would read something else. The cache
             would then return numbers computed from a different text without warning. A second
             checksum takes only a few lines of code and prevents that mistake.
@@ -1376,6 +1380,7 @@
             A setting controls whether the program may call the model;
             it does not change the grouping method. Tests and offline runs use results
             stored alongside the code and follow exactly the same path as production.
+            The same method covers both kinds of analysis: when tracking a longer process, the program groups articles by the group id assigned in step 05. It does not create separate clusters.
           </p>
           <div class="hood">
             <span class="ht">The technical side</span>
@@ -1417,7 +1422,7 @@
       <div class="uses">
 
         <div class="ucard">
-          <span class="tag here">what Proximtype does</span>
+          <span class="tag here">described here</span>
           <h3>Grouping and topic discovery</h3>
           <p>
             Texts without assigned categories form clusters, each representing one topic, including
@@ -1426,7 +1431,7 @@
         </div>
 
         <div class="ucard">
-          <span class="tag here">what Proximtype does</span>
+          <span class="tag here">described here</span>
           <h3>Matching across languages</h3>
           <p>
             Reports in French, English and Polish can land in one group without prior translation.
@@ -1494,7 +1499,7 @@
           <span class="tag">common</span>
           <h3>Spotting the odd one out</h3>
           <p>
-            A text lying far from everything the system has seen so far is either irrelevant noise
+            A text lying far from everything the system has seen so far may be irrelevant noise
             or the first sign of something new. Either way, it is worth a look.
           </p>
         </div>
@@ -1507,8 +1512,10 @@
           <p>
             It does not establish whether two texts are identical. The content checksum in step 01
             does that. The similarity score is not an explanation either: it shows that two texts
-            are close but not why. The model can use only patterns learned from its training data.
-            For an event from last week, the embedding represents only what appears in the input text.
+            are close but not why. The model uses patterns learned during training, but it does not
+            check facts or look for other reports. If an article describes an event from last week,
+            the embedding is computed only from that article, without information retrieved from
+            other sources.
           </p>
         </div>
       </div>

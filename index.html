@@ -21,7 +21,7 @@
 <meta property="og:title" content="Five newsrooms, one story">
 <meta property="og:description" content="What an embedding is, and how a system merges five different news reports into one story. The similarity scores come from a run of the model on test headlines.">
 <meta property="og:url" content="https://przemyslaw-naruszewicz.github.io/embeddings-explained/index.html">
-<meta property="og:image" content="https://przemyslaw-naruszewicz.github.io/embeddings-explained/og/og-en-v1.png">
+<meta property="og:image" content="https://przemyslaw-naruszewicz.github.io/embeddings-explained/og/og-en-v2.png">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -167,7 +167,7 @@
           <h1 class="hl">Five newsrooms.<br><span class="brasstx">One story.</span></h1>
 
           <div class="defbox">
-            <span class="dt">In one sentence</span>
+            <span class="dt">What is an embedding?</span>
             <p>
               An <b>embedding</b> is a vector: a fixed-length list of numbers that a language
               model computes for a piece of text. Texts with similar meanings usually produce
@@ -178,16 +178,16 @@
 
           <p class="sub">
             The board follows one worked example: five newsrooms report the same event in their
-            own words, each report becomes a vector, and the angle between those vectors decides
-            which reports belong to the same story. That topic group keeps one identity from day to day,
+            own words, each report becomes a vector, and the system uses cosine similarity to decide
+            which reports belong to the same story. That topic group keeps the same identifier across days,
             in a PostgreSQL database with the pgvector extension. The similarity scores come from a
-            run of the model; the headlines are test fixtures.
+            run of the model; the headlines were written for testing.
           </p>
         </div>
 
         <div class="aside">
           <figure class="shot">
-            <img src="og/og-en-v1.png" width="1200" height="630" loading="eager"
+            <img src="og/og-en-v2.png" width="1200" height="630" loading="eager"
                  alt="Preview of the English board: four heat strips showing the first 56 of 768
                       coordinates for four headlines. The two headlines about the same event share an
                       almost identical pattern; the other two differ clearly.">
