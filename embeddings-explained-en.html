@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Five newsrooms, one story · Proximtype</title>
-<meta name="description" content="What an embedding is, and how a system merges five different news reports into one story. Includes similarity scores computed by the model and explains its limits.">
+<title>A few newsrooms, one story · Proximtype</title>
+<meta name="description" content="What an embedding is, and how a system merges a few different news reports into one story. Includes similarity scores computed by the model and explains its limits.">
 
 <!-- Preview and language tags. The site address is not decided yet, so a placeholder stands
      in for the domain; ./set-base-url.sh <address> fills it in.
@@ -18,14 +18,14 @@
 <meta property="og:site_name" content="Proximtype">
 <meta property="og:locale" content="en_US">
 <meta property="og:locale:alternate" content="pl_PL">
-<meta property="og:title" content="Five newsrooms, one story">
-<meta property="og:description" content="What an embedding is, and how a system merges five different news reports into one story. Includes similarity scores computed by the model and explains its limits.">
+<meta property="og:title" content="A few newsrooms, one story">
+<meta property="og:description" content="What an embedding is, and how a system merges a few different news reports into one story. Includes similarity scores computed by the model and explains its limits.">
 <meta property="og:url" content="https://przemyslaw-naruszewicz.github.io/embeddings-explained/embeddings-explained-en.html">
-<meta property="og:image" content="https://przemyslaw-naruszewicz.github.io/embeddings-explained/og/og-en-v3.png">
+<meta property="og:image" content="https://przemyslaw-naruszewicz.github.io/embeddings-explained/og/og-en-v4.png">
 <meta property="og:image:type" content="image/png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Four heat strips: the first 56 of 768 coordinates for four headlines. The two headlines about the same event share an almost identical pattern; the other two differ clearly.">
+<meta property="og:image:width" content="2400">
+<meta property="og:image:height" content="1260">
+<meta property="og:image:alt" content="A few newsrooms, one story. Four strips show the first 20 of 768 headline coordinates. A bracket connects patterns A and B, with two cells differing in shade.">
 <meta name="twitter:card" content="summary_large_image">
 
 <link rel="stylesheet" href="assets/fonts-gdynia.css">
@@ -48,7 +48,7 @@
       <div class="blob1"></div><div class="blob2"></div><div class="grain"></div>
       <div class="heroIn">
         <p class="eyebrow">Semantic clustering · the meaning layer</p>
-        <h1 class="hl">Five newsrooms.<br><span class="brasstx">One story.</span></h1>
+        <h1 class="hl">A few newsrooms.<br><span class="brasstx">One story.</span></h1>
         <div class="defbox">
           <p>
             An <b>embedding</b> is a vector: a fixed-length list of numbers that a language model
@@ -58,7 +58,7 @@
           </p>
         </div>
         <p class="sub">
-          When a president resigns, for example, five newsrooms report the event in five different
+          When a president resigns, for example, a few newsrooms report the event in different
           ways. The articles may share no phrasing at all, and sometimes they are not even written
           in the same language. A program that groups them by common words will miss even a simple
           paraphrase.
@@ -147,7 +147,7 @@
               <p>
                 With the same model version and embedding computation method, the same text gives
                 a repeatable result. Storing the vector lets the program retrieve it when the text
-                appears again, without running the model again.
+                reappears, without another model call.
               </p>
             </div>
           </div>
@@ -669,8 +669,8 @@
         <div class="tcard">
           <h3><span class="g">≈</span> Embedding and grouping (steps 04 and 05): is this the same story?</h3>
           <p>
-            Five newsrooms describe one event in five different texts, so each checksum will be
-            different. Embeddings let the program measure how close those texts are and group them even when they do not share a single sentence.
+            A few newsrooms describe the same event in their own words, so their articles produce
+            distinct checksums. Embeddings let the program measure how close those texts are and group them even when they do not share a single sentence.
           </p>
           <p>
             Each question needs a different tool. The program first compares content checksums, a
@@ -787,9 +787,9 @@
           <div>
             <h3>One group, one analysis</h3>
             <p class="txt">
-              A group is analysed once, not once per article, so five reports of the same
-              event require one analysis in total. Grouping therefore also reduces the work at the
-              final stage. The result is either a trading signal or an indication that a longer
+              The program runs one analysis for the whole group of reports about an event.
+              This reduces the work at the final stage compared with processing each article
+              separately. The result is either a trading signal or an indication that a longer
               process has moved to its next stage. Once a group’s analysis has produced a signal,
               later reports on the same story still join the group but trigger no new analysis
               while that signal remains valid.
@@ -955,7 +955,7 @@
 
         <div class="card">
           <h3>What is a group’s centre?</h3>
-          <p class="note">Each article has a vector of 768 numbers. To get one vector for the whole group, the program averages each position separately: first the first number from every article, then the second, and so on. The result is another list of 768 numbers. This is the group’s centre.</p>
+          <p class="note">Each article has a vector of 768 numbers. To get one vector for the whole group, the program averages the first number from every article, then the second, and so on. The result is another list of 768 numbers. This is the group’s centre.</p>
           <p class="note">The centre is a shared reference point for the group. The program compares the new article’s vector with it. For a group with one article, the centre is that article’s vector; with two, it is their average.</p>
         </div>
 

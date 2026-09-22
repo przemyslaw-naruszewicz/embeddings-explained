@@ -1,41 +1,31 @@
-/* ============================================================
-   Preview image (Open Graph / LinkedIn), 1200 x 630 px.
-   Built on top of assets/board-gdynia.css, which is where the colour
-   variables, the heat strips (.heatrow, .cells, .scalebar) and the
-   navy panel decorations (.blob1, .blob2, .grain) come from.
-   This file sets only the 1200 x 630 frame and the type sizes, because
-   the image is seen as a small tile in the LinkedIn feed.
-   Rendering: ./render.sh og
-   ============================================================ */
+/* Reference-inspired card. Layout: 1200 × 630; PNG: 2400 × 1260.
+   Board colour tokens are injected by build-og.mjs; layout stays independent.
+   Render: ./render.sh og */
+*{box-sizing:border-box}
 html,body{margin:0;background:var(--surface)}
-
 .og{
   width:1200px;height:630px;overflow:hidden;
-  background:var(--surface);color:var(--on-surface);
-  font-family:var(--body);font-size:16.5px;line-height:1.62;
+  background:var(--surface);color:var(--primary);font-family:var(--body);
   -webkit-font-smoothing:antialiased;
-  display:flex;flex-direction:column;
 }
-
-/* ---------- navy panel with the title ---------- */
-.ogtop{position:relative;overflow:hidden;background:var(--primary);color:var(--surface);
-  padding:34px 56px 30px}
-.ogtopIn{position:relative;z-index:2}
-.ogtop .eyebrow{font-size:13px;letter-spacing:.28em}
-.ogtop h1{margin:12px 0 0;font-family:var(--head);font-weight:800;letter-spacing:-.03em;
-  line-height:1.04;font-size:54px;text-transform:uppercase}
-.ogtop h1 .brasstx{color:var(--brass)}
-/* full width instead of the board's measure: the subtitle has to fit on one line */
-.ogtop .sub{margin-top:14px;font-size:19px;max-width:100%}
-
-/* ---------- heat strips ---------- */
-.ogheat{flex:1;padding:22px 56px 24px;display:flex;flex-direction:column;justify-content:center}
-.ogheat .heatrow{margin-top:0}
-.ogheat .heatrow + .heatrow{margin-top:12px}
-.ogheat .heatrow .hh{margin-bottom:5px}
-.ogheat .heatrow .nm{font-size:15px}
-.ogheat .heatrow .sim{font-size:13.5px}
-.ogheat .cells{height:30px}
-.ogheat .scalebar{margin-top:16px;font-size:12.5px}
-.ogheat .scalebar .grad{flex:0 0 120px}
-.ogheat .scalebar .note{flex:1;color:var(--secondary)}
+.ogtop{height:222px;padding:48px 56px 36px;background:var(--primary);color:var(--surface)}
+.ogtop h1{
+  margin:0;font-family:var(--head);font-weight:800;
+  font-size:56px;line-height:1.16;letter-spacing:-2.2px;
+  text-transform:uppercase;white-space:nowrap;
+}
+.ogtop .brasstx{color:var(--brass)}
+.ogtop .sub{
+  margin:16px 0 0;color:var(--primary-fixed-dim);font-size:29px;
+  font-weight:500;line-height:1.3;white-space:nowrap;
+}
+.ogheat{position:relative;padding:42px 102px 54px 56px}
+.heatrow{display:grid;grid-template-columns:158px 1fr;gap:16px;align-items:center;height:48px}
+.heatrow + .heatrow{margin-top:36px}
+.label{font-size:32px;font-weight:700;white-space:nowrap;letter-spacing:-1px}
+.cells{display:grid;grid-template-columns:repeat(20,1fr);gap:7px;height:42px}
+.cells i{display:block}
+.pair-bracket{
+  position:absolute;right:60px;top:64px;width:23px;height:86px;
+  border:5px solid var(--primary);border-left:0;border-radius:0 3px 3px 0;
+}

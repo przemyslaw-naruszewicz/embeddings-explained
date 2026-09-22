@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Five newsrooms, one story · Proximtype</title>
-<meta name="description" content="Choose a language version of the board: what an embedding is, and how a system merges five news reports into one story.">
+<title>A few newsrooms, one story · Proximtype</title>
+<meta name="description" content="Choose a language version of the board: what an embedding is, and how a system merges a few news reports into one story.">
 
 <!-- Language chooser: the choice of version, nothing else. The page itself is in
      English; the only Polish on it is the button leading to the PL board.
@@ -18,14 +18,14 @@
 <meta property="og:site_name" content="Proximtype">
 <meta property="og:locale" content="en_US">
 <meta property="og:locale:alternate" content="pl_PL">
-<meta property="og:title" content="Five newsrooms, one story">
-<meta property="og:description" content="What an embedding is, and how a system merges five different news reports into one story. The similarity scores come from a run of the model on test headlines.">
+<meta property="og:title" content="A few newsrooms, one story">
+<meta property="og:description" content="What an embedding is, and how a system merges a few different news reports into one story. The similarity scores come from a run of the model on test headlines.">
 <meta property="og:url" content="https://przemyslaw-naruszewicz.github.io/embeddings-explained/index.html">
-<meta property="og:image" content="https://przemyslaw-naruszewicz.github.io/embeddings-explained/og/og-en-v3.png">
+<meta property="og:image" content="https://przemyslaw-naruszewicz.github.io/embeddings-explained/og/og-en-v4.png">
 <meta property="og:image:type" content="image/png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Four heat strips: the first 56 of 768 coordinates for four headlines. The two headlines about the same event share an almost identical pattern; the other two differ clearly.">
+<meta property="og:image:width" content="2400">
+<meta property="og:image:height" content="1260">
+<meta property="og:image:alt" content="A few newsrooms, one story. Four strips show the first 20 of 768 headline coordinates. A bracket connects patterns A and B, with two cells differing in shade.">
 <meta name="twitter:card" content="summary_large_image">
 
 <link rel="stylesheet" href="assets/fonts-gdynia.css">
@@ -164,7 +164,7 @@
 
       <div class="cols">
         <div class="intro">
-          <h1 class="hl">Five newsrooms.<br><span class="brasstx">One story.</span></h1>
+          <h1 class="hl">A few newsrooms.<br><span class="brasstx">One story.</span></h1>
 
           <div class="defbox">
             <span class="dt">What is an embedding?</span>
@@ -177,7 +177,7 @@
           </div>
 
           <p class="sub">
-            The board follows one worked example: five newsrooms report the same event in their
+            The board follows one worked example: a few newsrooms report the same event in their
             own words, each report becomes a vector, and the system uses cosine similarity to decide
             which reports belong to the same story. That topic group keeps the same identifier across days,
             in a PostgreSQL database with the pgvector extension. The similarity scores come from a
@@ -187,11 +187,11 @@
 
         <div class="aside">
           <figure class="shot">
-            <img src="og/og-en-v3.png" width="1200" height="630" loading="eager"
-                 alt="Preview of the English board: four heat strips showing the first 56 of 768
+            <img src="og/og-en-v4.png" width="2400" height="1260" loading="eager"
+                 alt="Preview of the English board: four heat strips showing the first 20 of 768
                       coordinates for four headlines. The two headlines about the same event share an
-                      almost identical pattern; the other two differ clearly.">
-            <figcaption class="cap">Board preview · the first 56 of 768 coordinates</figcaption>
+                      almost identical pattern, with two cells differing in shade; the other two differ clearly.">
+            <figcaption class="cap">Board preview · the first 20 of 768 coordinates</figcaption>
           </figure>
 
           <ul class="facts">

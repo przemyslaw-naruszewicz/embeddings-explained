@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Pięć redakcji, jedna historia · Proximtype</title>
-<meta name="description" content="Czym jest embedding i jak system łączy pięć różnych doniesień prasowych w jedną historię. Wyniki podobieństwa obliczone przez model i wyjaśnienie jego ograniczeń.">
+<title>Kilka redakcji, jedna historia · Proximtype</title>
+<meta name="description" content="Czym jest embedding i jak system łączy kilka różnych doniesień prasowych w jedną historię. Wyniki podobieństwa obliczone przez model i wyjaśnienie jego ograniczeń.">
 
 <!-- Preview and language tags. The site address is not decided yet, so a placeholder stands
      in for the domain; ./set-base-url.sh <address> fills it in.
@@ -18,14 +18,14 @@
 <meta property="og:site_name" content="Proximtype">
 <meta property="og:locale" content="pl_PL">
 <meta property="og:locale:alternate" content="en_US">
-<meta property="og:title" content="Pięć redakcji, jedna historia">
-<meta property="og:description" content="Czym jest embedding i jak system łączy pięć różnych doniesień prasowych w jedną historię. Wyniki podobieństwa obliczone przez model i wyjaśnienie jego ograniczeń.">
+<meta property="og:title" content="Kilka redakcji, jedna historia">
+<meta property="og:description" content="Czym jest embedding i jak system łączy kilka różnych doniesień prasowych w jedną historię. Wyniki podobieństwa obliczone przez model i wyjaśnienie jego ograniczeń.">
 <meta property="og:url" content="https://przemyslaw-naruszewicz.github.io/embeddings-explained/embeddings-explained-pl.html">
-<meta property="og:image" content="https://przemyslaw-naruszewicz.github.io/embeddings-explained/og/og-pl-v3.png">
+<meta property="og:image" content="https://przemyslaw-naruszewicz.github.io/embeddings-explained/og/og-pl-v4.png">
 <meta property="og:image:type" content="image/png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Cztery paski mapy cieplnej: pierwsze 56 z 768 współrzędnych czterech nagłówków. Dwa nagłówki o tym samym wydarzeniu mają niemal identyczny wzór, dwa pozostałe wyraźnie inny.">
+<meta property="og:image:width" content="2400">
+<meta property="og:image:height" content="1260">
+<meta property="og:image:alt" content="Kilka redakcji, jedna historia. Cztery paski pokazują pierwsze 20 z 768 współrzędnych nagłówków. Klamra łączy wzory A i B, różniące się odcieniem dwóch pól.">
 <meta name="twitter:card" content="summary_large_image">
 
 <link rel="stylesheet" href="assets/fonts-gdynia.css">
@@ -48,7 +48,7 @@
       <div class="blob1"></div><div class="blob2"></div><div class="grain"></div>
       <div class="heroIn">
         <p class="eyebrow">Klastrowanie semantyczne · warstwa znaczenia</p>
-        <h1 class="hl">Pięć redakcji.<br><span class="brasstx">Jedna historia.</span></h1>
+        <h1 class="hl">Kilka redakcji.<br><span class="brasstx">Jedna historia.</span></h1>
         <div class="defbox">
           <p>
             <b>Embedding</b> to wektor, czyli lista liczb o stałej długości, którą model językowy
@@ -58,8 +58,8 @@
           </p>
         </div>
         <p class="sub">
-          Kiedy na przykład prezydent rezygnuje z urzędu, pięć redakcji opisuje to wydarzenie na
-          pięć różnych sposobów. Teksty mogą nie mieć wspólnych sformułowań, a czasem są napisane
+          Kiedy na przykład prezydent rezygnuje z urzędu, kilka redakcji opisuje to wydarzenie,
+          każda po swojemu. Teksty mogą nie mieć wspólnych sformułowań, a czasem są napisane
           w różnych językach. Program, który grupuje artykuły na podstawie wspólnych słów, nie
           rozpozna nawet prostej parafrazy.
         </p>
@@ -452,7 +452,7 @@
           <p class="note">
             Początkowo sposób grupowania zależał od ustawienia: środowisko programisty bez modelu
             korzystało z TF-IDF, a środowisko produkcyjne z embeddingów. W rezultacie ta sama porcja
-            artykułów układała się w inne grupy w środowisku programisty niż w środowisku produkcyjnym,
+            artykułów układała się w tych środowiskach w inne grupy,
             a ten sam próg podobieństwa stosowano do dwóch różnych rozkładów wyników. Gdy na podstawie grup
             artykułów powstają sygnały mogące wspierać decyzje inwestycyjne, „u mnie wyszło inaczej”
             przestaje być drobiazgiem.
@@ -492,7 +492,7 @@
           <p class="note">
             Skrót <b>MoE</b> w nazwie to <i>mixture of experts</i>: model zawiera kilka
             wyspecjalizowanych podsieci, ale dla każdego fragmentu tekstu uruchamia tylko część
-            z nich. Ma więc możliwości większego modelu, choć zużywa podobną ilość zasobów jak mniejszy model.
+            z nich. Ma więc możliwości większego modelu, choć zużywa zasoby na poziomie mniejszego.
           </p>
           <p class="note">
             W tym zadaniu liczy się przede wszystkim wielojęzyczność: francuska depesza
@@ -670,8 +670,8 @@
         <div class="tcard">
           <h3><span class="g">≈</span> Embedding i grupowanie (kroki 04 i 05): czy to ta sama historia?</h3>
           <p>
-            Pięć redakcji opisuje jedno wydarzenie pięcioma różnymi tekstami, więc skrót każdego
-            z nich będzie inny. Dopiero embedding pozwala
+            Kilka redakcji pisze o jednym wydarzeniu, ale każda używa innych słów.
+            Dlatego teksty mają różne skróty. Dopiero embedding pozwala
             zmierzyć, jak blisko siebie leżą te teksty, i połączyć je w jedną grupę, mimo że
             nie mają ani jednego wspólnego zdania.
           </p>
@@ -790,8 +790,8 @@
           <div>
             <h3>Jedna grupa, jedna analiza</h3>
             <p class="txt">
-              Na ostatnim etapie program analizuje całą grupę wspólnie, więc pięć doniesień
-              o tym samym wydarzeniu wymaga jednej analizy zamiast pięciu.
+              Na ostatnim etapie program wykonuje jedną analizę dla całej grupy doniesień
+              o tym samym wydarzeniu, zamiast rozpatrywać każdy artykuł osobno.
               Wynikiem jest sygnał transakcyjny albo informacja, że dłuższy proces
               przeszedł do kolejnego etapu. Kiedy analiza grupy da sygnał, kolejne doniesienia
               o tym samym dołączają do grupy, ale nie wywołują nowej analizy, dopóki ten sygnał
