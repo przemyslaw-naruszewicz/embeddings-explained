@@ -96,7 +96,7 @@
     overflow-wrap:anywhere}
   .strip.hot .unit{color:var(--brass-soft)}
   .strip p.txt{margin-top:12px;color:var(--on-surface-variant);font-size:15.5px;font-weight:400;
-    line-height:1.6;max-width:78ch}
+    line-height:1.6;max-width:96ch}
   .strip.hot p.txt{color:var(--primary-fixed-dim)}
   .strip p.txt b{color:var(--primary);font-weight:600}
   .strip.hot p.txt b{color:var(--surface)}
@@ -122,8 +122,8 @@
   .oc.stop{background:rgba(255,180,171,.14)}
 
   /* ---------- data specimen ---------- */
-  .specimen{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-  .card{background:var(--sc-lowest);border-radius:var(--r-xl);padding:28px}
+  .specimen{display:grid;grid-template-columns:1fr 1fr;gap:20px;min-width:0}
+  .card{background:var(--sc-lowest);border-radius:var(--r-xl);padding:28px;min-width:0}
   .card.wide{grid-column:1 / -1}
   .card h3{font-size:19px;color:var(--primary);text-transform:uppercase;letter-spacing:-.02em}
   .card .note{margin-top:12px;color:var(--on-surface-variant);font-size:15.5px;font-weight:400;line-height:1.62}
@@ -179,7 +179,7 @@
   .verdict.no{color:var(--secondary)}
 
   /* ---------- decisions ---------- */
-  .cols2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .cols2{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
   .tcard{background:var(--sc-lowest);border-radius:var(--r-xl);padding:28px}
   .tcard h3{font-size:18px;color:var(--primary);text-transform:uppercase;letter-spacing:-.02em;
     display:flex;align-items:baseline;gap:.6em}
@@ -194,6 +194,7 @@
   /* ---------- foot ---------- */
   .foot{margin-top:8px;padding-top:22px;display:flex;flex-wrap:wrap;gap:10px 30px;
     font-size:12.5px;color:var(--secondary);font-weight:400}
+  .foot>span{min-width:0;overflow-wrap:anywhere}
   .foot b{font-weight:600;color:var(--primary)}
   .foot .mono{font-size:12px}
 
@@ -290,7 +291,7 @@
   .coscard{background:var(--sc-lowest);border-radius:var(--r-xl);padding:22px 26px}
   .coscard h3{font-size:17px;color:var(--primary);text-transform:uppercase;letter-spacing:-.02em}
   .coscard>p{margin-top:10px;color:var(--on-surface-variant);font-size:15.5px;font-weight:400;
-    line-height:1.62;max-width:86ch}
+    line-height:1.62;max-width:none}
   .coscard>p b{color:var(--primary);font-weight:600}
   .pcard{background:var(--sc-lowest);border-radius:var(--r-xl);padding:22px 26px;
     display:grid;grid-template-columns:44px 1fr;gap:0 22px;align-items:start}
@@ -330,7 +331,8 @@
   .cols2.tight + .strips{margin-top:20px}
 
   /* ---------- comparison table ---------- */
-  .cmp{width:100%;border-collapse:collapse;margin-top:20px;font-size:15px;font-weight:400;
+  .cmp-scroll{margin-top:20px;max-width:100%;overflow-x:auto}
+  .cmp{width:100%;border-collapse:collapse;font-size:15px;font-weight:400;
     color:var(--on-surface-variant)}
   .cmp th,.cmp td{text-align:left;vertical-align:top;padding:13px 16px;line-height:1.5}
   .cmp thead th{font-family:var(--head);font-weight:800;font-size:12px;letter-spacing:.14em;
@@ -394,6 +396,7 @@
 
   @media(max-width:640px){
     .cosviz{grid-template-columns:1fr}
+    .cmp{width:680px;min-width:680px}
   }
 
   /* ============================================================
