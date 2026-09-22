@@ -95,7 +95,7 @@
         <div class="kpi">
           <div class="v">brak</div>
           <div class="k">terminu ważności</div>
-          <div class="d">Raz obliczony wynik się nie zmienia, więc nie trzeba go unieważniać</div>
+          <div class="d">Sam upływ czasu nie wymaga ponownego obliczenia zapisanego wektora</div>
         </div>
       </div>
     </div>
@@ -144,11 +144,11 @@
           <div class="pcard">
             <div class="n">03</div>
             <div>
-              <h3>Ten sam tekst zawsze daje te same liczby</h3>
+              <h3>Raz obliczony wektor można wykorzystać ponownie</h3>
               <p>
-                Obliczenie embeddingu jest deterministyczne: ten sam tekst przetworzony przez tę samą
-                wersję modelu zawsze daje dokładnie ten sam wektor. Wynik nie zależy od chwili
-                obliczenia ani od tekstów wysłanych wcześniej. Dlatego warto go zapisać i nie obliczać ponownie.
+                Jeśli wersja modelu i sposób obliczania embeddingów pozostają bez zmian, ten sam tekst
+                daje powtarzalny wynik. Warto więc zapisać wektor i odczytywać go, gdy tekst pojawia się
+                ponownie, bez kolejnego uruchamiania modelu.
               </p>
             </div>
           </div>
@@ -422,12 +422,12 @@
               <tr>
                 <td>Czy wynik jest zawsze taki sam?</td>
                 <td>nie, zmienia się razem ze zbiorem, w którym liczona jest rzadkość słów</td>
-                <td>tak, ten sam tekst i model zawsze dają ten sam wynik</td>
+                <td>wynik jest powtarzalny, jeśli model i sposób obliczania embeddingów pozostają bez zmian</td>
               </tr>
               <tr>
                 <td>Ile kosztuje?</td>
                 <td>niewiele; obliczenia odbywają się lokalnie, bez dodatkowych narzędzi</td>
-                <td>model zajmuje 1,3 GB, a obliczenie trwa kilka sekund; wynik zapisuje się raz na zawsze</td>
+                <td>model zajmuje 1,3 GB, a obliczenie trwa kilka sekund; zapisany wynik można wykorzystywać ponownie</td>
               </tr>
               <tr>
                 <td>Da się sprawdzić, dlaczego tak wyszło?</td>
@@ -657,8 +657,8 @@
           <p>
             Ta sama depesza może przyjść z dwóch kanałów albo ponownie po przerwaniu połączenia.
             Program wykrywa duplikat za pomocą <b>skrótu treści</b>, czyli krótkiego ciągu znaków
-            obliczonego z całego tekstu. Ten sam tekst zawsze daje ten sam skrót, a każda zmiana daje
-            inny. Jeśli taki skrót jest już w bazie, program nie zapisuje artykułu ponownie.
+            obliczonego z całego tekstu. Ten sam tekst zawsze daje ten sam skrót. Zmiana tekstu w praktyce
+            daje inny skrót. Jeśli taki skrót jest już w bazie, program nie zapisuje artykułu ponownie.
           </p>
           <p>
             Rozstrzygnięcie jest zerojedynkowe i zupełnie nie uwzględnia znaczenia: przesunięcie
@@ -895,7 +895,8 @@
 }</pre></div>
           <p class="codecap">
             Klucz w bazie to para <code>(skrót tekstu, nazwa modelu)</code>, a wiersz zawiera wektor
-            zapisany jako <code>jsonb</code>. Nie ma terminu ważności, ponieważ wartość się nie zmienia.
+            zapisany jako <code>jsonb</code>. Wynik nie ma terminu ważności. Sam upływ czasu nie wymaga
+            ponownego obliczenia wektora.
           </p>
         </div>
 
@@ -929,7 +930,9 @@
             nie wchodzą w konflikt. Nazwa modelu jest częścią klucza: po jej zmianie program nie
             odczytuje już wcześniejszych wierszy dla tego samego tekstu. Wektor jest liczony od nowa.
             Wektory poprzedniego modelu zostają w tabeli, ale nie są już odczytywane, więc poprawność nie zależy od
-            tego, czy ktoś pamięta o wyczyszczeniu pamięci podręcznej. Ustawienie: <code>OLLAMA_ENABLED</code>.
+            tego, czy ktoś pamięta o wyczyszczeniu pamięci podręcznej. Jeśli zmieni się wersja modelu,
+            ale jego nazwa pozostanie ta sama, program nadal będzie korzystał z wektorów zapisanych
+            dla poprzedniej wersji. Ustawienie: <code>OLLAMA_ENABLED</code>.
             Inicjalizacja pamięci podręcznej: <code>bin/console app:embed:warm --days=1</code>.</p>
           </div>
         </div>

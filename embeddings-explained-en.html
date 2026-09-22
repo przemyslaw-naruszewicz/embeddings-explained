@@ -95,7 +95,7 @@
         <div class="kpi">
           <div class="v">none</div>
           <div class="k">expiry date</div>
-          <div class="d">A result computed once does not change, so it never needs to be invalidated</div>
+          <div class="d">A stored vector does not need to be recomputed just because time has passed</div>
         </div>
       </div>
     </div>
@@ -143,12 +143,11 @@
           <div class="pcard">
             <div class="n">03</div>
             <div>
-              <h3>The same text always gives the same numbers</h3>
+              <h3>A computed vector can be reused</h3>
               <p>
-                Computing an embedding is deterministic: the same version of the model returns
-                exactly the same vector for the same text. The result does not depend on when
-                it is computed or on any text processed earlier.
-                Storing the result avoids repeating the calculation.
+                With the same model version and embedding computation method, the same text gives
+                a repeatable result. Storing the vector lets the program retrieve it when the text
+                appears again, without running the model again.
               </p>
             </div>
           </div>
@@ -421,12 +420,12 @@
               <tr>
                 <td>Is the score always the same?</td>
                 <td>no, it changes with the collection used to calculate word rarity</td>
-                <td>yes, the same text and model always give the same result</td>
+                <td>the result is repeatable if the model and embedding computation method stay the same</td>
               </tr>
               <tr>
                 <td>What does it cost?</td>
                 <td>very little; it is computed locally, with no extra tooling</td>
-                <td>the model uses 1.3 GB and takes a few seconds; the result is then stored permanently</td>
+                <td>the model uses 1.3 GB and takes a few seconds; the stored result can be reused</td>
               </tr>
               <tr>
                 <td>Can you explain the result?</td>
@@ -655,8 +654,9 @@
           <h3><span class="g">≡</span> Intake (step 01): has this text been here before?</h3>
           <p>
             The same wire copy may arrive from two feeds, or return after a dropped connection.
-            A <b>checksum</b> detects it. This short string is computed from the entire text: the
-            same text always produces the same checksum, while any change produces a different one.
+            A <b>checksum</b> detects it. This short string is computed from the entire text.
+            The same text always produces the same checksum. In practice, changing the text produces
+            a different checksum.
             If the checksum is already in the database, the article is not stored again.
           </p>
           <p>
@@ -892,8 +892,8 @@
 }</pre></div>
           <p class="codecap">
             The database key is the pair <code>(text checksum, model name)</code>, while the row
-            contains the vector as <code>jsonb</code>. No expiry date is needed because the value
-            does not change.
+            contains the vector as <code>jsonb</code>. The result has no expiry date. The vector does
+            not need to be recomputed just because time has passed.
           </p>
         </div>
 
@@ -927,7 +927,9 @@
             The model name is part of the key: once it changes, the same text no longer matches the
             old rows and the vector is computed afresh. The previous model’s vectors
             stay in the table but are no longer read, so correctness does not depend
-            on anyone remembering to clear the cache. Setting: <code>OLLAMA_ENABLED</code>. Cache
+            on anyone remembering to clear the cache. If the model version changes but its name
+            stays the same, the program will keep using vectors stored for the previous version.
+            Setting: <code>OLLAMA_ENABLED</code>. Cache
             initialisation: <code>bin/console app:embed:warm --days=1</code>.</p>
           </div>
         </div>
